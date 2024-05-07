@@ -10,11 +10,8 @@ const saltRounds = 12;
 const port = process.env.PORT || 3000;
 
 const app = express();
-const profileRoutes = require('./profileRoutes');
+//const profileRoutes = require('./profileRoutes');
 const Joi = require("joi");
-
-
-app.use('/profile', profileRoutes);
 
 
 const expireTime = 24 * 60 * 60 * 1000; //expires after 1 day  (hours * minutes * seconds * millis)
@@ -52,10 +49,22 @@ app.use(session({
 }
 ));
 
+//app.use('/profile', profileRoutes);
+
 app.get('/', (req,res) => {
     var color = req.query.color;
 
     res.render("index", {color: color});
+});
+
+app.get('/profile', (req, res) => {
+    if (req.session.authenticated) {
+		const userName = req.session.username;
+		const userEmail = req.session.email;
+		res.render("profile", { userName: userName, userEmail: userEmail });
+	} else {
+		res.redirect('/login');
+	}
 });
 
 app.get('/map', (req, res) => {
@@ -63,40 +72,26 @@ app.get('/map', (req, res) => {
 });
 
 app.get('/createUser', (req,res) => {
-    var html = `
-    create user
-    <form action='/submitUser' method='post'>
-    <input name='username' type='text' placeholder='username'>
-    <input name='password' type='password' placeholder='password'>
-    <button>Submit</button>
-    </form>
-    `;
-    res.send(html);
+    res.render("createUser");
 });
 
 app.get('/login', (req,res) => {
-    var html = `
-    log in
-    <form action='/loggingin' method='post'>
-    <input name='username' type='text' placeholder='username'>
-    <input name='password' type='password' placeholder='password'>
-    <button>Submit</button>
-    </form>
-    `;
-    res.send(html);
+    res.render("login");
 });
 
 app.post('/submitUser', async (req,res) => {
     var username = req.body.username;
+	var email = req.body.email;
     var password = req.body.password;
 
 	const schema = Joi.object(
 		{
 			username: Joi.string().alphanum().max(20).required(),
+			email: Joi.string().email().max(20).required(),
 			password: Joi.string().max(20).required()
 		});
 	
-	const validationResult = schema.validate({username, password});
+	const validationResult = schema.validate({username, email, password});
 	if (validationResult.error != null) {
 	   console.log(validationResult.error);
 	   res.redirect("/createUser");
@@ -105,11 +100,12 @@ app.post('/submitUser', async (req,res) => {
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 	
-	await userCollection.insertOne({username: username, password: hashedPassword});
+	await userCollection.insertOne({username: username, email: email, password: hashedPassword});
 	console.log("Inserted user");
 
 	req.session.authenticated = true;
 	req.session.username = username;
+	req.session.email = email;
     req.session.cookie.maxAge = expireTime;
 
     var html = "successfully created user";
@@ -117,18 +113,18 @@ app.post('/submitUser', async (req,res) => {
 });
 
 app.post('/loggingin', async (req,res) => {
-    var username = req.body.username;
+    var email = req.body.email;
     var password = req.body.password;
 
 	const schema = Joi.string().max(20).required();
-	const validationResult = schema.validate(username);
+	const validationResult = schema.validate(email);
 	if (validationResult.error != null) {
 	   console.log(validationResult.error);
 	   res.redirect("/login");
 	   return;
 	}
 
-	const result = await userCollection.find({username: username}).project({username: 1, password: 1, _id: 1}).toArray();
+	const result = await userCollection.find({email: email}).project({username: 1, password: 1, _id: 1}).toArray();
 
 	console.log(result);
 	if (result.length != 1) {
@@ -139,10 +135,11 @@ app.post('/loggingin', async (req,res) => {
 	if (await bcrypt.compare(password, result[0].password)) {
 		console.log("correct password");
 		req.session.authenticated = true;
-		req.session.username = username;
+		req.session.email = email;
+		req.session.username = result[0].username;
 		req.session.cookie.maxAge = expireTime;
 
-		res.redirect('/loggedIn');
+		res.redirect('/profile');
 		return;
 	}
 	else {
