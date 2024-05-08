@@ -1,9 +1,12 @@
-<div class="bg-yellow-100">
-    <form>
-        <h3><%= item.type %></h3>
-        <% for(let i = 0; i < item.effects.length; i++) { %>
-            <%- include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: item[item.effects[i]]}) %>
-        <% } %>
-        <button type="submit">Purchase</button>
+<div class="bg-blue-100 flex justify-center mt-5">
+    <form class="inline-grid">
+        <div class='flex justify-center font-bold text-xl'><%= item.type %></div>
+        <div>
+            <% for(let i = 0; i < item.effects.length; i++) { %>
+                <%- include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: item[item.effects[i]]}) %>
+            <% } %>
+        </div>
+        
+        <button type="submit" class="flex justify-center align-bottom m-2 bg-green-700">Purchase</button>
     </form>
 </div>
