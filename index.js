@@ -74,18 +74,27 @@ app.get('/profile', (req, res) => {
 });
 
 app.get('/shop', async (req, res) => {
-	let items = await itemCollection.find().toArray();
-	let itemsPicked = new Array(3);
-	for(let i = 0; i < 3 && i < items.length; i++) {
-		let rand;
-		do {
-			rand = parseInt(Math.random() * items.length);
-		} while(items[rand] == null);
+	if(req.session.authenticated) {
+		let items = await itemCollection.find().toArray();
+		let itemsPicked = new Array(3);
+		for(let i = 0; i < 3 && i < items.length; i++) {
+			let rand;
+			do {
+				rand = parseInt(Math.random() * items.length);
+			} while(items[rand] == null);
 
-		itemsPicked[i] = items[rand];
-		items[rand] = null;
+			itemsPicked[i] = items[rand];
+			items[rand] = null;
+		}
+		res.render('shop', {items: itemsPicked});
+	} else {
+		res.redirect('/login');
 	}
-	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2]});
+});
+
+app.get('/buy', (req, res) => {
+	console.log('hello');
+	res.send('hello');
 });
 
 app.get('/map', (req, res) => {

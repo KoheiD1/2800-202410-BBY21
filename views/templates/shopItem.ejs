@@ -1,0 +1,9 @@
+<div class="bg-yellow-100">
+    <form>
+        <h3><%= item.type %></h3>
+        <% for(let i = 0; i < item.effects.length; i++) { %>
+            <%- include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: item[item.effects[i]]}) %>
+        <% } %>
+        <button type="submit">Purchase</button>
+    </form>
+</div>
