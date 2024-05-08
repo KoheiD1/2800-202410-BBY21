@@ -10,8 +10,7 @@ const saltRounds = 12;
 const port = process.env.PORT || 3000;
 
 const app = express();
-//const profileRoutes = require('./profileRoutes');
-// const shopRouter = require('./shopRouter.js');
+const shopRouter = require('./shopRouter.js');
 const Joi = require("joi");
 
 
@@ -51,9 +50,10 @@ app.use(session({
 }
 ));
 
-//app.use('/profile', profileRoutes);
+const profileRoutes = require('./profileRoutes');
+app.use('/', profileRoutes(userCollection));
 
-// app.use('/shop', shopRouter);
+//app.use('/shop', shopRouter);
 
 app.get('/', (req,res) => {
 	if(req.session.authenticated) {
@@ -63,15 +63,17 @@ app.get('/', (req,res) => {
 	}
 });
 
-app.get('/profile', (req, res) => {
-    if (req.session.authenticated) {
-		const userName = req.session.username;
-		const userEmail = req.session.email;
-		res.render("profile", { userName: userName, userEmail: userEmail });
-	} else {
-		res.redirect('/login');
-	}
-});
+app.use('/profile', profileRoutes);
+
+// app.get('/profile', (req, res) => {
+//     if (req.session.authenticated) {
+// 		const userName = req.session.username;
+// 		const userEmail = req.session.email;
+// 		res.render("profile", { userName: userName, userEmail: userEmail });
+// 	} else {
+// 		res.redirect('/login');
+// 	}
+// });
 
 app.get('/shop', async (req, res) => {
 	let items = await itemCollection.find().toArray();
@@ -121,12 +123,13 @@ app.post('/submitUser', async (req,res) => {
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 	
-	await userCollection.insertOne({username: username, email: email, password: hashedPassword});
+	await userCollection.insertOne({username: username, profile_pic: "profile-logo.png", email: email, password: hashedPassword});
 	console.log("Inserted user");
 
 	req.session.authenticated = true;
 	req.session.username = username;
 	req.session.email = email;
+	//req.session.profilePicture = "profile-logo.png";
     req.session.cookie.maxAge = expireTime;
 
     var html = "successfully created user";
