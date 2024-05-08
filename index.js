@@ -56,9 +56,11 @@ app.use(session({
 // app.use('/shop', shopRouter);
 
 app.get('/', (req,res) => {
-    var color = req.query.color;
-
-    res.render("index", {color: color});
+	if(req.session.authenticated) {
+		res.render("index", {loggedIn: req.session.authenticated});
+	} else {
+    res.render("index", {loggedIn: false});
+	}
 });
 
 app.get('/profile', (req, res) => {
@@ -176,6 +178,11 @@ app.get('/loggedin', (req,res) => {
     You are logged in!
     `;
     res.send(html);
+});
+
+app.get('/logout', (req,res) => {
+    req.session.destroy();
+    res.redirect('/');
 });
 
 app.use(express.static(__dirname + "/public"));
