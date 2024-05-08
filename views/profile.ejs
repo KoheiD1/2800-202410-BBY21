@@ -8,6 +8,14 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
     <style>
+        
+        body {
+            background-image: url('/indexBG.png'); 
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+        }
+
         .modal {
             display: none;
         }
@@ -19,7 +27,7 @@
         <div class="px-4 py-8">
             <div class="text-center">
                 <!-- Add outline to the profile picture -->
-                <img id="profileImg" class="h-28 w-28 rounded-full mx-auto border-2 border-gray-500 cursor-pointer" src="<%= userProfilePic %>" alt="Profile Picture" onclick="openModal()">
+                <img id="profileImg" class="h-28 w-28 rounded-full bg-white mx-auto border-2 border-gray-500 cursor-pointer" src="<%= userProfilePic %>" alt="Profile Picture" onclick="openModal()">
                 <h1 class="text-2xl font-bold mt-4"><%= userName %></h1>
                 <p class="text-sm text-gray-600 mt-2">Web Developer</p>
             </div>
@@ -33,7 +41,7 @@
     </div>
 
 
-    <div id="myModal" class="modal fixed inset-0 flex items-center justify-center z-10">
+    <div id="myModal" class="modal fixed inset-0 flex items-center justify-center z-10" >
         <div class="overlay fixed inset-0"></div>
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg relative">
             <h2 class="text-2xl font-bold mb-4">Choose Profile Picture</h2>
@@ -48,6 +56,23 @@
         </div>
     </div>
     
+    <div class="max-w-md mx-auto rounded-lg overflow-hidden mt-8">
+        <div class="px-4 py-2 flex items-center">
+            <h2 class="text-xl pr-4 font-bold mb-4">Friends List</h2>
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-xs">
+                Find Friends
+            </button>
+        </div>
+        <ul class="px-4">
+            <% if (friendsList && friendsList.length > 0) { %>
+                <% friendsList.forEach(friend => { %>
+                    <li class="text-gray-900"><%= friend %></li>
+                <% }); %>
+            <% } else { %>
+                <li class="text-gray-900">No friends to display</li>
+            <% } %>
+        </ul>
+    </div>
     
 
     <script>

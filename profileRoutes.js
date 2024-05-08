@@ -9,9 +9,10 @@ module.exports = function(userCollection) {
             const userId = req.session.userId;
 
             const user = await userCollection.findOne({ username: userName });
-            const userProfilePic = user ? user.profile_pic : 'profile-logo.png'; 
+            const userProfilePic = user ? user.profile_pic : 'profile-logo.png';
+            const friendsList = user.friendsList; 
 
-            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId });
+            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList });
         } else {
             res.redirect('/login');
         }
