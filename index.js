@@ -11,6 +11,7 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 //const profileRoutes = require('./profileRoutes');
+// const shopRouter = require('./shopRouter.js');
 const Joi = require("joi");
 
 
@@ -29,6 +30,7 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 var {database} = include('databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
+const itemCollection = database.db(mongodb_database).collection('items');
 
 app.use(express.urlencoded({extended: false}));
 
@@ -51,6 +53,8 @@ app.use(session({
 
 //app.use('/profile', profileRoutes);
 
+// app.use('/shop', shopRouter);
+
 app.get('/', (req,res) => {
     var color = req.query.color;
 
@@ -65,6 +69,21 @@ app.get('/profile', (req, res) => {
 	} else {
 		res.redirect('/login');
 	}
+});
+
+app.get('/shop', async (req, res) => {
+	let items = await itemCollection.find().toArray();
+	let itemsPicked = new Array(3);
+	for(let i = 0; i < 3 && i < items.length; i++) {
+		let rand;
+		do {
+			rand = parseInt(Math.random() * items.length);
+		} while(items[rand] == null);
+
+		itemsPicked[i] = items[rand];
+		items[rand] = null;
+	}
+	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2]});
 });
 
 app.get('/map', (req, res) => {
