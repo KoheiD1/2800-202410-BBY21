@@ -187,6 +187,10 @@ app.get('/logout', (req,res) => {
     res.redirect('/');
 });
 
+app.post('/encounter', (req,res) => {
+	res.render("encounter", {difficulty: req.body.difficulty});
+});
+
 app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req,res) => {
