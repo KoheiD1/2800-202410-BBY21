@@ -11,7 +11,6 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 //const profileRoutes = require('./profileRoutes');
-// const shopRouter = require('./shopRouter.js');
 const Joi = require("joi");
 
 
@@ -53,7 +52,8 @@ app.use(session({
 
 //app.use('/profile', profileRoutes);
 
-// app.use('/shop', shopRouter);
+const shopRouter = require('./shopRouter');
+app.use('/', shopRouter(itemCollection, userCollection));
 
 app.get('/', (req,res) => {
 	if(req.session.authenticated) {
@@ -68,25 +68,6 @@ app.get('/profile', (req, res) => {
 		const userName = req.session.username;
 		const userEmail = req.session.email;
 		res.render("profile", { userName: userName, userEmail: userEmail });
-	} else {
-		res.redirect('/login');
-	}
-});
-
-app.get('/shop', async (req, res) => {
-	if(req.session.authenticated) {
-		let items = await itemCollection.find().toArray();
-		let itemsPicked = new Array(3);
-		for(let i = 0; i < 3 && i < items.length; i++) {
-			let rand;
-			do {
-				rand = parseInt(Math.random() * items.length);
-			} while(items[rand] == null);
-
-			itemsPicked[i] = items[rand];
-			items[rand] = null;
-		}
-		res.render('shop', {items: itemsPicked});
 	} else {
 		res.redirect('/login');
 	}
