@@ -56,6 +56,9 @@ app.use('/', profileRoutes(userCollection));
 const friendsRoutes = require('./friendsRoutes');
 app.use('/', friendsRoutes(userCollection));
 
+const findFriendsRoutes = require('./findFriendsRoutes');
+app.use('/', findFriendsRoutes(userCollection));
+
 //app.use('/shop', shopRouter);
 
 app.get('/', (req,res) => {
@@ -68,15 +71,6 @@ app.get('/', (req,res) => {
 
 app.use('/profile', profileRoutes);
 
-// app.get('/profile', (req, res) => {
-//     if (req.session.authenticated) {
-// 		const userName = req.session.username;
-// 		const userEmail = req.session.email;
-// 		res.render("profile", { userName: userName, userEmail: userEmail });
-// 	} else {
-// 		res.redirect('/login');
-// 	}
-// });
 
 app.get('/shop', async (req, res) => {
 	let items = await itemCollection.find().toArray();
@@ -184,10 +178,9 @@ app.get('/loggedin', (req,res) => {
     `;
     res.send(html);
 });
-
 app.get('/logout', (req,res) => {
-    req.session.destroy();
-    res.redirect('/');
+	req.session.destroy();
+	res.redirect('/');
 });
 
 app.use(express.static(__dirname + "/public"));

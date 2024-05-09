@@ -6,12 +6,26 @@
     <title>User List</title>
     <!-- Include Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('/indexBG.png'); 
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="max-w-4xl mx-auto py-8">
-        <h1 class="text-3xl font-bold mb-4">User List</h1>
-        <ul class="divide-y divide-gray-200">
-            
+        <h1 class="text-3xl px-4 font-bold mb-4">Friends List</h1>
+        <ul class="divide-y divide-black">
+            <% if (friendsList && friendsList.length > 0) { %>
+                <% friendsList.forEach(friend => { %>
+                    <li class="text-md text-gray-900 px-4"><%= friend %></li>
+                <% }); %>
+            <% } else { %>
+                <li class="text-gray-900 px-4">No friends to display</li>
+            <% } %>
         </ul>
     </div>
 </body>
