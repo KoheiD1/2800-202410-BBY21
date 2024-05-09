@@ -53,6 +53,9 @@ app.use(session({
 const profileRoutes = require('./profileRoutes');
 app.use('/', profileRoutes(userCollection));
 
+const friendsRoutes = require('./friendsRoutes');
+app.use('/', friendsRoutes(userCollection));
+
 //app.use('/shop', shopRouter);
 
 app.get('/', (req,res) => {

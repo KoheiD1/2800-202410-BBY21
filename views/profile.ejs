@@ -59,9 +59,11 @@
     <div class="max-w-md mx-auto rounded-lg overflow-hidden mt-8">
         <div class="px-4 py-2 flex items-center">
             <h2 class="text-xl pr-4 font-bold mb-4">Friends List</h2>
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-xs">
-                Find Friends
-            </button>
+            <a href="/friends" class="inline-block"> 
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-xs">
+                    Find Friends
+                </button>
+            </a>                
         </div>
         <ul class="px-4">
             <% if (friendsList && friendsList.length > 0) { %>
