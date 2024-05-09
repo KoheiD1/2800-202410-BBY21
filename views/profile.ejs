@@ -24,6 +24,11 @@
 </head>
 <body class="bg-gray-100">
     <div class="max-w-md mx-auto rounded-lg overflow-hidden">
+        <form action="/logout" method="get">
+            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                Logout
+            </button>
+        </form>
         <div class="px-4 py-8">
             <div class="text-center">
                 <!-- Add outline to the profile picture -->
@@ -56,14 +61,20 @@
         </div>
     </div>
     
-    <div class="max-w-md mx-auto rounded-lg overflow-hidden mt-8">
+    <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
         <div class="px-4 py-2 flex items-center">
-            <h2 class="text-xl pr-4 font-bold mb-4">Friends List</h2>
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-xs">
-                Find Friends
-            </button>
+            <form action="/friends" method="get">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">
+                    Friends List
+                </button>
+            </form>
+            <form action="/findFriends" method="get">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    Add Friends
+                </button>
+            </form>            
         </div>
-        <ul class="px-4">
+        <!-- <ul class="px-4">
             <% if (friendsList && friendsList.length > 0) { %>
                 <% friendsList.forEach(friend => { %>
                     <li class="text-gray-900"><%= friend %></li>
@@ -71,7 +82,7 @@
             <% } else { %>
                 <li class="text-gray-900">No friends to display</li>
             <% } %>
-        </ul>
+        </ul> -->
     </div>
     
 

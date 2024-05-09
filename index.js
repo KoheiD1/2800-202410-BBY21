@@ -54,8 +54,18 @@ app.use(session({
 const profileRoutes = require('./profileRoutes');
 app.use('/', profileRoutes(userCollection));
 
+const friendProfileRoutes = require('./friendProfileRoutes');
+app.use('/', friendProfileRoutes(userCollection));
+
+const friendsRoutes = require('./friendsRoutes');
+app.use('/', friendsRoutes(userCollection));
+
+const findFriendsRoutes = require('./findFriendsRoutes');
+app.use('/', findFriendsRoutes(userCollection));
+
 const shopRouter = require('./shopRouter');
 app.use('/', shopRouter(itemCollection, userCollection));
+
 
 app.get('/', (req,res) => {
 	if(req.session.authenticated) {
@@ -67,19 +77,20 @@ app.get('/', (req,res) => {
 
 app.use('/profile', profileRoutes);
 
-// app.get('/profile', (req, res) => {
-//     if (req.session.authenticated) {
-// 		const userName = req.session.username;
-// 		const userEmail = req.session.email;
-// 		res.render("profile", { userName: userName, userEmail: userEmail });
-// 	} else {
-// 		res.redirect('/login');
-// 	}
-// });
 
-app.get('/buy', (req, res) => {
-	console.log('hello');
-	res.send('hello');
+app.get('/shop', async (req, res) => {
+	let items = await itemCollection.find().toArray();
+	let itemsPicked = new Array(3);
+	for(let i = 0; i < 3 && i < items.length; i++) {
+		let rand;
+		do {
+			rand = parseInt(Math.random() * items.length);
+		} while(items[rand] == null);
+
+		itemsPicked[i] = items[rand];
+		items[rand] = null;
+	}
+	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2]});
 });
 
 app.get('/map', (req, res) => {
@@ -173,10 +184,9 @@ app.get('/loggedin', (req,res) => {
     `;
     res.send(html);
 });
-
 app.get('/logout', (req,res) => {
-    req.session.destroy();
-    res.redirect('/');
+	req.session.destroy();
+	res.redirect('/');
 });
 
 app.use(express.static(__dirname + "/public"));

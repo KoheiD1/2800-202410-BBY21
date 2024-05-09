@@ -34,6 +34,12 @@ module.exports = function(userCollection) {
             res.sendStatus(500); 
         }
     });
+
+    router.get('/logout', (req,res) => {
+        console.log("logging out")
+        req.session.destroy();
+        res.redirect('/');
+    });
     
 
     return router;
