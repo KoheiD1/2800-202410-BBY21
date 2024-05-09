@@ -59,6 +59,9 @@ app.use('/', friendsRoutes(userCollection));
 const findFriendsRoutes = require('./findFriendsRoutes');
 app.use('/', findFriendsRoutes(userCollection));
 
+const friendProfileRoutes = require('./friendProfileRoutes');
+app.use('/', friendProfileRoutes(userCollection));
+
 //app.use('/shop', shopRouter);
 
 app.get('/', (req,res) => {
