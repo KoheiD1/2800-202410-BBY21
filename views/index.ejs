@@ -1,13 +1,49 @@
 
     <% if (loggedIn) { %>
         <%- include("templates/headerloggedin") %>
+        <div class="relative flex justify-center h-screen">
+            <div class="z-10">
+                <h1 class="text-6xl md:text-8xl lg:text-10xl xl:text-12xl text-black title-font">CODECRYPT</h1>
+                <!-- Add the route to the game Start Button is here -->
+                <button onclick="window.location.href=''" class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl">Start Game</button>
+            </div>
     <%}else{%>
         <%- include("templates/header") %>
+        <div class="relative flex justify-center  h-screen">
+            <div class="z-10">
+                <h1 class="text-6xl md:text-8xl lg:text-10xl xl:text-12xl text-black title-font">CODECRYPT</h1>
+            
+            </div>
+        
     <% } %>
+    <style>
+        @font-face {
+            font-family: 'titlefont';
+            src: url('titlefont.ttf') format('truetype'); /* Specify the correct file format */
+        }
+    
+        .title-font {
+            font-family: 'titlefont', sans-serif; /* Use your custom font with a fallback */
+        }
+    </style>
 
-        <div class="fixed inset-0 bg-no repeat bg-right" >
-            <img src="/Untitled-3.png" alt="Image" class="w-full h-full object-cover "/>
+<style>
+    @font-face {
+        font-family: 'startfont';
+        src: url('StartGame.ttf') format('truetype'); /* Specify the correct file format */
+    }
+
+    .start-font {
+        font-family: 'startfont', sans-serif; /* Use your custom font with a fallback */
+    }
+</style>
+    
+    
+        <div class="fixed inset-0 bg-no-repeat bg-right z-0">
+            <img src="/Untitled-3.png" alt="Image" class="w-full h-full object-cover">
         </div>
+    </div>
+    
 <%- include("templates/footer") %>
 
 
