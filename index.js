@@ -10,7 +10,8 @@ const saltRounds = 12;
 const port = process.env.PORT || 3000;
 
 const app = express();
-const shopRouter = require('./shopRouter.js');
+//const profileRoutes = require('./profileRoutes');
+// const shopRouter = require('./shopRouter.js');
 const Joi = require("joi");
 
 
@@ -53,7 +54,8 @@ app.use(session({
 const profileRoutes = require('./profileRoutes');
 app.use('/', profileRoutes(userCollection));
 
-//app.use('/shop', shopRouter);
+const shopRouter = require('./shopRouter');
+app.use('/', shopRouter(itemCollection, userCollection));
 
 app.get('/', (req,res) => {
 	if(req.session.authenticated) {
@@ -75,19 +77,9 @@ app.use('/profile', profileRoutes);
 // 	}
 // });
 
-app.get('/shop', async (req, res) => {
-	let items = await itemCollection.find().toArray();
-	let itemsPicked = new Array(3);
-	for(let i = 0; i < 3 && i < items.length; i++) {
-		let rand;
-		do {
-			rand = parseInt(Math.random() * items.length);
-		} while(items[rand] == null);
-
-		itemsPicked[i] = items[rand];
-		items[rand] = null;
-	}
-	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2]});
+app.get('/buy', (req, res) => {
+	console.log('hello');
+	res.send('hello');
 });
 
 app.get('/map', (req, res) => {

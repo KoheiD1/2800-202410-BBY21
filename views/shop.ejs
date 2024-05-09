@@ -1,6 +1,9 @@
-<% include("templates/header") %>
-<h1>Item Shop</h1>
-<div><%= item1.type %></div>
-<div><%= item2.type %></div>
-<div><%= item3.type %></div>
-<% include("templates/footer") %>
+<%- include("templates/headerloggedin") %>
+<h1 class="flex justify-center text-3xl">Item Shop</h1>
+<img src="https://picsum.photos/id/101/1920/500">
+<div class="grid grid-cols-3 space-x-5">
+    <% for(let i = 0; i < items.length; i++) { %>
+        <%- include('templates/shopItem', {item: items[i]}) %>
+    <% } %>
+</div>
+<%- include("templates/footer") %>
