@@ -35,7 +35,7 @@
         <ul class="divide-y divide-black">
             <% if (allUsers && allUsers.length > 0) { %>
                 <% allUsers.forEach(user => { %>
-                    <li class="py-2 px-4 text-md flex items-center justify-between">
+                    <li class="py-2 px-4 text-md flex items-center justify-between" onclick="getProfileInfo('<%= user %>')">
                         <span class="text-gray-900"><%= user%></span>
                         <img class="w-8 h-8 cursor-pointer" src="user-add.png" alt="Add Friend" onclick="addFriend('<%= user %>'); this.parentNode.style.display = 'none';">
 
@@ -69,6 +69,25 @@
     <div id="modalOverlay" class="modal-overlay"></div>
 
     <script>
+        function getProfileInfo(friendName) {
+    fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
+        method: 'GET'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to get friend profile');
+        }
+        // Redirect to the friend profile page
+        //window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
+        window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
+    })
+    .catch(error => {
+        console.error('Error updating friend profile:', error);
+        alert('Failed to load friend profile');
+    });
+}
+
+
         function addFriend(username) {
             // Send an AJAX request to your server to add the user to the friends list
             fetch('/addFriend', {
@@ -100,7 +119,6 @@
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');
             document.getElementById('modalOverlay').classList.add('hidden');
-
         }
 
     </script>
