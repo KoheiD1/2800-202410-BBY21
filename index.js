@@ -43,9 +43,25 @@ var mongoStore = MongoStore.create({
 	}
 })
 
+var gameStore = MongoStore.create({
+	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/gameSessions`,
+	crypto: {
+		secret: mongodb_session_secret
+	}
+})
+
 app.use(session({ 
     secret: node_session_secret,
 	store: mongoStore, //default is memory store 
+	saveUninitialized: false, 
+	resave: true
+}
+));
+
+app.use(session({
+	name: 'gameSession', 
+    secret: node_session_secret,
+	store: gameStore, 
 	saveUninitialized: false, 
 	resave: true
 }
