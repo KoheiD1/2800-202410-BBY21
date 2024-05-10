@@ -1,0 +1,13 @@
+<%- include("templates/headerloggedin") %>
+<h1><%= question.questionText %></h1>
+<ul>
+    <% question.options.forEach((option, index) => { %>
+        <li>
+            <form action="/feedback" method="post">
+                <input type="hidden" name="option" value="<%= index %>">
+                <button type="submit" class="option-button"><%= option.text %></button>
+            </form>
+        </li>
+    <% }); %>
+</ul>
+<%- include("templates/footer") %>
