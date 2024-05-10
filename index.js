@@ -112,6 +112,8 @@ app.get('/map', (req, res) => {
 	req.gameSession.gold = 0;
 	req.gameSession.inventory = [];
 	req.gameSession.answeredQuestions = [];
+	req.gameSession.currentQuestion = null;
+	req.gameSession.playerDamage = 5;
 
 	res.render("map");
 });
