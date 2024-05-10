@@ -15,5 +15,5 @@
         <% } %>
     </div>
     
-    <button onclick="purchaseItem('<%=string %>')" class="flex justify-center align-bottom m-2 bg-green-700">Purchase</button>
+    <button onclick="window.location.href='/purchase?info=<%= string %>'" class="flex justify-center align-bottom m-2 bg-green-700">Purchase</button>
 </div>

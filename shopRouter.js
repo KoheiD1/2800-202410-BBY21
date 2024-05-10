@@ -25,6 +25,42 @@ module.exports = function(itemCollection, userCollection) {
         }
     });
 
+    router.get('/purchase',  async (req, res) => {
+        let info = req.query.info;
+        // res.redirect('/');
+        let name = req.session.username;
+        let result = await userCollection.find({username: name}).toArray();
+        console.log(result[0].itemList.length);
+        let item = {type : info.substring(0, info.indexOf(',')),
+                    effects : []};
+        let effect = true;
+        let effectName = '';
+
+        for(let i = info.indexOf(',') + 1; i != 0;) {
+            if(effect == true) {
+                effectName = info.substring(i, info.indexOf(',', i));
+                item.effects[item.effects.length] = effectName;
+                i = info.indexOf(',', i) + 1;
+                effect = false;
+            } else {
+                let num;
+                if(info.indexOf(',', i) == -1) {
+                    num = info.substring(i);
+                } else {
+                    num = info.substring(i, info.indexOf(',', i));
+                }
+                item[effectName] = num;
+                i = info.indexOf(',', i) + 1;
+                effect = true;
+            }
+        }
+
+        result[0].itemList[result[0].itemList.length] = item;
+        userCollection.updateOne({username: name}, { $set : {itemList: result[0].itemList}});
+
+        res.redirect('/');
+    });
+
     
 
     return router;
