@@ -1,18 +1,19 @@
-<div class="bg-blue-100 flex justify-center mt-5">
-    <form class="inline-grid">
-        <div class='flex justify-center font-bold text-xl'><%= item.type %></div>
-        <div>
-            <% for(let i = 0; i < item.effects.length; i++) { %>
-                <% if(item[item.effects[i]].length == 1) { %>
-                    <%- include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: item[item.effects[i]]}) %>
-                <% } else { %>
-                    <% let x = parseInt(Math.random() * (parseInt(item[item.effects[i]][1]) - parseInt(item[item.effects[i]][0]))) + parseInt(item[item.effects[i]][0]) %>
-                    <% console.log(x) %>
-                    <%- include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: x}) %>
-                    <% } %>
-            <% } %>
-        </div>
-        
-        <button type="submit" class="flex justify-center align-bottom m-2 bg-green-700">Purchase</button>
-    </form>
+<div class="bg-blue-100 flex justify-center mt-5 inline-grid">
+    <div class='flex justify-center font-bold text-xl'><%= item.type %></div>
+    <div>
+        <% let string = item.type %>
+        <% for(let i = 0; i < item.effects.length; i++) { %>
+            <% string += ',' + item.effects[i] %>
+            <% if(item[item.effects[i]].length == 1) { %>
+                <%- include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: item[item.effects[i]]}) %>
+                <% string += ',' + item[item.effects[i]] %>
+            <% } else { %>
+                <% let x = parseInt(Math.random() * (parseInt(item[item.effects[i]][1]) - parseInt(item[item.effects[i]][0]))) + parseInt(item[item.effects[i]][0]) %>
+                <%- include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: x}) %>
+                <% string += ',' + x %>
+                <% } %>
+        <% } %>
+    </div>
+    
+    <button onclick="purchaseItem('<%=string %>')" class="flex justify-center align-bottom m-2 bg-green-700">Purchase</button>
 </div>

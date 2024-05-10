@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const ejs = require('ejs')
+const ejs = require('ejs');
+
+router.use(express.urlencoded({extended: false}));
+
 
 module.exports = function(itemCollection, userCollection) {
     router.get('/shop', async (req, res) => {
@@ -22,5 +25,8 @@ module.exports = function(itemCollection, userCollection) {
         }
     });
 
+    
+
     return router;
 }
+
