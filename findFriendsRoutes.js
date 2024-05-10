@@ -16,9 +16,12 @@ module.exports = function(userCollection) {
     
             const recentlyAddedUsers = req.session.recentlyAddedUsers || [];
     
+            // Exclude the current user and their friends from the search
+            const excludedUsers = [...friendsList, ...recentlyAddedUsers, currentUser];
+    
             const documents = await userCollection.find(
                 { 
-                    username: { $nin: [...friendsList, ...recentlyAddedUsers] }
+                    username: { $nin: excludedUsers }
                 },
                 { projection: { _id: 0, username: 1 } }
             ).toArray();
@@ -33,6 +36,7 @@ module.exports = function(userCollection) {
             res.status(500).send('Internal Server Error');
         }
     });
+    
     
     
 
