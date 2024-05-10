@@ -14,6 +14,7 @@ const app = express();
 // const shopRouter = require('./shopRouter.js');
 const Joi = require("joi");
 
+const { ObjectId } = require('mongodb');
 
 const expireTime = 24 * 60 * 60 * 1000; //expires after 1 day  (hours * minutes * seconds * millis)
 
@@ -43,9 +44,41 @@ var mongoStore = MongoStore.create({
 	}
 })
 
+var gameStore = MongoStore.create({
+	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/gameSessions`,
+	crypto: {
+		secret: mongodb_session_secret
+	}
+})
+
+var battleStore = MongoStore.create({
+	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/battleSessions`,
+	crypto: {
+		secret: mongodb_session_secret
+	}
+})
+
 app.use(session({ 
     secret: node_session_secret,
 	store: mongoStore, //default is memory store 
+	saveUninitialized: false, 
+	resave: true
+}
+));
+
+app.use(session({
+	name: 'gameSession', 
+    secret: node_session_secret,
+	store: gameStore, 
+	saveUninitialized: false, 
+	resave: true
+}
+));
+
+app.use(session({
+	name: 'battleSession', 
+    secret: node_session_secret,
+	store: gameStore, 
 	saveUninitialized: false, 
 	resave: true
 }
@@ -96,6 +129,12 @@ app.get('/shop', async (req, res) => {
 });
 
 app.get('/map', (req, res) => {
+	req.gameSession.health = 1000;
+	req.gameSession.gold = 0;
+	req.gameSession.inventory = [];
+	req.gameSession.answeredQuestions = [];
+	req.gameSession.playerDamage = 5;
+
 	res.render("map");
 });
 
@@ -106,6 +145,58 @@ app.get('/createUser', (req,res) => {
 app.get('/login', (req,res) => {
     res.render("login");
 });
+
+var questionID; // Define questionID at the module level to make it accessible across routes
+
+app.get('/question', async (req, res) => {
+    try {
+        // Fetch random question from the MongoDB collection
+        const question = await database.db(mongodb_database).collection('questions').aggregate([{ $sample: { size: 1 } }]).next();
+        questionID = question._id; // Assign the fetched question's ID to questionID
+				console.log(questionID);
+        res.render('question', { question: question });
+    } catch (error) {
+        console.error('Error fetching question:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/feedback', async (req, res) => {
+    try {
+        // Check if questionID is defined
+        if (!questionID) {
+            console.error('No question ID available');
+            return res.status(404).send('No question ID available');
+        }
+
+        const { option } = req.body;
+        
+        // Fetch the selected question based on the stored question ID
+        const question = await database.db(mongodb_database).collection('questions').findOne({ _id: questionID });
+				console.log(question);
+        if (!question) {
+            console.error('No question found for ID:', questionID);
+            return res.status(404).send('No question found');
+        }
+
+        // Get the feedback for the selected option
+        const selectedOption = question.options[option];
+				console.log(selectedOption);
+        if (!selectedOption) {
+            console.error('No option found for index:', option);
+            return res.status(404).send('No option found');
+        }
+				console.log(selectedOption.feedback);
+        // Render the feedback.ejs template with the feedback for the selected option
+        res.render('feedback', { feedback: selectedOption.feedback, isCorrect: selectedOption.isCorrect});
+				
+    } catch (error) {
+        console.error('Error fetching feedback:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 
 app.post('/submitUser', async (req,res) => {
     var username = req.body.username;
