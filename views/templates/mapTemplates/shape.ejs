@@ -4,117 +4,19 @@
   </div>
   <% break;
   case 'circle' : %>
-    <% if (status == "unvisited") { %>
-      <div>
-        <form action="/encounter" method="POST">
-          <input type="hidden" name="difficulty" value="triangle">
-          <input type="image" src="/circle_black.svg" class="w-full" alt="home">
-        </form>
-      </div>
-    <% } else { %>
-      <div>
-        <form action="/encounter" method="POST">
-          <input type="hidden" name="difficulty" value="triangle">
-          <input type="image" src="/circle_green.svg" class="w-full" alt="home">
-        </form>
-      </div>
-    <% } %>
+    <%- include("./circle", {status: status, index: index}) %>
   <% break;
   case 'triangle' : %>
-    <% if (status == "unvisited") { %>
-      <div>
-        <form action="/encounter" method="POST">
-          <input type="hidden" name="difficulty" value="triangle">
-          <input type="image" src="/triangle_black.svg" class="w-full" alt="home">
-        </form>
-      </div>
-    <% } else if (status == "chosen") { %>
-      <div>
-        <form action="/encounter" method="POST">
-          <input type="hidden" name="difficulty" value="triangle">
-          <input type="image" src="/triangle_green.svg" class="w-full" alt="home">
-        </form>
-      </div>
-    <% } else if (status == "notChosen") { %>
-      <div>
-        <form action="/encounter" method="POST">
-          <input type="hidden" name="difficulty" value="triangle">
-          <input type="image" src="/triangle_red.svg" class="w-full" alt="home">
-        </form>
-      </div>
-    <% } %>
+    <%- include("./triangle", {status: status, index: index}) %>
   <% break;
   case 'square' : %>
-  <% if (status == "unvisited") { %>
-    <div>
-      <form action="/encounter" method="POST">
-        <input type="hidden" name="difficulty" value="triangle">
-        <input type="image" src="/square_black.svg" class="w-full" alt="home">
-      </form>
-    </div>
-  <% } else if (status == "chosen") { %>
-    <div>
-      <form action="/encounter" method="POST">
-        <input type="hidden" name="difficulty" value="triangle">
-        <input type="image" src="/square_green.svg" class="w-full" alt="home">
-      </form>
-    </div>
-  <% } else if (status == "notChosen") { %>
-    <div>
-      <form action="/encounter" method="POST">
-        <input type="hidden" name="difficulty" value="triangle">
-        <input type="image" src="/square_red.svg" class="w-full" alt="home">
-      </form>
-    </div>
-  <% } %>
+    <%- include("./square", {status: status, index: index}) %>
   <% break;
   case 'pentagon' : %>
-  <% if (status == "unvisited") { %>
-    <div>
-      <form action="/encounter" method="POST">
-        <input type="hidden" name="difficulty" value="triangle">
-        <input type="image" src="/pentagon_black.svg" class="w-full" alt="home">
-      </form>
-    </div>
-  <% } else if (status == "chosen") { %>
-    <div>
-      <form action="/encounter" method="POST">
-        <input type="hidden" name="difficulty" value="triangle">
-        <input type="image" src="/pentagon_green.svg" class="w-full" alt="home">
-      </form>
-    </div>
-  <% } else if (status == "notChosen") { %>
-    <div>
-      <form action="/encounter" method="POST">
-        <input type="hidden" name="difficulty" value="triangle">
-        <input type="image" src="/pentagon_red.svg" class="w-full" alt="home">
-      </form>
-    </div>
-  <% } %>
+    <%- include("./pentagon", {status: status, index: index}) %>
   <% break;
   case 'hexagon' : %>
-  <% if (status == "unvisited") { %>
-    <div>
-      <form action="/encounter" method="POST">
-        <input type="hidden" name="difficulty" value="triangle">
-        <input type="image" src="/hexagon_black.svg" class="w-full" alt="home">
-      </form>
-    </div>
-  <% } else if (status == "chosen") { %>
-    <div>
-      <form action="/encounter" method="POST">
-        <input type="hidden" name="difficulty" value="triangle">
-        <input type="image" src="/hexagon_green.svg" class="w-full" alt="home">
-      </form>
-    </div>
-  <% } else if (status == "notChosen") { %>
-    <div>
-      <form action="/encounter" method="POST">
-        <input type="hidden" name="difficulty" value="triangle">
-        <input type="image" src="/hexagon_red.svg" class="w-full" alt="home">
-      </form>
-    </div>
-  <% } %>
+    <%- include("./hexagon", {status: status, index: index}) %>
   <% break;
   }
 %>

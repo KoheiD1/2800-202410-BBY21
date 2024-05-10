@@ -1,0 +1,29 @@
+<% switch(status) {
+  case 'unvisited' : %>
+  <div>
+    <form action="/encounter" method="POST">
+      <input type="hidden" name="difficulty" value="pentatagon">
+      <input type="hidden" name="index" value="<%- index %>">
+      <input type="image" src="/pentagon_black.svg" class="w-full" alt="home">
+    </form>
+  </div>
+  <% break;
+  case 'chosen' : %>
+  <div>
+    <!-- <form action="/encounter" method="POST">
+      <input type="hidden" name="difficulty" value="pentatagon">
+      <input type="image" src="/pentatagon_green.svg" class="w-full" alt="home">
+    </form> -->
+    <img src="/pentagon_green.svg" class="w-full" alt="home">
+  </div>
+  <% break;
+  case 'notChosen' : %>
+  <div>
+    <!-- <form action="/encounter" method="POST">
+      <input type="hidden" name="difficulty" value="pentatagon">
+      <input type="image" src="/pentatagon_red.svg" class="w-full" alt="home">
+    </form> -->
+    <img src="/pentagon_red.svg" class="w-full" alt="home">
+  </div>
+  <% break;
+} %>

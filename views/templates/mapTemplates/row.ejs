@@ -1,5 +1,7 @@
 <div class="grid grid-cols-5">
+  <% var index = 0; %>
   <% arr.forEach((item) => { %>
-    <%- include("./shape", {shape: item.shape, status: item.status}) %>
+    <%- include("./shape", {shape: item.shape, status: item.status, index: index}) %>
+    <% index++; %>
   <%}); %>
 </div>

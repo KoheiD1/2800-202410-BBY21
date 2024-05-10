@@ -5,6 +5,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const ejs = require('ejs')
 const bcrypt = require('bcrypt');
+const ObjectId = require('mongodb').ObjectId; 
+
 const saltRounds = 12;
 
 const port = process.env.PORT || 3000;
@@ -30,6 +32,7 @@ var {database} = include('databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
 const itemCollection = database.db(mongodb_database).collection('items');
+const pathsCollection = database.db(mongodb_database).collection('paths');
 
 app.use(express.urlencoded({extended: false}));
 
@@ -90,8 +93,11 @@ app.get('/shop', async (req, res) => {
 	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2]});
 });
 
-app.get('/map', (req, res) => {
-	res.render("map", {row1: [{shape: "square", status: "unvisited"}, {shape: "empty"}, {shape: "triangle", status: "unvisited"}, {shape: "empty"}, {shape: "square", status: "unvisited"}]});
+app.get('/map', async (req, res) => {
+	const result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({row0: 1, row1: 1, row2: 1, row3: 1, row4: 1}).toArray();
+	// res.send(result[0].row1);
+	res.render("map", 
+	{rows: result[0]});
 });
 
 app.get('/createUser', (req,res) => {
@@ -188,8 +194,19 @@ app.get('/logout', (req,res) => {
 });
 
 app.post('/encounter', (req,res) => {
-	res.render("encounter", {difficulty: req.body.difficulty});
+	res.render("encounter", {difficulty: req.body.difficulty, index: req.body.index});
 });
+
+app.post('/victory', async (req,res) => {
+	const index = req.body.index;
+	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
+		{$set: {"row1.0.status" : "notChosen", "row1.2.status" : "notChosen", "row1.4.status" : "notChosen"}
+	});
+	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
+		{$set: {["row1."+index+".status"] : "chosen"}
+	});
+	res.render("victory");
+});	
 
 app.use(express.static(__dirname + "/public"));
 
