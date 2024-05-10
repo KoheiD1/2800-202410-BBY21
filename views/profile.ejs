@@ -6,12 +6,28 @@
     <title>Profile Page</title>
     <!-- Include Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        
+        body {
+            background-image: url('/indexBG.png'); 
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+        }
+
+        .modal {
+            display: none;
+        }
+    </style>
+
 </head>
 <body class="bg-gray-100">
     <div class="max-w-md mx-auto rounded-lg overflow-hidden">
         <div class="px-4 py-8">
             <div class="text-center">
-                <img class="h-20 w-20 rounded-full mx-auto" src="https://via.placeholder.com/150" alt="Profile Picture">
+                <!-- Add outline to the profile picture -->
+                <img id="profileImg" class="h-28 w-28 rounded-full bg-white mx-auto border-2 border-gray-500 cursor-pointer" src="<%= userProfilePic %>" alt="Profile Picture" onclick="openModal()">
                 <h1 class="text-2xl font-bold mt-4"><%= userName %></h1>
                 <p class="text-sm text-gray-600 mt-2">Web Developer</p>
             </div>
@@ -20,12 +36,85 @@
                     <span class="text-sm text-gray-600">Email:</span>
                     <span class="text-sm text-gray-900"><%= userEmail %></span>
                 </div>
-            </div>
-            <div class="mt-6">
-                <label for="description" class="block text-sm font-medium text-gray-700">Description:</label>
-                <textarea id="description" name="description" rows="3" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-            </div>            
+            </div>         
         </div>
     </div>
+
+
+    <div id="myModal" class="modal fixed inset-0 flex items-center justify-center z-10" >
+        <div class="overlay fixed inset-0"></div>
+        <div class="modal-content bg-white p-8 rounded-lg shadow-lg relative">
+            <h2 class="text-2xl font-bold mb-4">Choose Profile Picture</h2>
+            <div class="flex justify-center space-x-4">
+                <img class="h-16 w-16 rounded-full cursor-pointer" src="/pfp-1.png" alt="Profile Picture 1" onclick="selectProfilePicture('pfp-1.png')">
+                <img class="h-16 w-16 rounded-full cursor-pointer" src="/pfp-2.png" alt="Profile Picture 2" onclick="selectProfilePicture('pfp-2.png')">
+                <img class="h-16 w-16 rounded-full cursor-pointer" src="/pfp-3.png" alt="Profile Picture 3" onclick="selectProfilePicture('pfp-3.png')">
+                <!-- Add more profile picture options -->
+            </div>
+            <!-- Add the close button inside the modal -->
+            <span class="close-modal absolute top-0 right-0 m-4 text-gray-600 cursor-pointer" onclick="closeModal()">&times;</span>
+        </div>
+    </div>
+    
+    <div class="max-w-md mx-auto rounded-lg overflow-hidden mt-8">
+        <div class="px-4 py-2 flex items-center">
+            <h2 class="text-xl pr-4 font-bold mb-4">Friends List</h2>
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-xs">
+                Find Friends
+            </button>
+        </div>
+        <ul class="px-4">
+            <% if (friendsList && friendsList.length > 0) { %>
+                <% friendsList.forEach(friend => { %>
+                    <li class="text-gray-900"><%= friend %></li>
+                <% }); %>
+            <% } else { %>
+                <li class="text-gray-900">No friends to display</li>
+            <% } %>
+        </ul>
+    </div>
+    
+
+    <script>
+        // Define the userId variable and assign it the value passed from the server
+        const userId = '<%= userId %>';
+    
+        function openModal() {
+            document.getElementById('myModal').style.display = "flex";
+        }
+    
+        function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+        }
+    
+        function selectProfilePicture(pictureSrc) {
+    console.log(pictureSrc);
+    document.getElementById('profileImg').src = pictureSrc;
+    closeModal();
+
+    console.log("Making post request");
+
+    fetch('/updateProfilePicture', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            profilePictureUrl: pictureSrc
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update profile picture');
+        }
+
+        // Optionally, handle success response
+    })
+    .catch(error => {
+        console.error('Error updating profile picture:', error);
+    });
+}
+
+    </script>
 </body>
 </html>
