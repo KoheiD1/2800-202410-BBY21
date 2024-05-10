@@ -11,17 +11,14 @@ module.exports = function(userCollection) {
     
             const currentUser = req.session.username;
     
-            // Find the current user to access their friends list
             const currentUserDocument = await userCollection.findOne({ username: currentUser });
             const friendsList = currentUserDocument.friendsList || [];
     
-            // Fetch recently added users from the session, if available
             const recentlyAddedUsers = req.session.recentlyAddedUsers || [];
     
-            // Query for users who are not in the current user's friends list and not recently added
             const documents = await userCollection.find(
                 { 
-                    username: { $nin: [...friendsList, ...recentlyAddedUsers] } // Exclude users in friendsList and recentlyAddedUsers
+                    username: { $nin: [...friendsList, ...recentlyAddedUsers] }
                 },
                 { projection: { _id: 0, username: 1 } }
             ).toArray();

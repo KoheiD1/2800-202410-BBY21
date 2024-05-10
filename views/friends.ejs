@@ -21,12 +21,38 @@
         <ul class="divide-y divide-black">
             <% if (friendsList && friendsList.length > 0) { %>
                 <% friendsList.forEach(friend => { %>
-                    <li class="text-md text-gray-900 px-4"><%= friend %></li>
+    
+                    <li class="text-md text-gray-900 px-4">
+                        <button type="submit" class="hover:text-blue-500" onclick="getProfileInfo('<%= friend %>')"><%= friend %></button>
+                     </li>
                 <% }); %>
             <% } else { %>
                 <li class="text-gray-900 px-4">No friends to display</li>
             <% } %>
         </ul>
     </div>
+    <script>
+        function getProfileInfo(friendName) {
+    fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
+        method: 'GET'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to get friend profile');
+        }
+       
+        window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
+    })
+    .catch(error => {
+        console.error('Error updating friend profile:', error);
+        alert('Failed to load friend profile');
+    });
+}
+
+
+    </script>
+
 </body>
 </html>
+
+
