@@ -32,14 +32,12 @@
 <body class="bg-gray-100">
     <div class="max-w-4xl mx-auto py-8">
         <h1 class="text-3xl px-4 font-bold mb-4">Users List</h1>
-        <ul class="divide-y divide-black">
+        <ul>
             <% if (allUsers && allUsers.length > 0) { %>
                 <% allUsers.forEach(user => { %>
-                    <li class="py-2 px-4 text-md flex items-center justify-between" onclick="getProfileInfo('<%= user %>')">
-                        <span class="text-gray-900"><%= user%></span>
+                    <li class="py-2 px-4 text-md flex items-center justify-between" style="background-image: url('/username-box.png'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 50px;">
+                        <span class="text-gray-900" onclick="getProfileInfo('<%= user %>')"><%= user%></span>
                         <img class="w-8 h-8 cursor-pointer" src="user-add.png" alt="Add Friend" onclick="addFriend('<%= user %>'); this.parentNode.style.display = 'none';">
-
-                        <!-- You can add more elements or buttons here for each user if needed -->
                     </li>
                 <% }); %>
             <% } else { %>
@@ -47,6 +45,7 @@
             <% } %>
         </ul>
     </div>
+    
 
     <!-- Success Modal -->
     <div id="successModal" class="fixed z-50 inset-0 overflow-y-auto hidden">
