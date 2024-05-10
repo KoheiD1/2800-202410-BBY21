@@ -50,6 +50,13 @@ var gameStore = MongoStore.create({
 	}
 })
 
+var battleStore = MongoStore.create({
+	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/battleSessions`,
+	crypto: {
+		secret: mongodb_session_secret
+	}
+})
+
 app.use(session({ 
     secret: node_session_secret,
 	store: mongoStore, //default is memory store 
@@ -60,6 +67,15 @@ app.use(session({
 
 app.use(session({
 	name: 'gameSession', 
+    secret: node_session_secret,
+	store: gameStore, 
+	saveUninitialized: false, 
+	resave: true
+}
+));
+
+app.use(session({
+	name: 'battleSession', 
     secret: node_session_secret,
 	store: gameStore, 
 	saveUninitialized: false, 
@@ -112,10 +128,7 @@ app.get('/map', (req, res) => {
 	req.gameSession.gold = 0;
 	req.gameSession.inventory = [];
 	req.gameSession.answeredQuestions = [];
-	req.gameSession.currentQuestion = null;
 	req.gameSession.playerDamage = 5;
-	req.gameSession.enemyDamage = 0;
-	req.gameSession.enemyHealth = 0;
 
 	res.render("map");
 });
