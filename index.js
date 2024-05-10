@@ -69,12 +69,9 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-app.get('/', async (req,res) => {
-	const userName = req.session.username;
-	const user = await userCollection.findOne({ username: userName });
-	const userProfilePic = user ? user.profile_pic : 'profile-logo.png';
+app.get('/', (req,res) => {
 	if(req.session.authenticated) {
-		res.render("index", {loggedIn: req.session.authenticated, userProfilePic: userProfilePic});
+		res.render("index", {loggedIn: req.session.authenticated});
 	} else {
     res.render("index", {loggedIn: false});
 	}

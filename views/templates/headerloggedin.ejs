@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class=<%= overflowVariable %>>
-  <div class="relative z-20">
-    <img id="profileImg" class="h-12 w-12 rounded-full bg-white absolute top-0 right-0 mr-4 mt-4 hover:border border-black" src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile'">
+  <div class="pr-10 pt-2 text-end relative z-10">
+    <button class="pr-5 rounded-full bg-yellow-600 text-white px-4 py-2"  onclick="window.location.href='/profile'">Profile</button>
+    <button class="rounded-full bg-yellow-600 text-white px-4 py-2 ml-2" onclick="window.location.href='/logout'">Logout</button>
 </div>
