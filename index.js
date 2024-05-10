@@ -66,6 +66,8 @@ app.use('/', findFriendsRoutes(userCollection));
 const shopRouter = require('./shopRouter');
 app.use('/', shopRouter(itemCollection, userCollection));
 
+const inventoryRouter = require('./inventoryRouter');
+app.use('/', inventoryRouter(userCollection));
 
 app.get('/', (req,res) => {
 	if(req.session.authenticated) {
@@ -126,7 +128,7 @@ app.post('/submitUser', async (req,res) => {
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 	
-	await userCollection.insertOne({username: username, profile_pic: "profile-logo.png", friendsList: [], email: email, password: hashedPassword});
+	await userCollection.insertOne({username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword});
 	console.log("Inserted user");
 
 	req.session.authenticated = true;

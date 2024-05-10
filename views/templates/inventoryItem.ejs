@@ -1,0 +1,6 @@
+<div>
+    <h1><%= item.type %></h1>
+    <% for(let i = 0; i < item.effects.length; i++) { %>
+        <h4><%= item.effects[i] %>: <%= item[item.effects[i]] %></h4>
+    <% } %>
+</div>
