@@ -55,6 +55,9 @@ app.use(session({
 const shopRouter = require('./shopRouter');
 app.use('/', shopRouter(itemCollection, userCollection));
 
+const inventoryRouter = require('./inventoryRouter');
+app.use('/', inventoryRouter(userCollection));
+
 app.get('/', (req,res) => {
 	if(req.session.authenticated) {
 		res.render("index", {loggedIn: req.session.authenticated});
