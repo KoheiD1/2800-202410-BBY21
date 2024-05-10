@@ -1,0 +1,5 @@
+<div class="grid grid-cols-5">
+  <% arr.forEach((item) => { %>
+    <%- include("./shape", {shape: item.shape, status: item.status}) %>
+  <%}); %>
+</div>

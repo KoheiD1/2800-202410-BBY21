@@ -42,13 +42,7 @@
     <div></div>
     <div><img class="object-contain" src="/middle.svg" alt="home"></div>
   </div>
-  <div class="grid grid-cols-5">
-    <%- include("templates/mapTemplates/square") %>
-    <div></div>
-    <%- include("templates/mapTemplates/triangle") %>
-    <div></div>
-    <%- include("templates/mapTemplates/square") %>
-  </div>
+  <%- include("templates/mapTemplates/row", {arr: row1}) %>
   <div class="grid grid-cols-5">
     <div></div>
     <div><img class="object-contain" src="/left.svg" alt="home"></div>

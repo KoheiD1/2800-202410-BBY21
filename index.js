@@ -91,7 +91,7 @@ app.get('/shop', async (req, res) => {
 });
 
 app.get('/map', (req, res) => {
-	res.render("map");
+	res.render("map", {row1: [{shape: "square", status: "unvisited"}, {shape: "empty"}, {shape: "triangle", status: "unvisited"}, {shape: "empty"}, {shape: "square", status: "unvisited"}]});
 });
 
 app.get('/createUser', (req,res) => {
