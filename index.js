@@ -94,7 +94,10 @@ app.get('/shop', async (req, res) => {
 });
 
 app.get('/map', async (req, res) => {
-	const result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({row0: 1, row1: 1, row2: 1, row3: 1, row4: 1}).toArray();
+	const result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
+		r0active:1, r1active:1, r2active:1, r3active:1, r4active:1,
+		r0connect: 1, r1connect: 1
+	}).toArray();
 	// res.send(result[0].row1);
 	res.render("map", 
 	{rows: result[0]});
@@ -199,13 +202,25 @@ app.post('/encounter', (req,res) => {
 
 app.post('/victory', async (req,res) => {
 	const index = req.body.index;
+	const row = req.body.row;
+
+	var result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({r1connect: 1}).toArray();
+	var arr = result[0].r1connect[index];
+	arr.forEach(async (element) => {
+		await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
+			{$push: {"r2active" : element}
+		});
+	});
+
+
 	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
 		{$set: {"row1.0.status" : "notChosen", "row1.2.status" : "notChosen", "row1.4.status" : "notChosen"}
 	});
 	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
 		{$set: {["row1."+index+".status"] : "chosen"}
 	});
-	res.render("victory");
+	
+		res.render("victory");
 });	
 
 app.use(express.static(__dirname + "/public"));
