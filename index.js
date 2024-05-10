@@ -108,6 +108,11 @@ app.get('/shop', async (req, res) => {
 });
 
 app.get('/map', (req, res) => {
+	req.gamesession.health = 1000;
+	req.gamesession.gold = 0;
+	req.gamesession.inventory = [];
+	req.gamesession.answeredQuestions = [];
+
 	res.render("map");
 });
 
