@@ -1,0 +1,8 @@
+<%- include("templates/header") %>
+  <% if (isCorrect) { %>
+    <h2>Correct</h2>
+  <% } else { %>
+    <h2>Incorrect</h2>
+  <% } %>
+  <p><%= (feedback) %></p>
+<%- include("templates/footer") %>
