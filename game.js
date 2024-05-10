@@ -1,4 +1,4 @@
-function damageCalculator(choice) {
+function damageCalculator(choice, enemyDamage, playerDamage) {
     if (choice) {
         
 

@@ -114,6 +114,8 @@ app.get('/map', (req, res) => {
 	req.gameSession.answeredQuestions = [];
 	req.gameSession.currentQuestion = null;
 	req.gameSession.playerDamage = 5;
+	req.gameSession.enemyDamage = 0;
+	req.gameSession.enemyHealth = 0;
 
 	res.render("map");
 });
