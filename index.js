@@ -67,9 +67,12 @@ const shopRouter = require('./shopRouter');
 app.use('/', shopRouter(itemCollection, userCollection));
 
 
-app.get('/', (req,res) => {
+app.get('/', async (req,res) => {
+	const userName = req.session.username;
+	const user = await userCollection.findOne({ username: userName });
+	const userProfilePic = user ? user.profile_pic : 'profile-logo.png';
 	if(req.session.authenticated) {
-		res.render("index", {loggedIn: req.session.authenticated});
+		res.render("index", {loggedIn: req.session.authenticated, userProfilePic: userProfilePic});
 	} else {
     res.render("index", {loggedIn: false});
 	}
