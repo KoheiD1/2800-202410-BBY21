@@ -1,12 +1,6 @@
 <%- include("templates/header", { overflowVariable: '' }) %>
 <div class="grid grid-rows-9 p-2">
-  <div class="grid grid-cols-5">
-    <div></div>
-    <div></div>
-    <div><img class="object-contain" src="/hexagon_black.svg" alt="boss"></div>
-    <div></div>
-    <div></div>
-  </div>
+  <%- include("templates/mapTemplates/row", {arr: rows.row4, active: rows.r4active}) %>
   <div class="grid grid-cols-5">
     <div></div>
     <div><img class="object-contain" src="/right.svg" alt="home"></div>
@@ -14,13 +8,7 @@
     <div><img class="object-contain" src="/left.svg" alt="home"></div>
     <div></div>
   </div>
-  <div class="grid grid-cols-5">
-    <div><img class="object-contain" src="/triangle_black.svg" alt="home"></div>
-    <div></div>
-    <div><img class="object-contain" src="/square_black.svg" alt="home"></div>
-    <div></div>
-    <div><img class="object-contain" src="/pentagon_black.svg" alt="home"></div>
-  </div>
+  <%- include("templates/mapTemplates/row", {arr: rows.row3, active: rows.r3active}) %>
   <div class="grid grid-cols-5">
     <div><img class="object-contain" src="/middle.svg" alt="home"></div>
     <div></div>
@@ -28,13 +16,7 @@
     <div><img class="object-contain" src="/left.svg" alt="home"></div>
     <div><img class="object-contain" src="/middle.svg" alt="home"></div>
   </div>
-  <div class="grid grid-cols-5">
-    <div><img class="object-contain" src="/square_black.svg" alt="home"></div>
-    <div></div>
-    <div><img class="object-contain" src="/triangle_black.svg" alt="home"></div>
-    <div></div>
-    <div><img class="object-contain" src="/triangle_black.svg" alt="home"></div>
-  </div>
+  <%- include("templates/mapTemplates/row", {arr: rows.row2, active: rows.r2active}) %>
   <div class="grid grid-cols-5">
     <div><img class="object-contain" src="/middle.svg" alt="home"></div>
     <div><img class="object-contain" src="/right.svg" alt="home"></div>
@@ -42,13 +24,7 @@
     <div></div>
     <div><img class="object-contain" src="/middle.svg" alt="home"></div>
   </div>
-  <div class="grid grid-cols-5">
-    <div><img class="object-contain" src="/square_black.svg" alt="home"></div>
-    <div></div>
-    <div><img class="object-contain" src="/triangle_black.svg" alt="home"></div>
-    <div></div>
-    <div><img class="object-contain" src="/square_black.svg" alt="home"></div>
-  </div>
+  <%- include("templates/mapTemplates/row", {arr: rows.row1, active: rows.r1active}) %>
   <div class="grid grid-cols-5">
     <div></div>
     <div><img class="object-contain" src="/left.svg" alt="home"></div>
@@ -56,12 +32,6 @@
     <div><img class="object-contain" src="/right.svg" alt="home"></div>
     <div></div>
   </div>
-  <div class="grid grid-cols-5">
-    <div></div>
-    <div></div>
-    <div><img class="object-contain" src="/circle_black.svg" alt="boss"></div>
-    <div></div>
-    <div></div>
-  </div>
+  <%- include("templates/mapTemplates/row", {arr: rows.row0, active: rows.r0active}) %>
 </div>
 <%- include("templates/footer") %>
