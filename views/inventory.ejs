@@ -1,4 +1,8 @@
-<% for(let i = 0; i < items.length; i++) { %>
-    <%- include('templates/inventoryItem', {item: items[i]}) %>
-<% } %>
+<%- include("templates/headerloggedin", {overflowVariable: 'overflow-auto'}) %>
+<div class="grid">
+    <% for(let i = 0; i < items.length; i++) { %>
+        <%- include('templates/inventoryItem', {item: items[i]}) %>
+    <% } %>
+</div>
+<br>
 <button onclick="history.back()">Back</button>
