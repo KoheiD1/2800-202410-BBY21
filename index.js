@@ -104,8 +104,17 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-app.get('/', (req,res) => {
-    res.render("index", {session: req.session});
+
+// Middleware to set the user profile picture and authentication status in the response locals
+// res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
+app.use((req, res, next) => {
+    res.locals.userProfilePic = req.session.profile_pic || 'default_profile_pic_url';
+	res.locals.authenticated = req.session.authenticated || false;
+    next();
+});
+
+app.get('/', (req, res) => {
+    res.render("index");
 });
 
 app.use('/profile', profileRoutes);
@@ -132,11 +141,11 @@ app.get('/map', async (req, res) => {
 		r0connect: 1, r1connect: 1
 	}).toArray();
 	// res.send(result[0].row1);
-	req.gameSession.health = 1000;
-	req.gameSession.gold = 0;
-	req.gameSession.inventory = [];
-	req.gameSession.answeredQuestions = [];
-	req.gameSession.playerDamage = 5;
+	// req.gameSession.health = 1000;
+	// req.gameSession.gold = 0;
+	// req.gameSession.inventory = [];
+	// req.gameSession.answeredQuestions = [];
+	// req.gameSession.playerDamage = 5;
 
 	res.render("map", 
 	{rows: result[0]});
@@ -282,7 +291,9 @@ app.get('/loggedin', (req,res) => {
     `;
     res.send(html);
 });
+
 app.get('/logout', (req,res) => {
+	req.session.authenticated = false;
 	req.session.destroy();
 	res.redirect('/');
 });

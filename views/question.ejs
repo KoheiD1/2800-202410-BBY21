@@ -1,4 +1,4 @@
-<%- include("templates/headerloggedin") %>
+<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
 <h1><%= question.questionText %></h1>
 <ul>
     <% question.options.forEach((option, index) => { %>
