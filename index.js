@@ -5,7 +5,6 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const ejs = require('ejs')
 const bcrypt = require('bcrypt');
-const ObjectId = require('mongodb').ObjectId; 
 
 const saltRounds = 12;
 
@@ -106,11 +105,7 @@ const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
 app.get('/', (req,res) => {
-	if(req.session.authenticated) {
-		res.render("index", {loggedIn: req.session.authenticated});
-	} else {
-    res.render("index", {loggedIn: false});
-	}
+    res.render("index", {session: req.session});
 });
 
 app.use('/profile', profileRoutes);
@@ -252,7 +247,7 @@ app.post('/loggingin', async (req,res) => {
 	   return;
 	}
 
-	const result = await userCollection.find({email: email}).project({username: 1, password: 1, _id: 1}).toArray();
+	const result = await userCollection.find({email: email}).project({username: 1, password: 1, _id: 1, profile_pic: 1}).toArray();
 
 	console.log(result);
 	if (result.length != 1) {
@@ -264,6 +259,7 @@ app.post('/loggingin', async (req,res) => {
 		console.log("correct password");
 		req.session.authenticated = true;
 		req.session.email = email;
+		req.session.profile_pic = result[0].profile_pic;
 		req.session.username = result[0].username;
 		req.session.cookie.maxAge = expireTime;
 
