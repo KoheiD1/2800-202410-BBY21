@@ -5,8 +5,10 @@ const ejs = require('ejs');
 router.use(express.urlencoded({extended: false}));
 
 
+
 module.exports = function(itemCollection, userCollection) {
     router.get('/shop', async (req, res) => {
+        res.locals.userProfilePic = req.session.profile_pic;
         if(req.session.authenticated) {
             let items = await itemCollection.find().toArray();
             let itemsPicked = new Array(3);

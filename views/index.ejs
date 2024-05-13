@@ -1,6 +1,6 @@
 
-    <% if (loggedIn) { %>
-        <%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
+    <% if (authenticated) { %>
+        <%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden'}) %>
         <div class="relative flex justify-center h-screen">
             <div class="z-10">
                 <h1 class="text-6xl md:text-8xl lg:text-10xl xl:text-12xl text-black title-font">CODECRYPT</h1>
