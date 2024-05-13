@@ -74,11 +74,13 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
+const { damageCalculator, coinDistribution} = require('./game');
+
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
 app.use((req, res, next) => {
-    res.locals.userProfilePic = req.session.profile_pic || 'default_profile_pic_url';
+    res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
     next();
 });
@@ -105,20 +107,23 @@ app.get('/shop', async (req, res) => {
 	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2]});
 });
 
+app.get('/startGame', (req, res) => {
+	// When the player starts the game it creates a new game session
+	req.session.gameSession = {
+		playerHealth: 1000,
+		playerDMG: 5,
+		inventory: [],
+		coins: 0
+	}
+	res.redirect('/map');
+});	
+
 app.get('/map', async (req, res) => {
 	const result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
 		r0active:1, r1active:1, r2active:1, r3active:1, r4active:1,
 		r0connect: 1, r1connect: 1
 	}).toArray();
 	// res.send(result[0].row1);
-	// When the player starts the game it creates a new game session
-	req.session.gameSession = {
-		health: 1000,
-		playerDMG: 5,
-		inventory: [],
-		coins: 0,
-	}
-
 	res.render("map", 
 	{rows: result[0]});
 });
@@ -132,6 +137,16 @@ app.get('/login', (req,res) => {
 });
 
 var questionID; // Define questionID at the module level to make it accessible across routes
+
+app.get('/startencounter', (req, res) => {
+	// When the player starts the game it creates a new game session
+	req.session.battleSession = {
+		enemyHealth: 100,
+		enemyDMG: 10,
+	};
+	res.redirect('/question');
+});	
+
 
 app.get('/question', async (req, res) => {
     try {
@@ -173,6 +188,9 @@ app.post('/feedback', async (req, res) => {
         }
 				console.log(selectedOption.feedback);
         // Render the feedback.ejs template with the feedback for the selected option
+		damageCalculator(selectedOption.isCorrect, req);
+		console.log(req.session.gameSession.playerHealth);
+		console.log(req.session.battleSession.enemyHealth);
         res.render('feedback', { feedback: selectedOption.feedback, isCorrect: selectedOption.isCorrect});
 				
     } catch (error) {
@@ -271,10 +289,6 @@ app.get('/logout', (req,res) => {
 });
 
 app.post('/encounter', (req,res) => {
-	req.session.battleSession = {
-		enemyHealth: 100,
-		enemyDMG: 10,
-	};
 
 	res.render("encounter", {difficulty: req.body.difficulty, index: req.body.index});
 });
