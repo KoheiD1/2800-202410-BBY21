@@ -78,7 +78,7 @@ app.use('/', inventoryRouter(userCollection));
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
 app.use((req, res, next) => {
-    res.locals.userProfilePic = req.session.profile_pic || 'default_profile_pic_url';
+    res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
     next();
 });
@@ -139,6 +139,7 @@ app.get('/question', async (req, res) => {
         const question = await database.db(mongodb_database).collection('questions').aggregate([{ $sample: { size: 1 } }]).next();
         questionID = question._id; // Assign the fetched question's ID to questionID
 				console.log(questionID);
+		console.log("Opening questions page");
         res.render('question', { question: question });
     } catch (error) {
         console.error('Error fetching question:', error);

@@ -1,13 +1,42 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
-<h1><%= question.questionText %></h1>
-<ul>
-    <% question.options.forEach((option, index) => { %>
-        <li>
-            <form action="/feedback" method="post">
-                <input type="hidden" name="option" value="<%= index %>">
-                <button type="submit" class="option-button"><%= option.text %></button>
-            </form>
-        </li>
-    <% }); %>
-</ul>
+<body>
+    <div class="flex flex-col justify-center items-center h-screen">
+        <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full"></div>
+
+        <div class="max-w-lg mx-auto p-8 bg-white rounded shadow-md h-1/2">
+            <h1 class="text-2xl font-bold mb-4"><%= question.questionText %></h1>
+            <ul>
+                <% question.options.forEach((option, index) => { %>
+                    <li class="mb-2">
+                        <form id="feedbackForm<%= index %>" class="feedback-form">
+                            <input type="hidden" name="option" value="<%= index %>">
+                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                <%= option.text %>
+                            </button>
+                        </form>
+                        <div id="feedbackResult<%= index %>"></div>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function getOptionFeedback(formId) {
+            const form = document.getElementById(formId);
+            const option = form.querySelector('input[name="option"]').value;
+            const feedbackResult = document.getElementById(`feedbackResult${option}`);
+            const feedbackForm = document.getElementById(`feedbackForm${option}`);
+
+            fetch(`/api/feedback/${question.id}/${option}`)
+                .then(response => response.json())
+                .then(data => {
+                    feedbackResult.innerHTML = `<h2>${data.isCorrect ? 'Correct' : 'Incorrect'}</h2><p>${data.feedback}</p>`;
+                    feedbackForm.style.display = 'none';
+                });
+        }
+    </script>
+    
+    
+</body>
 <%- include("templates/footer") %>
