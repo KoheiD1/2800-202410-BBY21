@@ -46,19 +46,6 @@ var mongoStore = MongoStore.create({
 	}
 })
 
-var gameStore = MongoStore.create({
-	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/gameSessions`,
-	crypto: {
-		secret: mongodb_session_secret
-	}
-})
-
-var battleStore = MongoStore.create({
-	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/battleSessions`,
-	crypto: {
-		secret: mongodb_session_secret
-	}
-})
 
 app.use(session({ 
     secret: node_session_secret,
@@ -68,23 +55,6 @@ app.use(session({
 }
 ));
 
-app.use(session({
-	name: 'gameSession', 
-    secret: node_session_secret,
-	store: gameStore, 
-	saveUninitialized: false, 
-	resave: true
-}
-));
-
-app.use(session({
-	name: 'battleSession', 
-    secret: node_session_secret,
-	store: gameStore, 
-	saveUninitialized: false, 
-	resave: true
-}
-));
 
 const profileRoutes = require('./profileRoutes');
 app.use('/', profileRoutes(userCollection));
@@ -141,11 +111,13 @@ app.get('/map', async (req, res) => {
 		r0connect: 1, r1connect: 1
 	}).toArray();
 	// res.send(result[0].row1);
-	// req.gameSession.health = 1000;
-	// req.gameSession.gold = 0;
-	// req.gameSession.inventory = [];
-	// req.gameSession.answeredQuestions = [];
-	// req.gameSession.playerDamage = 5;
+	// When the player starts the game it creates a new game session
+	req.session.gameSession = {
+		health: 1000,
+		playerDMG: 5,
+		inventory: [],
+		coins: 0,
+	}
 
 	res.render("map", 
 	{rows: result[0]});
@@ -299,12 +271,18 @@ app.get('/logout', (req,res) => {
 });
 
 app.post('/encounter', (req,res) => {
+	req.session.battleSession = {
+		enemyHealth: 100,
+		enemyDMG: 10,
+	};
+
 	res.render("encounter", {difficulty: req.body.difficulty, index: req.body.index});
 });
 
 app.post('/victory', async (req,res) => {
 	const index = req.body.index;
 	const row = req.body.row;
+
 
 	var result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({r1connect: 1}).toArray();
 	var arr = result[0].r1connect[index];

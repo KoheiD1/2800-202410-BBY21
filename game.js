@@ -1,9 +1,11 @@
-function damageCalculator(choice, enemyDamage, playerDamage) {
+function damageCalculator(choice) {
+    var enemyHealth = req.session.battleSession.enemyHealth;
+    var enemyDamage = req.session.battleSession.enemyDMG;
+    var playerHealth = req.session.gameSession.playerHealth;
+    var playerDamage = req.session.gameSession.playerDamage;
     if (choice) {
-        
-
-        return 1;
+        enemyHealth -= playerDamage;
     } else {
-        return 0;
+        playerHealth -= enemyDamage;
     }
 }
