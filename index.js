@@ -74,7 +74,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution} = require('./game');
+const { damageCalculator, coinDistribution, purchaseItem } = require('./game');
 
 
 // Middleware to set the user profile picture and authentication status in the response locals
@@ -112,8 +112,8 @@ app.get('/startGame', (req, res) => {
 	req.session.gameSession = {
 		playerHealth: 1000,
 		playerDMG: 5,
-		inventory: [],
-		coins: 0
+		playerInventory: [],
+		playerCoins: 0
 	}
 	res.redirect('/map');
 });	
@@ -186,11 +186,14 @@ app.post('/feedback', async (req, res) => {
             console.error('No option found for index:', option);
             return res.status(404).send('No option found');
         }
-				console.log(selectedOption.feedback);
-        // Render the feedback.ejs template with the feedback for the selected option
+		console.log(selectedOption.feedback);
+        
+		// Call the coinDistribution function to distribute coins to the player
+		// Call the damageCalculator function to calculate the damage taken by the player and enemy
+		coinDistribution(req);
 		damageCalculator(selectedOption.isCorrect, req);
-		console.log(req.session.gameSession.playerHealth);
-		console.log(req.session.battleSession.enemyHealth);
+		
+		// Render the feedback.ejs template with the feedback for the selected option
         res.render('feedback', { feedback: selectedOption.feedback, isCorrect: selectedOption.isCorrect});
 				
     } catch (error) {
