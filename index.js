@@ -83,10 +83,23 @@ app.use((req, res, next) => {
     res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+	res.locals.gameStarted = req.session.gameSession ? true : false;
     next();
 });
 
-app.get('/', (req, res) => {
+function inGame(req, res, next) {
+    if (!req.session.gameSession != null) {
+        req.session.gameSession = null;
+		res.locals.gameStarted = req.session.gameSession ? true : false;
+		next();
+    }
+    else {
+        next();
+    }
+}
+
+
+app.get('/', inGame, (req, res) => {
     res.render("index");
 });
 
@@ -193,7 +206,7 @@ app.post('/feedback', async (req, res) => {
 		// Call the damageCalculator function to calculate the damage taken by the player and enemy
 		coinDistribution(req);
 		damageCalculator(selectedOption.isCorrect, req);
-		
+		res.locals.playerCoins = req.session.gameSession.playerCoins;
 		// Render the feedback.ejs template with the feedback for the selected option
         res.render('feedback', { feedback: selectedOption.feedback, isCorrect: selectedOption.isCorrect});
 				

@@ -10,12 +10,13 @@
   <div class="pr-2 pt-4 text-end relative z-10">
       <div class="flex justify-end">
         <img class="h-12 w-12  md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer ml-auto" src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile'">
-        <div class="flex items-center ml-4 border-black ">
+        <% if (gameStarted) { %>
+        <div class="flex items-center ml-4">
           <span class="inline-flex items-center text-gray-900">
             <span class="mr-1"><%= playerCoins %></span>
             <img src="goldCoin.png" class="w-6 h-6">
           </span>
-          
         </div>
+        <% } %>
   </div>
 </div>
