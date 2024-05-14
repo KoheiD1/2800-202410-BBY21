@@ -1,7 +1,9 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
 ENCOUNTER <%- difficulty %>
 INDEX <%- index %>
+ROW <%- row %>
 <form action="/victory" method="post"> 
+  <input type="hidden" name="row" value="<%- row %>">
   <input type="hidden" name="index" value="<%- index %>">
   <input type="image" src="/square_black.svg" class="w-full" alt="home">
 </form>

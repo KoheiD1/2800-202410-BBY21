@@ -2,6 +2,7 @@
   case 'unvisited' : %>
   <div>
     <form action="/encounter" method="POST">
+      <input type="hidden" name="row" value="<%- row %>">
       <input type="hidden" name="difficulty" value="circle">
       <input type="hidden" name="index" value="<%- index %>">
       <input type="image" src="/circle_black.svg" class="w-full" alt="home">

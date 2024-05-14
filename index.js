@@ -138,7 +138,7 @@ app.get('/shop', async (req, res) => {
 app.get('/map', async (req, res) => {
 	const result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
 		r0active:1, r1active:1, r2active:1, r3active:1, r4active:1,
-		r0connect: 1, r1connect: 1
+		r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
 	}).toArray();
 	// res.send(result[0].row1);
 	// req.gameSession.health = 1000;
@@ -299,29 +299,35 @@ app.get('/logout', (req,res) => {
 });
 
 app.post('/encounter', (req,res) => {
-	res.render("encounter", {difficulty: req.body.difficulty, index: req.body.index});
+	res.render("encounter", {difficulty: req.body.difficulty, index: req.body.index, row: req.body.row});
 });
 
 app.post('/victory', async (req,res) => {
 	const index = req.body.index;
 	const row = req.body.row;
 
-	var result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({r1connect: 1}).toArray();
-	var arr = result[0].r1connect[index];
+	var result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({['r' + row + 'connect']: 1}).toArray();
+	var arr = result[0]['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {
 		await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
-			{$push: {"r2active" : element}
+			{$push: {['r' + (eval(row)+1) + 'active'] : element}
 		});
+		console.log("Added " + element + " to row " + (eval(row)+1));
 	});
 
+	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
+		{$set: {['r'+row+'active'] : [0, 2, 4]}
+	});
+	console.log("Updated row " + row + " to active");
 
 	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
-		{$set: {"row1.0.status" : "notChosen", "row1.2.status" : "notChosen", "row1.4.status" : "notChosen"}
+		{$set: {['row'+row+'.0.status'] : "notChosen", ['row'+row+'.2.status'] : "notChosen", ['row'+row+'.4.status'] : "notChosen"}
 	});
+	console.log("Updated row " + row + " to notChosen");
 	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
-		{$set: {["row1."+index+".status"] : "chosen"}
+		{$set: {['row'+row+'.'+index+'.status'] : "chosen"}
 	});
-	
+	console.log("Updated row: " + row + " index:" + index + " to chosen");
 		res.render("victory");
 });	
 

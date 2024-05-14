@@ -4,19 +4,19 @@
   </div>
   <% break;
   case 'circle' : %>
-    <%- include("./circle", {status: status, index: index}) %>
+    <%- include("./circle", {status: status, index: index, row: row}) %>
   <% break;
   case 'triangle' : %>
-    <%- include("./triangle", {status: status, index: index}) %>
+    <%- include("./triangle", {status: status, index: index, row: row}) %>
   <% break;
   case 'square' : %>
-    <%- include("./square", {status: status, index: index}) %>
+    <%- include("./square", {status: status, index: index, row: row}) %>
   <% break;
   case 'pentagon' : %>
-    <%- include("./pentagon", {status: status, index: index}) %>
+    <%- include("./pentagon", {status: status, index: index, row: row}) %>
   <% break;
   case 'hexagon' : %>
-    <%- include("./hexagon", {status: status, index: index}) %>
+    <%- include("./hexagon", {status: status, index: index, row: row}) %>
   <% break;
   }
 %>

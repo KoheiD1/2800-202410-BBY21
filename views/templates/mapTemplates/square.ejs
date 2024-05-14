@@ -2,6 +2,7 @@
   case 'unvisited' : %>
   <div>
     <form action="/encounter" method="POST">
+      <input type="hidden" name="row" value="<%- row %>">
       <input type="hidden" name="difficulty" value="square">
       <input type="hidden" name="index" value="<%- index %>">
       <input type="image" src="/square_black.svg" class="w-full" alt="home">
@@ -30,7 +31,7 @@
   <div>
     <!-- <form action="/encounter" method="POST">
       <input type="hidden" name="difficulty" value="square">
-      <input type="image" src="/square_red.svg" class="w-full" alt="home">
+      <input type="image" src="/square_black.svg" class="w-full" alt="home">
     </form> -->
     <img src="/square_black.svg" class="w-full" alt="home">
   </div>
