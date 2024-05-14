@@ -34,6 +34,7 @@ var {database} = include('databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 const itemCollection = database.db(mongodb_database).collection('items');
 const pathsCollection = database.db(mongodb_database).collection('paths');
+const questionCollection = database.db(mongodb_database).collection('questions');
 
 app.use(express.urlencoded({extended: false}));
 
@@ -48,19 +49,6 @@ var mongoStore = MongoStore.create({
 	}
 })
 
-var gameStore = MongoStore.create({
-	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/gameSessions`,
-	crypto: {
-		secret: mongodb_session_secret
-	}
-})
-
-var battleStore = MongoStore.create({
-	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/battleSessions`,
-	crypto: {
-		secret: mongodb_session_secret
-	}
-})
 
 app.use(session({ 
     secret: node_session_secret,
@@ -70,23 +58,6 @@ app.use(session({
 }
 ));
 
-app.use(session({
-	name: 'gameSession', 
-    secret: node_session_secret,
-	store: gameStore, 
-	saveUninitialized: false, 
-	resave: true
-}
-));
-
-app.use(session({
-	name: 'battleSession', 
-    secret: node_session_secret,
-	store: gameStore, 
-	saveUninitialized: false, 
-	resave: true
-}
-));
 
 const profileRoutes = require('./profileRoutes');
 app.use('/', profileRoutes(userCollection));
@@ -106,16 +77,32 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
+const { damageCalculator, coinDistribution, purchaseItem } = require('./game');
+
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
 app.use((req, res, next) => {
-    res.locals.userProfilePic = req.session.profile_pic || 'default_profile_pic_url';
+    res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
+	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+	res.locals.gameStarted = req.session.gameSession ? true : false;
     next();
 });
 
-app.get('/', (req, res) => {
+function inGame(req, res, next) {
+    if (!req.session.gameSession != null) {
+        req.session.gameSession = null;
+		res.locals.gameStarted = req.session.gameSession ? true : false;
+		next();
+    }
+    else {
+        next();
+    }
+}
+
+
+app.get('/', inGame, (req, res) => {
     res.render("index");
 });
 
@@ -137,12 +124,25 @@ app.get('/shop', async (req, res) => {
 	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2]});
 });
 
+app.get('/startGame', (req, res) => {
+	// When the player starts the game it creates a new game session
+	req.session.gameSession = {
+		playerHealth: 1000,
+		playerDMG: 5,
+		playerInventory: [],
+		playerCoins: 0
+	}
+	res.redirect('/map');
+});	
+
 app.get('/map', async (req, res) => {
 	const result = await pathsCollection.find({_id: currMap}).project({row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
 		r0active:1, r1active:1, r2active:1, r3active:1, r4active:1,
 		r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
 	}).toArray();
 	// res.send(result[0].row1);
+	res.render("map", 
+	{rows: result[0]});
 	// req.gameSession.health = 1000;
 	// req.gameSession.gold = 0;
 	// req.gameSession.inventory = [];
@@ -162,13 +162,25 @@ app.get('/login', (req,res) => {
 
 var questionID; // Define questionID at the module level to make it accessible across routes
 
+app.get('/startencounter', (req, res) => {
+	// When the player starts the game it creates a new game session
+	req.session.battleSession = {
+		enemyHealth: 100,
+		enemyDMG: 10,
+	};
+	res.redirect('/question');
+});	
+
+
 app.get('/question', async (req, res) => {
     try {
+
         // Fetch random question from the MongoDB collection
-        const question = await database.db(mongodb_database).collection('questions').aggregate([{ $sample: { size: 1 } }]).next();
+        const question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).next();
         questionID = question._id; // Assign the fetched question's ID to questionID
 				console.log(questionID);
-        res.render('question', { question: question });
+		console.log("Opening questions page");
+        res.render('question', { question: question, questionCollection: questionCollection });
     } catch (error) {
         console.error('Error fetching question:', error);
         res.status(500).send('Internal Server Error');
@@ -177,39 +189,46 @@ app.get('/question', async (req, res) => {
 
 app.post('/feedback', async (req, res) => {
     try {
-        // Check if questionID is defined
-        if (!questionID) {
-            console.error('No question ID available');
-            return res.status(404).send('No question ID available');
-        }
+        const { optionIndex, questionID } = req.body;
 
-        const { option } = req.body;
-        
-        // Fetch the selected question based on the stored question ID
-        const question = await database.db(mongodb_database).collection('questions').findOne({ _id: questionID });
-				console.log(question);
+        console.log("Option Index: " + optionIndex);
+        console.log("Question ID: " + questionID);
+
+        const question = await questionCollection.findOne({ _id: questionID });
+
         if (!question) {
             console.error('No question found for ID:', questionID);
-            return res.status(404).send('No question found');
+            return res.status(404).json({ error: 'No question found' });
         }
 
-        // Get the feedback for the selected option
-        const selectedOption = question.options[option];
-				console.log(selectedOption);
-        if (!selectedOption) {
-            console.error('No option found for index:', option);
-            return res.status(404).send('No option found');
+        if (!question.options || !Array.isArray(question.options)) {
+            console.error('Invalid question data:', question);
+            return res.status(500).json({ error: 'Invalid question data' });
         }
-				console.log(selectedOption.feedback);
-        // Render the feedback.ejs template with the feedback for the selected option
-        res.render('feedback', { feedback: selectedOption.feedback, isCorrect: selectedOption.isCorrect});
-				
+
+        const selectedOption = question.options[optionIndex];
+
+        if (!selectedOption) {
+            console.error('Invalid optionIndex:', optionIndex);
+            return res.status(500).json({ error: 'Invalid optionIndex' });
+        }
+
+        let feedback;
+        if (selectedOption.isCorrect) {
+            feedback = "Success! You chose the correct option.";
+        } else {
+            feedback = "Sorry, the option you chose is incorrect.";
+        }
+
+        console.log("Feedback:", feedback);
+
+        res.json({ feedback: feedback });
+
     } catch (error) {
         console.error('Error fetching feedback:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
 
 
 app.post('/submitUser', async (req,res) => {
@@ -306,6 +325,7 @@ app.post('/encounter', (req,res) => {
 app.post('/victory', async (req,res) => {
 	const index = req.body.index;
 	const row = req.body.row;
+
 
 	var result = await pathsCollection.find({_id: currMap}).project({['r' + row + 'connect']: 1}).toArray();
 	var arr = result[0]['r' + row + 'connect'][index];

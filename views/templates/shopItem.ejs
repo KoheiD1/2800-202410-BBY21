@@ -13,7 +13,8 @@
                 <% string += ',' + x %>
                 <% } %>
         <% } %>
+        <%- include('shopItemBonus', {itemEffect: 'Price', effectBonus: item.price}) %>
+        <% string += ',price,' + item.price %>
     </div>
-    
     <button onclick="window.location.href='/purchase?info=<%= string %>'" class="flex justify-center align-bottom m-2 bg-green-700">Purchase</button>
 </div>
