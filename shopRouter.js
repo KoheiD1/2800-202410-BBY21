@@ -108,9 +108,11 @@ module.exports = function(itemCollection, userCollection) {
 
         await itemCollection.insertOne(item);
 
-        let string = "/itemAdder?msg=Item Added" + item;
+        let string = "/itemAdder?msg=Item Added&pwd=" + process.env.ITEM_PASSWORD;
         res.redirect(string);
     });
+
+    
 
     return router;
 }
