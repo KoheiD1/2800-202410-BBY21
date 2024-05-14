@@ -63,8 +63,6 @@ module.exports = function(itemCollection, userCollection) {
         res.redirect('/shop');
     });
 
-    
-
     return router;
 }
 
