@@ -1,0 +1,21 @@
+<%- include('templates/header') %>
+<div>
+    <form action="/addItem" method="post">
+        <input type="text" name="itemName">
+        <br>
+        <input type="text" name="effect1">
+        <input type="number" name="effect1-1">
+        <input type="number" name="effect1-2">
+        <br>
+        <input type="text" name="effect2">
+        <input type="number" name="effect2-1">
+        <input type="number" name="effect2-2">
+        <br>
+        <input type="text" name="effect3">
+        <input type="number" name="effect3-1">
+        <input type="number" name="effect3-2">
+        <br>
+        <button type="submit">Add Item</button>
+    </form>
+</div>
+<%- include('templates/footer') %>
