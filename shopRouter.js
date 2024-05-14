@@ -3,13 +3,14 @@ const router = express.Router();
 const ejs = require('ejs');
 
 router.use(express.urlencoded({extended: false}));
-const { damageCalculator, coinDistribution, purchaseItem } = require('./game');
+const {purchaseItem } = require('./game');
 
 
 
 module.exports = function(itemCollection, userCollection) {
     router.get('/shop', async (req, res) => {
         res.locals.userProfilePic = req.session.profile_pic;
+        res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
         if(req.session.authenticated) {
             let items = await itemCollection.find().toArray();
             let itemsPicked = new Array(3);

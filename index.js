@@ -82,6 +82,7 @@ const { damageCalculator, coinDistribution, purchaseItem } = require('./game');
 app.use((req, res, next) => {
     res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
+	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
     next();
 });
 
