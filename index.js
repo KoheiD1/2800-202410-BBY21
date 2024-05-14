@@ -171,7 +171,7 @@ app.get('/question', async (req, res) => {
         questionID = question._id; // Assign the fetched question's ID to questionID
 				console.log(questionID);
 		console.log("Opening questions page");
-        res.render('question', { question: question, questionCollection: questionCollection });
+        res.render('question', { question: question});
     } catch (error) {
         console.error('Error fetching question:', error);
         res.status(500).send('Internal Server Error');
@@ -186,10 +186,12 @@ app.post('/feedback', async (req, res) => {
         console.log("Option Index: " + optionIndex);
         console.log("Question ID: " + questionID);
 
-        const question = await questionCollection.findOne({ _id: questionID });
+		const parsedQuestionID = new ObjectId(questionID);
+
+        const question = await questionCollection.findOne({ _id: parsedQuestionID });
 
         if (!question) {
-            console.error('No question found for ID:', questionID);
+            console.error('No question found for ID:',parsedQuestionID);
             return res.status(404).json({ error: 'No question found' });
         }
 
