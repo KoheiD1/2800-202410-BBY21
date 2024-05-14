@@ -39,6 +39,8 @@ app.use(express.urlencoded({extended: false}));
 
 app.set('view engine', 'ejs');
 
+const currMap = new ObjectId("663e7a12dad64c6bf7d9f544");
+
 var mongoStore = MongoStore.create({
 	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
 	crypto: {
@@ -136,7 +138,7 @@ app.get('/shop', async (req, res) => {
 });
 
 app.get('/map', async (req, res) => {
-	const result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
+	const result = await pathsCollection.find({_id: currMap}).project({row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
 		r0active:1, r1active:1, r2active:1, r3active:1, r4active:1,
 		r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
 	}).toArray();
@@ -147,8 +149,7 @@ app.get('/map', async (req, res) => {
 	// req.gameSession.answeredQuestions = [];
 	// req.gameSession.playerDamage = 5;
 
-	res.render("map", 
-	{rows: result[0]});
+	res.render("map", {rows: result[0], id: currMap});
 });
 
 app.get('/createUser', (req,res) => {
@@ -306,30 +307,241 @@ app.post('/victory', async (req,res) => {
 	const index = req.body.index;
 	const row = req.body.row;
 
-	var result = await pathsCollection.find({_id: new ObjectId("663e7a12dad64c6bf7d9f544")}).project({['r' + row + 'connect']: 1}).toArray();
+	var result = await pathsCollection.find({_id: currMap}).project({['r' + row + 'connect']: 1}).toArray();
 	var arr = result[0]['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {
-		await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
+		await pathsCollection.updateOne({_id: currMap},
 			{$push: {['r' + (eval(row)+1) + 'active'] : element}
 		});
-		console.log("Added " + element + " to row " + (eval(row)+1));
 	});
 
-	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
+	await pathsCollection.updateOne({_id: currMap},
 		{$set: {['r'+row+'active'] : [0, 2, 4]}
 	});
-	console.log("Updated row " + row + " to active");
 
-	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
+	await pathsCollection.updateOne({_id: currMap},
 		{$set: {['row'+row+'.0.status'] : "notChosen", ['row'+row+'.2.status'] : "notChosen", ['row'+row+'.4.status'] : "notChosen"}
 	});
-	console.log("Updated row " + row + " to notChosen");
-	await pathsCollection.updateOne({_id: new ObjectId("663e7a12dad64c6bf7d9f544")},
+
+	await pathsCollection.updateOne({_id: currMap},
 		{$set: {['row'+row+'.'+index+'.status'] : "chosen"}
 	});
-	console.log("Updated row: " + row + " index:" + index + " to chosen");
 		res.render("victory");
 });	
+
+app.post('/mapreset', async (req,res) => {
+	var id = req.body.id;
+
+	await pathsCollection.updateOne({_id: new ObjectId(id)},
+		{$set: {
+			
+			"row0" : [
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "circle",
+							"status" : "chosen"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "empty"
+					}
+			],
+			"row1" : [
+					{
+							"shape" : "square",
+							"status" : "unvisited"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "triangle",
+							"status" : "unvisited"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "square",
+							"status" : "unvisited"
+					}
+			],
+			"row2" : [
+					{
+							"shape" : "square",
+							"status" : "unvisited"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "triangle",
+							"status" : "unvisited"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "triangle",
+							"status" : "unvisited"
+					}
+			],
+			"row3" : [
+					{
+							"shape" : "triangle",
+							"status" : "unvisited"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "square",
+							"status" : "unvisited"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "pentagon",
+							"status" : "unvisited"
+					}
+			],
+			"row4" : [
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "hexagon",
+							"status" : "unvisited"
+					},
+					{
+							"shape" : "empty"
+					},
+					{
+							"shape" : "empty"
+					}
+			],
+			"r0active" : [
+					2
+			],
+			"r1active" : [
+					0,
+					2,
+					4
+			],
+			"r2active" : [
+	
+			],
+			"r3active" : [
+	
+			],
+			"r4active" : [
+	
+			],
+			"r0connect" : [
+					[
+	
+					],
+					[
+	
+					],
+					[
+							0,
+							2,
+						  4
+					],
+					[
+	
+					],
+					[
+	
+					]
+			],
+			"r1connect" : [
+					[
+							0,
+							2
+					],
+					[
+	
+					],
+					[
+							2
+					],
+					[
+	
+					],
+					[
+							4
+					]
+			],
+			"r2connect" : [
+					[
+							0
+					],
+					[
+	
+					],
+					[
+							2
+					],
+					[
+	
+					],
+					[
+							2,
+							4
+					]
+			],
+			"r3connect" : [
+					[
+							2
+					],
+					[
+	
+					],
+					[
+							2
+					],
+					[
+	
+					],
+					[
+							2
+					]
+			],
+			"r4connect" : [
+					[
+	
+					],
+					[
+	
+					],
+					[
+	
+					],
+					[
+	
+					],
+					[
+	
+					]
+			]
+	}
+	
+	});
+	res.redirect('/map');
+});
 
 app.use(express.static(__dirname + "/public"));
 

@@ -1,0 +1,5 @@
+<% if (index % 2 == 0) { %>
+  <%- include("./connector", {index: index, rowConnect: rowConnect, even: true}) %>
+<% } else { %>
+  <%- include("./connector", {index: index, rowConnect: rowConnect, even: false}) %>
+<% } %>
