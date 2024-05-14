@@ -112,8 +112,8 @@ app.get('/startGame', (req, res) => {
 	req.session.gameSession = {
 		playerHealth: 1000,
 		playerDMG: 5,
-		inventory: [],
-		coins: 0
+		playerInventory: [],
+		playerCoins: 0
 	}
 	res.redirect('/map');
 });	

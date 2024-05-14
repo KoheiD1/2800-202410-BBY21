@@ -15,13 +15,30 @@ function damageCalculator(choice, req) {
 }
 
 function coinDistribution(req) {
-    var coins = Math.floor(Math.random() * 10) + 1;
+    var coins = Math.floor(Math.random() * 5) + 5;
     req.session.gameSession.playerCoins += coins;
+    return coins;
+}
+
+// function damageMultiplier(req) {
+//     var playerDamage = req.session.gameSession.playerDMG;
+//     var playerInventory = req.session.gameSession.playerInventory;
+    
+//     playerInventory.forEach(item => {
+//         item.
+//     });
+
+// }
+
+function purchaseItem(req, item) {
+
+
 }
 
 
 
 module.exports = {
     damageCalculator,
-    coinDistribution
+    coinDistribution,
+    // damageMultiplier,
 };
