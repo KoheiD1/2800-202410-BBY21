@@ -15,9 +15,8 @@ function damageCalculator(choice, req) {
 }
 
 function coinDistribution(req) {
-    var coins = Math.floor(Math.random() * 5) + 5;
+    var coins = 10;
     req.session.gameSession.playerCoins += coins;
-    return coins;
 }
 
 // function damageMultiplier(req) {
@@ -31,14 +30,26 @@ function coinDistribution(req) {
 // }
 
 function purchaseItem(req, item) {
-
-
+    console.log("item price: " + item.price);
+    if(purchasable(req.session.gameSession.playerCoins, item.price)){
+        req.session.gameSession.playerCoins -= item.price;
+        req.session.gameSession.playerInventory.push(item);
+    }else{
+        return false;
+    }
 }
 
+function purchasable(coins, price){
+    if(coins >= price){
+        return true;
+    }else{
+        return false;
+    }
+}
 
 
 module.exports = {
     damageCalculator,
     coinDistribution,
-    // damageMultiplier,
+    purchaseItem
 };

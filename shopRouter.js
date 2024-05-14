@@ -3,6 +3,7 @@ const router = express.Router();
 const ejs = require('ejs');
 
 router.use(express.urlencoded({extended: false}));
+const { damageCalculator, coinDistribution, purchaseItem } = require('./game');
 
 
 
@@ -58,7 +59,9 @@ module.exports = function(itemCollection, userCollection) {
         }
 
         result[0].itemList[result[0].itemList.length] = item;
-        req.session.gameSession.playerInventory.push(item);
+        if(!purchaseItem(req, item)){
+           
+        }
 
         res.redirect('/shop');
     });
