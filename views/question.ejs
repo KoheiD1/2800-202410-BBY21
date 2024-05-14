@@ -1,4 +1,10 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<style>
+    .hidden {
+    display: none;
+}
+
+</style>
 <body>
     <div class="flex flex-col justify-center items-center h-screen">
         <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full"></div>
@@ -26,8 +32,7 @@
         <div class="absolute inset-0 "></div>
         <div class="bg-white rounded-lg p-8 max-w-md bg-gray-500">
             <div class="flex justify-end">
-                <!-- Change "x" button to "Done" button -->
-                <button id="closeModal" class="text-gray-500 hover:text-gray-700">Done</button>
+                <button id="closeModal" class="text-blue-500 hover:text-gray-700" onclick="closeModalFunction()">Done</button>
             </div>
             <p id="modalFeedback" class="mt-4"></p>
         </div>
@@ -47,7 +52,7 @@
     
                     console.log("Option index submitted:", optionIndex);
                     console.log("Question ID:", questionID);
-
+    
                     fetch('/feedback', {
                         method: 'POST',
                         headers: {
@@ -58,16 +63,13 @@
                     .then(response => response.json())
                     .then(data => {
                         console.log('Feedback:', data.feedback);
-
-                        const modal = document.getElementById("feedbackModal");
+    
                         const modalFeedback = document.getElementById("modalFeedback");
                         modalFeedback.textContent = data.feedback;
-                        modal.classList.remove("hidden");
+                        openModal(); // Open the modal
 
-                        const closeModal = document.getElementById("closeModal");
-                        closeModal.addEventListener("click", function() {
-                            modal.classList.add("hidden");
-                        });
+                        console.log("Opened Feedback");
+    
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -75,15 +77,20 @@
                 });
             });
         });
-
-        function openModal() {
-            document.getElementById('myModal').style.display = "flex";
-        }
     
-        function closeModal() {
-            document.getElementById('myModal').style.display = "none";
-        }
+        function openModal() {
+    document.getElementById('feedbackModal').classList.remove("hidden");
+}
+
+    
+        function closeModalFunction() {
+    document.getElementById('feedbackModal').classList.add("hidden");
+    console.log("close modal");
+}
+
     </script>
+    
+    
      
 </body>
 <%- include("templates/footer") %>
