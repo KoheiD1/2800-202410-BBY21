@@ -34,6 +34,7 @@ var {database} = include('databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 const itemCollection = database.db(mongodb_database).collection('items');
 const pathsCollection = database.db(mongodb_database).collection('paths');
+const questionCollection = database.db(mongodb_database).collection('questions');
 
 app.use(express.urlencoded({extended: false}));
 
@@ -135,12 +136,13 @@ var questionID; // Define questionID at the module level to make it accessible a
 
 app.get('/question', async (req, res) => {
     try {
+
         // Fetch random question from the MongoDB collection
-        const question = await database.db(mongodb_database).collection('questions').aggregate([{ $sample: { size: 1 } }]).next();
+        const question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).next();
         questionID = question._id; // Assign the fetched question's ID to questionID
 				console.log(questionID);
 		console.log("Opening questions page");
-        res.render('question', { question: question });
+        res.render('question', { question: question, questionCollection: questionCollection });
     } catch (error) {
         console.error('Error fetching question:', error);
         res.status(500).send('Internal Server Error');
@@ -149,39 +151,46 @@ app.get('/question', async (req, res) => {
 
 app.post('/feedback', async (req, res) => {
     try {
-        // Check if questionID is defined
-        if (!questionID) {
-            console.error('No question ID available');
-            return res.status(404).send('No question ID available');
-        }
+        const { optionIndex, questionID } = req.body;
 
-        const { option } = req.body;
-        
-        // Fetch the selected question based on the stored question ID
-        const question = await database.db(mongodb_database).collection('questions').findOne({ _id: questionID });
-				console.log(question);
+        console.log("Option Index: " + optionIndex);
+        console.log("Question ID: " + questionID);
+
+        const question = await questionCollection.findOne({ _id: questionID });
+
         if (!question) {
             console.error('No question found for ID:', questionID);
-            return res.status(404).send('No question found');
+            return res.status(404).json({ error: 'No question found' });
         }
 
-        // Get the feedback for the selected option
-        const selectedOption = question.options[option];
-				console.log(selectedOption);
-        if (!selectedOption) {
-            console.error('No option found for index:', option);
-            return res.status(404).send('No option found');
+        if (!question.options || !Array.isArray(question.options)) {
+            console.error('Invalid question data:', question);
+            return res.status(500).json({ error: 'Invalid question data' });
         }
-				console.log(selectedOption.feedback);
-        // Render the feedback.ejs template with the feedback for the selected option
-        res.render('feedback', { feedback: selectedOption.feedback, isCorrect: selectedOption.isCorrect});
-				
+
+        const selectedOption = question.options[optionIndex];
+
+        if (!selectedOption) {
+            console.error('Invalid optionIndex:', optionIndex);
+            return res.status(500).json({ error: 'Invalid optionIndex' });
+        }
+
+        let feedback;
+        if (selectedOption.isCorrect) {
+            feedback = "Success! You chose the correct option.";
+        } else {
+            feedback = "Sorry, the option you chose is incorrect.";
+        }
+
+        console.log("Feedback:", feedback);
+
+        res.json({ feedback: feedback });
+
     } catch (error) {
         console.error('Error fetching feedback:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
 
 
 app.post('/submitUser', async (req,res) => {

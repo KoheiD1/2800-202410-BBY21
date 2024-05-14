@@ -8,9 +8,9 @@
             <ul>
                 <% question.options.forEach((option, index) => { %>
                     <li class="mb-2">
-                        <form id="feedbackForm<%= index %>" class="feedback-form">
+                        <form id="<%= index %>" class="feedback-form" data-question-id="<%= question._id %>">
                             <input type="hidden" name="option" value="<%= index %>">
-                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <button id="opt-btn" type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 <%= option.text %>
                             </button>
                         </form>
@@ -22,21 +22,37 @@
     </div>
 
     <script>
-        function getOptionFeedback(formId) {
-            const form = document.getElementById(formId);
-            const option = form.querySelector('input[name="option"]').value;
-            const feedbackResult = document.getElementById(`feedbackResult${option}`);
-            const feedbackForm = document.getElementById(`feedbackForm${option}`);
+        document.addEventListener("DOMContentLoaded", function () {
+            // Attach click event listener to each button inside the form
+            document.querySelectorAll('.feedback-form button').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    // Prevent default button behavior (form submission)
+                    event.preventDefault();
+    
+                    const optionIndex = button.parentElement.querySelector('input[name="option"]').value;
+                    const questionID = button.parentElement.getAttribute('data-question-id');
+    
+                    console.log("Option index submitted:", optionIndex);
+                    console.log("Question ID:", questionID);
 
-            fetch(`/api/feedback/${question.id}/${option}`)
-                .then(response => response.json())
-                .then(data => {
-                    feedbackResult.innerHTML = `<h2>${data.isCorrect ? 'Correct' : 'Incorrect'}</h2><p>${data.feedback}</p>`;
-                    feedbackForm.style.display = 'none';
+                    fetch('/feedback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ optionIndex: optionIndex, questionID: questionID })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Question associated with option:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
                 });
-        }
+            });
+        });
     </script>
-    
-    
+     
 </body>
 <%- include("templates/footer") %>
