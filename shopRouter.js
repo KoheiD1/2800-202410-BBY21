@@ -63,6 +63,55 @@ module.exports = function(itemCollection, userCollection) {
         res.redirect('/');
     });
 
+    router.get("/itemAdder", (req, res) => {
+        if(req.query.pwd == process.env.ITEM_PASSWORD) {
+            res.render("itemAdder", {msg: req.query.msg});
+        } else {
+            res.send("this page does not exist");
+        }
+    });
+
+    router.post("/addItem", async (req, res) => {
+        let item = {};
+        item.type = req.body.itemName;
+
+        if(item.type == "") {
+            res.redirect("/itemAdder?msg=Name Needed");
+        }
+
+        item.effects = [];
+
+        for(let i = 1; i < 4; i++) {
+            let effectName = 'effect' + i;
+            let name = req.body[effectName];
+            if(name != "") {
+                item.effects[item.effects.length] = name;
+                item[item.effects[item.effects.length - 1]] = new Array(1);
+                item[item.effects[item.effects.length - 1]][0] = req.body[effectName + '-1'];
+                let effectMax = req.body[effectName + '-2'];
+                if(effectMax != "") {
+                    item[item.effects[item.effects.length - 1]][1] = req.body[effectName + '-2'];
+                }
+            } else {
+                if(i == 1) {
+                    res.redirect("/itemAdder?msg=Effect Needed");
+                }
+                break;
+            }
+        }
+
+        item.price = req.body.price;
+
+        if(item.price == "") {
+            res.redirect("/itemAdder?msg=Price Needed");
+        }
+
+        await itemCollection.insertOne(item);
+
+        let string = "/itemAdder?msg=Item Added" + item;
+        res.redirect(string);
+    });
+
     return router;
 }
 

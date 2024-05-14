@@ -1,21 +1,24 @@
-<%- include('templates/header') %>
+<%- include('templates/header', {overflowVariable: "overflow-hidden"}) %>
 <div>
     <form action="/addItem" method="post">
-        <input type="text" name="itemName">
-        <br>
-        <input type="text" name="effect1">
-        <input type="number" name="effect1-1">
-        <input type="number" name="effect1-2">
-        <br>
-        <input type="text" name="effect2">
-        <input type="number" name="effect2-1">
-        <input type="number" name="effect2-2">
-        <br>
-        <input type="text" name="effect3">
-        <input type="number" name="effect3-1">
-        <input type="number" name="effect3-2">
-        <br>
-        <button type="submit">Add Item</button>
+        <input type="text" name="itemName" placeholder="Name" class="border-2">
+        <br><br>
+        <input type="text" name="effect1" placeholder="effect1" class="border-2">
+        <input type="number" name="effect1-1" placeholder="effectMin" class="border-2">
+        <input type="number" name="effect1-2" placeholder="effectMax" class="border-2">
+        <br><br>
+        <input type="text" name="effect2" placeholder="effect2" class="border-2">
+        <input type="number" name="effect2-1" placeholder="effectMin" class="border-2">
+        <input type="number" name="effect2-2" placeholder="effectMax" class="border-2">
+        <br><br>
+        <input type="text" name="effect3" placeholder="effect3" class="border-2">
+        <input type="number" name="effect3-1" placeholder="effectMin" class="border-2">
+        <input type="number" name="effect3-2" placeholder="effectMax" class="border-2">
+        <br><br>
+        <input type="number" name="price" placeholder="price" class="border-2">
+        <br><br>        
+        <button type="submit" class="border-2">Add Item</button>
     </form>
+    <div><%= msg %></div>
 </div>
 <%- include('templates/footer') %>
