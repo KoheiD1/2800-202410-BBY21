@@ -44,19 +44,67 @@
             <p id="modalFeedback" class="mt-4"></p>
         </div>
     </div>
-
+    
     <script>
-        var healthbarLeft = document.getElementById("healthbar-left");
-        var healthbarRight = document.getElementById("healthbar-right");
+        var enemyHealth = <%= enemyHealth %>;
+        var playerHealth = <%= playerHealth %>;
 
-        var fillsLeft = healthbarLeft.querySelectorAll(".healthbar_fill");
-        var fillsRight = healthbarRight.querySelectorAll(".healthbar_fill");
+        renderHealth(); // Render health bars
+        document.addEventListener("DOMContentLoaded", function () {
+            // Attach click event listener to each button inside the form
+            document.querySelectorAll('.feedback-form button').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    // Prevent default button behavior (form submission)
+                    event.preventDefault();
+    
+                    const optionIndex = button.parentElement.querySelector('input[name="option"]').value;
+                    const questionID = button.parentElement.getAttribute('data-question-id');
+    
+                    console.log("Option index submitted:", optionIndex);
+                    console.log("Question ID:", questionID);
 
-        var healthLeft = 100;
-        var healthRight = 100;
-        var maxHp = 100;
+                    fetch('/feedback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ optionIndex: optionIndex, questionID: questionID })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Feedback:', data.feedback);
+                        enemyHealth = data.enemyHealth;
+                        playerHealth = data.playerHealth;
+                        console.log("Feedback Result: ", data.result);
 
+                        const modalFeedback = document.getElementById("modalFeedback");
+                        modalFeedback.textContent = data.feedback;
+                        openModal(data.result);
+                        
+                        renderHealth();
+
+                        console.log("Opened Feedback");
+
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+        // Update health
+        
         function renderHealth() {
+            var healthbarLeft = document.getElementById("healthbar-left");
+            var healthbarRight = document.getElementById("healthbar-right");
+
+            var fillsLeft = healthbarLeft.querySelectorAll(".healthbar_fill");
+            var fillsRight = healthbarRight.querySelectorAll(".healthbar_fill");
+            console.log(playerHealth, enemyHealth);
+            var healthLeft = playerHealth;
+            var healthRight = enemyHealth;
+            var maxHp = 100;
+
             var percentLeft = healthLeft / maxHp * 100;
             var percentRight = healthRight / maxHp * 100;
             var leftFill = healthbarLeft.querySelector(".healthbar_fill");
@@ -95,75 +143,10 @@
             fillsRight.forEach(fill => {
                 fill.style.width = percentRight + "%";
             });
+            console.log("Player: " + percentLeft + ", Enemy: " + percentRight);
+
         }
 
-        function updateHealth(change, isCorrect) {
-            if (change === 0) { // Reset health bars to maximum value
-                healthLeft = maxHp;
-                healthRight = maxHp;
-            } else {
-                if (isCorrect) {
-                    healthRight -= change;
-                } else {
-                    healthLeft -= change;
-                }
-                healthLeft = healthLeft > maxHp ? maxHp : healthLeft;
-                healthRight = healthRight > maxHp ? maxHp : healthRight;
-                healthLeft = healthLeft < 0 ? 0 : healthLeft;
-                healthRight = healthRight < 0 ? 0 : healthRight;
-            }
-            renderHealth();
-        }
-
-        // Init
-        updateHealth(0);
-    </script>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Attach click event listener to each button inside the form
-            document.querySelectorAll('.feedback-form button').forEach(button => {
-                button.addEventListener('click', function (event) {
-                    // Prevent default button behavior (form submission)
-                    event.preventDefault();
-    
-                    const optionIndex = button.parentElement.querySelector('input[name="option"]').value;
-                    const questionID = button.parentElement.getAttribute('data-question-id');
-    
-                    console.log("Option index submitted:", optionIndex);
-                    console.log("Question ID:", questionID);
-    
-                    fetch('/feedback', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ optionIndex: optionIndex, questionID: questionID })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Feedback:', data.feedback);
-                        enemyHealth = data.enemyHealth;
-                        playerHealth = data.playerHealth;
-                        console.log("Feedback Result: ", data.result);
-
-                        const modalFeedback = document.getElementById("modalFeedback");
-                        modalFeedback.textContent = data.feedback;
-                        openModal(data.result);
-                        
-                        // Pass the result to updateHealth
-                        updateHealth(10, data.result);
-
-                        console.log("Opened Feedback");
-
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-                });
-            });
-        });
-    
         function openModal(correct) {
             const feedbackModal = document.getElementById('feedbackModal');
             feedbackModal.classList.remove("hidden");
