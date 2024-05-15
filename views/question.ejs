@@ -46,7 +46,6 @@
     </div>
 
     <script>
-        console.log("Healthbar.js is linked and executing.");
         var healthbarLeft = document.getElementById("healthbar-left");
         var healthbarRight = document.getElementById("healthbar-right");
 
@@ -69,13 +68,24 @@
             document.documentElement.style.setProperty('--bar-fill', '#57e705');
             document.documentElement.style.setProperty('--bar-top',  '#6aff03');
 
-            if (percent <= 50) { // Yellows
-                document.documentElement.style.setProperty('--bar-fill', '#d6ed20');
-                document.documentElement.style.setProperty('--bar-top',  '#d8ff48');   
+            // Update color for left health bar
+            if (percentLeft <= 50) { // Yellows
+                document.documentElement.style.setProperty('--bar-fill-left', '#d6ed20');
+                document.documentElement.style.setProperty('--bar-top-left',  '#d8ff48');   
             }
-            if (percent <= 25) { // Reds
-                document.documentElement.style.setProperty('--bar-fill', '#ec290a');
-                document.documentElement.style.setProperty('--bar-top',  '#ff3818');
+            if (percentLeft <= 25) { // Reds
+                document.documentElement.style.setProperty('--bar-fill-left', '#ec290a');
+                document.documentElement.style.setProperty('--bar-top-left',  '#ff3818');
+            }
+
+            // Update color for right health bar
+            if (percentRight <= 50) { // Yellows
+                document.documentElement.style.setProperty('--bar-fill-right', '#d6ed20');
+                document.documentElement.style.setProperty('--bar-top-right',  '#d8ff48');   
+            }
+            if (percentRight <= 25) { // Reds
+                document.documentElement.style.setProperty('--bar-fill-right', '#ec290a');
+                document.documentElement.style.setProperty('--bar-top-right',  '#ff3818');
             }
 
             fillsLeft.forEach(fill => {
@@ -182,6 +192,6 @@
         }
 
     </script>
-     
+    
 </body>
 <%- include("templates/footer") %>
