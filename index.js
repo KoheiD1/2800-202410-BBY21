@@ -321,7 +321,7 @@ app.post('/encounter', (req, res) => {
 app.post('/victory', async (req, res) => {
 	const index = req.body.index;
 	const row = req.body.row;
-
+	const difficulty = req.body.difficulty;
 
 	var result = await pathsCollection.find({ _id: currMap }).project({ ['r' + row + 'connect']: 1 }).toArray();
 	var arr = result[0]['r' + row + 'connect'][index];
