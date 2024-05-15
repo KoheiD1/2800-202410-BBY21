@@ -123,7 +123,7 @@ app.get('/shop', async (req, res) => {
 app.get('/startGame', (req, res) => {
 	// When the player starts the game it creates a new game session
 	req.session.gameSession = {
-		playerHealth: 10,
+		playerHealth: 100,
 		playerDMG: 5,
 		playerInventory: [],
 		playerCoins: 0
@@ -153,7 +153,7 @@ var questionID; // Define questionID at the module level to make it accessible a
 
 app.post('/startencounter', async (req, res) => {
 	// When the player starts the game it creates a new game session
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 5 } }]).toArray();
+	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 10 } }]).toArray();
 	let enemies = await enemiesCollection.find().toArray();
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
 

@@ -7,8 +7,14 @@
 </style>
 <body>
     <div class="flex flex-col justify-center items-center h-screen">
-        <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full"></div>
-
+        <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full relative">
+            <div id="healthbar-left" class="health-bar-left absolute top-2 left-4">
+              <%- include('healthbar.html') %>
+            </div>
+            <div id="healthbar-right" class="health-bar-right absolute top-2 right-4">
+              <%- include('healthbar.html') %>
+            </div>
+        </div>
         <div class="max-w-lg mx-auto p-8 bg-white rounded shadow-md h-1/2">
             <h1 class="text-2xl font-bold mb-4"><%= question.questionText %></h1>
             <ul>
@@ -38,9 +44,12 @@
             <p id="modalFeedback" class="mt-4"></p>
         </div>
     </div>
-
-
+    
     <script>
+        var enemyHealth = <%= enemyHealth %>;
+        var playerHealth = <%= playerHealth %>;
+
+        renderHealth(); // Render health bars
         document.addEventListener("DOMContentLoaded", function () {
             // Attach click event listener to each button inside the form
             document.querySelectorAll('.feedback-form button').forEach(button => {
@@ -53,7 +62,7 @@
     
                     console.log("Option index submitted:", optionIndex);
                     console.log("Question ID:", questionID);
-    
+
                     fetch('/feedback', {
                         method: 'POST',
                         headers: {
@@ -67,13 +76,15 @@
                         enemyHealth = data.enemyHealth;
                         playerHealth = data.playerHealth;
                         console.log("Feedback Result: ", data.result);
-    
+
                         const modalFeedback = document.getElementById("modalFeedback");
                         modalFeedback.textContent = data.feedback;
                         openModal(data.result);
+                        
+                        renderHealth();
 
                         console.log("Opened Feedback");
-    
+
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -81,7 +92,61 @@
                 });
             });
         });
-    
+        // Update health
+        
+        function renderHealth() {
+            var healthbarLeft = document.getElementById("healthbar-left");
+            var healthbarRight = document.getElementById("healthbar-right");
+
+            var fillsLeft = healthbarLeft.querySelectorAll(".healthbar_fill");
+            var fillsRight = healthbarRight.querySelectorAll(".healthbar_fill");
+            console.log(playerHealth, enemyHealth);
+            var healthLeft = playerHealth;
+            var healthRight = enemyHealth;
+            var maxHp = 100;
+
+            var percentLeft = healthLeft / maxHp * 100;
+            var percentRight = healthRight / maxHp * 100;
+            var leftFill = healthbarLeft.querySelector(".healthbar_fill");
+            var rightFill = healthbarRight.querySelector(".healthbar_fill");
+            leftFill.style.width = percentLeft + "%";
+            rightFill.style.width = percentRight + "%";
+
+            // Update color
+            document.documentElement.style.setProperty('--bar-fill', '#57e705');
+            document.documentElement.style.setProperty('--bar-top',  '#6aff03');
+
+            // Update color for left health bar
+            if (percentLeft <= 50) { // Yellows
+                document.documentElement.style.setProperty('--bar-fill-left', '#d6ed20');
+                document.documentElement.style.setProperty('--bar-top-left',  '#d8ff48');   
+            }
+            if (percentLeft <= 25) { // Reds
+                document.documentElement.style.setProperty('--bar-fill-left', '#ec290a');
+                document.documentElement.style.setProperty('--bar-top-left',  '#ff3818');
+            }
+
+            // Update color for right health bar
+            if (percentRight <= 50) { // Yellows
+                document.documentElement.style.setProperty('--bar-fill-right', '#d6ed20');
+                document.documentElement.style.setProperty('--bar-top-right',  '#d8ff48');   
+            }
+            if (percentRight <= 25) { // Reds
+                document.documentElement.style.setProperty('--bar-fill-right', '#ec290a');
+                document.documentElement.style.setProperty('--bar-top-right',  '#ff3818');
+            }
+
+            fillsLeft.forEach(fill => {
+                fill.style.width = percentLeft + "%";
+            });
+
+            fillsRight.forEach(fill => {
+                fill.style.width = percentRight + "%";
+            });
+            console.log("Player: " + percentLeft + ", Enemy: " + percentRight);
+
+        }
+
         function openModal(correct) {
             const feedbackModal = document.getElementById('feedbackModal');
             feedbackModal.classList.remove("hidden");
@@ -118,7 +183,5 @@
         }
     </script>
     
-    
-     
 </body>
 <%- include("templates/footer") %>
