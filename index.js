@@ -35,6 +35,7 @@ const userCollection = database.db(mongodb_database).collection('users');
 const itemCollection = database.db(mongodb_database).collection('items');
 const pathsCollection = database.db(mongodb_database).collection('paths');
 const questionCollection = database.db(mongodb_database).collection('questions');
+const enemiesCollection = database.db(mongodb_database).collection('enemies');
 
 app.use(express.urlencoded({ extended: false }));
 
