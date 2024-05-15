@@ -564,6 +564,10 @@ app.post('/mapreset', async (req, res) => {
 	res.redirect('/map');
 });
 
+app.get('/defeat', (req, res) => {
+	res.render("defeat");
+});
+
 app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
