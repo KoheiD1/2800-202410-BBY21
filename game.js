@@ -16,6 +16,7 @@ function damageCalculator(choice, req) {
 
 function coinDistribution(req) {
     var coins = 10;
+    console.log("coins: " + coins);
     req.session.gameSession.playerCoins += coins;
 }
 

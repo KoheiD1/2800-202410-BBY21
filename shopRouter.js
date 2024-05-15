@@ -3,16 +3,19 @@ const router = express.Router();
 const ejs = require('ejs');
 
 router.use(express.urlencoded({extended: false}));
-const {purchaseItem } = require('./game');
+const {purchaseItem, coinDistribution} = require('./game');
 
 
 
 module.exports = function(itemCollection, userCollection) {
     router.get('/shop', async (req, res) => {
-        res.locals.userProfilePic = req.session.profile_pic;
-        res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-        res.locals.gameStarted = req.session.gameSession ? true : false;
         if(req.session.authenticated) {
+            coinDistribution(req);
+
+            res.locals.userProfilePic = req.session.profile_pic;
+            res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+            res.locals.gameStarted = req.session.gameSession ? true : false;
+
             let items = await itemCollection.find().toArray();
             let itemsPicked = new Array(3);
             for(let i = 0; i < 3 && i < items.length; i++) {
@@ -119,8 +122,5 @@ module.exports = function(itemCollection, userCollection) {
         res.redirect(string);
     });
 
-    
-
     return router;
 }
-

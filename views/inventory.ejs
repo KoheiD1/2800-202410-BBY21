@@ -1,4 +1,40 @@
-<% for(let i = 0; i < items.length; i++) { %>
-    <%- include('templates/inventoryItem', {item: items[i]}) %>
-<% } %>
-<button onclick="history.back()">Back</button>
+<%- include('templates/header', {overflowVariable: "overflow-hidden" }) %>
+<dialog class="size-52 text-xl grid">
+    <h1>Hello</h1>
+    <div></div>
+    <br>
+    <button class="">close</button>
+</dialog>
+<div class="">
+    <div class="absolute inset-0 z-0">
+        <img src="/backpack.png" alt="Image" class="h-full w-full">
+    </div>
+    <div class="relative z-10 h-screen">
+        <div id="items" class="grid grid-cols-4 grid-rows-8 p-7 h-screen">
+            <% for(let i=0; i < items.length; i++) { %>
+                <!-- <% console.log(items[0]) %> -->
+                <%- include('templates/inventoryItem', {item: items[i]}) %>
+            <% } %>
+        </div>
+        <!-- <button onclick="history.back()">Back</button> -->
+    </div>
+
+    <script>
+        const dialog = document.querySelector('dialog');
+            const items = document.querySelector("#items");
+            // console.log(items.children[0]);
+            for(let i = 0; i < items.children.length; i++) {
+                // console.log(items.children[i].children[0].innerHTML);
+                items.children[i].addEventListener('click', () => {
+                    dialog.getElementsByTagName("h1")[0].innerHTML = items.children[i].children[0].innerHTML;
+                    let userItems = (<%- JSON.stringify(items) %>);
+                    // console.log(userItems);
+                    dialog.getElementsByTagName("div")[0].innerHTML = userItems[i].effects;
+                    dialog.showModal();
+                    dialog.getElementsByTagName("button")[0].addEventListener('click', () => {
+                        dialog.close();
+                    });
+                });
+            }
+    </script>
+</div>
