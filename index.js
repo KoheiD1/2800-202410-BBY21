@@ -78,7 +78,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, purchaseItem } = require('./game');
+const { damageCalculator, coinDistribution, purchaseItem, chooseEnemy} = require('./game');
 
 
 // Middleware to set the user profile picture and authentication status in the response locals
@@ -159,12 +159,22 @@ app.get('/login', (req, res) => {
 
 var questionID; // Define questionID at the module level to make it accessible across routes
 
-app.get('/startencounter', (req, res) => {
+app.get('/startencounter', async (req, res) => {
 	// When the player starts the game it creates a new game session
+	let enemies = await enemiesCollection.find().toArray();
+	var enemy = chooseEnemy(req, 1, enemies);
+
 	req.session.battleSession = {
-		enemyHealth: 100,
-		enemyDMG: 10,
+		enemyName: enemy.enemyName,
+		enemyHealth: enemy.enemyHealth,
+		enemyDMG: enemy.enemyDMG,
+		enemyDifficulty: enemy.enemyDifficulty, 
 	};
+
+	console.log("enemy name: " + req.session.battleSession.enemyName);
+	console.log("enemy health: " + req.session.battleSession.enemyHealth);
+	console.log("enemy damage: " + req.session.battleSession.enemyDMG);
+	
 	res.redirect('/question');
 });
 
