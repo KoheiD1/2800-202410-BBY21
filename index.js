@@ -173,8 +173,11 @@ app.post('/startencounter', async (req, res) => {
 		enemyDMG: enemy.enemyDMG, 
 		encounterQuestions: encounterQuestions,
 		answerdQuestions: [],
+		index: req.body.index,
+		row: req.body.row,
+		difficulty: req.body.difficulty	
 	};
-	
+
 	res.redirect(`/question?encounterQuestions=${encodeURIComponent(JSON.stringify(encounterQuestions))}`);
 });	
 
@@ -194,7 +197,7 @@ app.get('/question', async (req, res) => {
 		console.log("Encounter Questions:", req.session.battleSession.encounterQuestions);
 		console.log("Answered Questions:", req.session.battleSession.answerdQuestions);
 		console.log("Opening questions page");
-        res.render('question', { question: question});
+        res.render('question', { question: question, enemyHealth: req.session.battleSession.enemyHealth});
     } catch (error) {
         console.error('Error fetching question:', error);
         res.status(500).send('Internal Server Error');
@@ -238,10 +241,10 @@ app.post('/feedback', async (req, res) => {
 			result = true;
         }
 
-		console.log("Feedback:", feedback);
-
-        res.json({ feedback: feedback, result: result});
-
+		damageCalculator(result, req);
+		
+        res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth });
+		
 	} catch (error) {
 		console.error('Error fetching feedback:', error);
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -340,10 +343,10 @@ app.post('/encounter', (req, res) => {
 	res.render("encounter", { difficulty: req.body.difficulty, index: req.body.index, row: req.body.row });
 });
 
-app.post('/victory', async (req, res) => {
-	const index = req.body.index;
-	const row = req.body.row;
-	const difficulty = req.body.difficulty;
+app.get('/victory', async (req, res) => {
+	const index = req.session.battleSession.index;
+	const row = req.session.battleSession.row;
+	const difficulty = req.session.battleSession.difficulty;
 
 	var result = await pathsCollection.find({ _id: currMap }).project({ ['r' + row + 'connect']: 1 }).toArray();
 	var arr = result[0]['r' + row + 'connect'][index];

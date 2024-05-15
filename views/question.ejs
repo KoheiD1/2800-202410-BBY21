@@ -64,7 +64,7 @@
                     .then(response => response.json())
                     .then(data => {
                         console.log('Feedback:', data.feedback);
-
+                        enemyHealth = data.enemyHealth;
                         console.log("Feedback Result: ", data.result);
     
                         const modalFeedback = document.getElementById("modalFeedback");
@@ -106,10 +106,13 @@
 
         function closeModalFunction() {
             document.getElementById('feedbackModal').classList.add("hidden");
-            console.log("close modal");
-            window.location.href = '/question';
-        }
 
+            if(enemyHealth == 0){
+                window.location.href = '/victory';
+            }else{
+                window.location.href = '/question';
+            }
+        }
     </script>
     
     
