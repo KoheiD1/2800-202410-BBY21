@@ -163,6 +163,7 @@ app.get('/startencounter', (req, res) => {
 	req.session.battleSession = {
 		enemyHealth: 100,
 		enemyDMG: 10,
+		answeredQuestions: [],
 	};
 	res.redirect('/question');
 });
@@ -171,31 +172,35 @@ app.get('/startencounter', (req, res) => {
 app.get('/question', async (req, res) => {
 	try {
 
-		// Fetch random question from the MongoDB collection
-		const question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).next();
-		questionID = question._id; // Assign the fetched question's ID to questionID
-		console.log(questionID);
+		const answeredQuestions = [];
+
+        const question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).next();
+        questionID = question._id; // Assign the fetched question's ID to questionID
+				console.log(questionID);
 		console.log("Opening questions page");
-		res.render('question', { question: question, questionCollection: questionCollection });
-	} catch (error) {
-		console.error('Error fetching question:', error);
-		res.status(500).send('Internal Server Error');
-	}
+        res.render('question', { question: question});
+    } catch (error) {
+        console.error('Error fetching question:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.post('/feedback', async (req, res) => {
-	try {
-		const { optionIndex, questionID } = req.body;
+	
+    try {
+        const { optionIndex, questionID } = req.body;
 
 		console.log("Option Index: " + optionIndex);
 		console.log("Question ID: " + questionID);
 
-		const question = await questionCollection.findOne({ _id: questionID });
+		const parsedQuestionID = new ObjectId(questionID);
 
-		if (!question) {
-			console.error('No question found for ID:', questionID);
-			return res.status(404).json({ error: 'No question found' });
-		}
+        const question = await questionCollection.findOne({ _id: parsedQuestionID });
+
+        if (!question) {
+            console.error('No question found for ID:',parsedQuestionID);
+            return res.status(404).json({ error: 'No question found' });
+        }
 
 		if (!question.options || !Array.isArray(question.options)) {
 			console.error('Invalid question data:', question);
@@ -209,16 +214,17 @@ app.post('/feedback', async (req, res) => {
 			return res.status(500).json({ error: 'Invalid optionIndex' });
 		}
 
-		let feedback;
-		if (selectedOption.isCorrect) {
-			feedback = "Success! You chose the correct option.";
-		} else {
-			feedback = "Sorry, the option you chose is incorrect.";
-		}
+		const feedback = selectedOption.feedback || "No feedback available."
+
+		let result = false;
+
+		if (selectedOption.isCorrect === true) {
+			result = true;
+        }
 
 		console.log("Feedback:", feedback);
 
-		res.json({ feedback: feedback });
+        res.json({ feedback: feedback, result: result});
 
 	} catch (error) {
 		console.error('Error fetching feedback:', error);

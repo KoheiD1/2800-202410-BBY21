@@ -1,4 +1,10 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<style>
+    .hidden {
+    display: none;
+}
+
+</style>
 <body>
     <div class="flex flex-col justify-center items-center h-screen">
         <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full"></div>
@@ -21,6 +27,19 @@
         </div>
     </div>
 
+    <!-- Tailwind Modal -->
+    <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center z-10 hidden">
+        <div class="absolute inset-0 "></div>
+        <div class="bg-white rounded-lg p-8 max-w-md bg-gray-500">
+            <div class="flex justify-end">
+                <button id="closeModal" class="text-blue-500 hover:text-gray-700 z-50" onclick="closeModalFunction()">Done</button>
+            </div>
+            
+            <p id="modalFeedback" class="mt-4"></p>
+        </div>
+    </div>
+
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Attach click event listener to each button inside the form
@@ -34,7 +53,7 @@
     
                     console.log("Option index submitted:", optionIndex);
                     console.log("Question ID:", questionID);
-
+    
                     fetch('/feedback', {
                         method: 'POST',
                         headers: {
@@ -44,7 +63,16 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Question associated with option:', data);
+                        console.log('Feedback:', data.feedback);
+
+                        console.log("Feedback Result: ", data.result);
+    
+                        const modalFeedback = document.getElementById("modalFeedback");
+                        modalFeedback.textContent = data.feedback;
+                        openModal(data.result);
+
+                        console.log("Opened Feedback");
+    
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -52,7 +80,39 @@
                 });
             });
         });
+    
+        function openModal(correct) {
+            const feedbackModal = document.getElementById('feedbackModal');
+            feedbackModal.classList.remove("hidden");
+
+            const modalFeedback = document.getElementById("modalFeedback");
+
+            if (correct === true) {
+                const h2Element = document.createElement('h2');
+                h2Element.textContent = "Correct";
+                h2Element.style.fontSize = "2rem";
+                h2Element.style.textAlign = "center";
+                h2Element.style.marginTop = "1rem";
+                modalFeedback.insertBefore(h2Element, modalFeedback.firstChild);
+            } else {
+                const h2Element = document.createElement('h2');
+                h2Element.textContent = "Wrong";
+                h2Element.style.fontSize = "2rem";
+                h2Element.style.textAlign = "center"; 
+                h2Element.style.marginTop = "1rem"; 
+                modalFeedback.insertBefore(h2Element, modalFeedback.firstChild);
+            }
+        }
+
+        function closeModalFunction() {
+            document.getElementById('feedbackModal').classList.add("hidden");
+            console.log("close modal");
+            window.location.href = '/question';
+        }
+
     </script>
+    
+    
      
 </body>
 <%- include("templates/footer") %>
