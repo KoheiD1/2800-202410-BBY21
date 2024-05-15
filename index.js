@@ -158,25 +158,37 @@ app.get('/login', (req, res) => {
 
 var questionID; // Define questionID at the module level to make it accessible across routes
 
-app.get('/startencounter', (req, res) => {
+app.get('/startencounter', async (req, res) => {
+	
+	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 5 } }]).toArray();
+
+	//console.log("Encounter Questions:", encounterQuestions);
+	
 	// When the player starts the game it creates a new game session
 	req.session.battleSession = {
 		enemyHealth: 100,
 		enemyDMG: 10,
-		answeredQuestions: [],
+		encounterQuestions: encounterQuestions,
+		answerdQuestions: [],
 	};
-	res.redirect('/question');
-});
+	res.redirect(`/question?encounterQuestions=${encodeURIComponent(JSON.stringify(encounterQuestions))}`);
+});	
 
 
 app.get('/question', async (req, res) => {
-	try {
+    try {	
 
-		const answeredQuestions = [];
-
-        const question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).next();
+        const randomIndex = Math.floor(Math.random() * req.session.battleSession.encounterQuestions.length);
+		const question = req.session.battleSession.encounterQuestions[randomIndex];
         questionID = question._id; // Assign the fetched question's ID to questionID
 				console.log(questionID);
+		
+		console.log("Encounter Questions before:", req.session.battleSession.encounterQuestions);
+
+		req.session.battleSession.encounterQuestions.splice(randomIndex, 1); // Remove the question from the encounterQuestions array
+		req.session.battleSession.answerdQuestions.push(question); // Add the question ID to the answerdQuestions array
+		console.log("Encounter Questions:", req.session.battleSession.encounterQuestions);
+		console.log("Answered Questions:", req.session.battleSession.answerdQuestions);
 		console.log("Opening questions page");
         res.render('question', { question: question});
     } catch (error) {
