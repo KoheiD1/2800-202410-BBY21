@@ -1,13 +1,58 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
-<h1><%= question.questionText %></h1>
-<ul>
-    <% question.options.forEach((option, index) => { %>
-        <li>
-            <form action="/feedback" method="post">
-                <input type="hidden" name="option" value="<%= index %>">
-                <button type="submit" class="option-button"><%= option.text %></button>
-            </form>
-        </li>
-    <% }); %>
-</ul>
+<body>
+    <div class="flex flex-col justify-center items-center h-screen">
+        <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full"></div>
+
+        <div class="max-w-lg mx-auto p-8 bg-white rounded shadow-md h-1/2">
+            <h1 class="text-2xl font-bold mb-4"><%= question.questionText %></h1>
+            <ul>
+                <% question.options.forEach((option, index) => { %>
+                    <li class="mb-2">
+                        <form id="<%= index %>" class="feedback-form" data-question-id="<%= question._id %>">
+                            <input type="hidden" name="option" value="<%= index %>">
+                            <button id="opt-btn" type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                <%= option.text %>
+                            </button>
+                        </form>
+                        <div id="feedbackResult<%= index %>"></div>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Attach click event listener to each button inside the form
+            document.querySelectorAll('.feedback-form button').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    // Prevent default button behavior (form submission)
+                    event.preventDefault();
+    
+                    const optionIndex = button.parentElement.querySelector('input[name="option"]').value;
+                    const questionID = button.parentElement.getAttribute('data-question-id');
+    
+                    console.log("Option index submitted:", optionIndex);
+                    console.log("Question ID:", questionID);
+
+                    fetch('/feedback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ optionIndex: optionIndex, questionID: questionID })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Question associated with option:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+    </script>
+     
+</body>
 <%- include("templates/footer") %>
