@@ -166,7 +166,8 @@ app.get('/startencounter', (req, res) => {
 app.get('/question', async (req, res) => {
     try {
 
-        // Fetch random question from the MongoDB collection
+		const answeredQuestions = [];
+
         const question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).next();
         questionID = question._id; // Assign the fetched question's ID to questionID
 				console.log(questionID);

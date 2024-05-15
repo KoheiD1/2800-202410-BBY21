@@ -69,7 +69,7 @@
     
                         const modalFeedback = document.getElementById("modalFeedback");
                         modalFeedback.textContent = data.feedback;
-                        openModal(data.result); // Open the modal
+                        openModal(data.result);
 
                         console.log("Opened Feedback");
     
@@ -85,36 +85,30 @@
             const feedbackModal = document.getElementById('feedbackModal');
             feedbackModal.classList.remove("hidden");
 
-            // Get the modal feedback element
             const modalFeedback = document.getElementById("modalFeedback");
 
-            // Check if correct is true
             if (correct === true) {
-                // If correct, display "Correct" in a big h2 element at the top
                 const h2Element = document.createElement('h2');
                 h2Element.textContent = "Correct";
-                h2Element.style.fontSize = "2rem"; // Set font size to be big
-                h2Element.style.textAlign = "center"; // Center the text
-                h2Element.style.marginTop = "1rem"; // Add top margin
+                h2Element.style.fontSize = "2rem";
+                h2Element.style.textAlign = "center";
+                h2Element.style.marginTop = "1rem";
                 modalFeedback.insertBefore(h2Element, modalFeedback.firstChild);
             } else {
                 const h2Element = document.createElement('h2');
                 h2Element.textContent = "Wrong";
-                h2Element.style.fontSize = "2rem"; // Set font size to be big
-                h2Element.style.textAlign = "center"; // Center the text
-                h2Element.style.marginTop = "1rem"; // Add top margin
+                h2Element.style.fontSize = "2rem";
+                h2Element.style.textAlign = "center"; 
+                h2Element.style.marginTop = "1rem"; 
                 modalFeedback.insertBefore(h2Element, modalFeedback.firstChild);
             }
         }
 
-
-
-
-    
         function closeModalFunction() {
-    document.getElementById('feedbackModal').classList.add("hidden");
-    console.log("close modal");
-}
+            document.getElementById('feedbackModal').classList.add("hidden");
+            console.log("close modal");
+            window.location.href = '/question';
+        }
 
     </script>
     
