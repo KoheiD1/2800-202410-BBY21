@@ -38,7 +38,6 @@ const questionCollection = database.db(mongodb_database).collection('questions')
 const enemiesCollection = database.db(mongodb_database).collection('enemies');
 
 app.use(express.urlencoded({ extended: false }));
-
 app.set('view engine', 'ejs');
 
 const currMap = new ObjectId("663e7a12dad64c6bf7d9f544");
@@ -50,7 +49,6 @@ var mongoStore = MongoStore.create({
 	}
 })
 
-
 app.use(session({
 	secret: node_session_secret,
 	store: mongoStore, //default is memory store 
@@ -58,7 +56,6 @@ app.use(session({
 	resave: true
 }
 ));
-
 
 const profileRoutes = require('./profileRoutes');
 app.use('/', profileRoutes(userCollection));
@@ -78,8 +75,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, purchaseItem, chooseEnemy} = require('./game');
-
+const { damageCalculator, coinDistribution, purchaseItem, chooseEnemy } = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -102,7 +98,6 @@ function inGame(req, res, next) {
 		next();
 	}
 }
-
 
 app.get('/', inGame, (req, res) => {
 	res.render("index");
@@ -136,17 +131,12 @@ app.get('/startGame', (req, res) => {
 	res.redirect('/map');
 });
 
-app.get('/map',  async (req, res) => {
+app.get('/map', async (req, res) => {
 	const result = await pathsCollection.find({ _id: currMap }).project({
 		row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
 		r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
 		r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
 	}).toArray();
-	// req.gameSession.health = 1000;
-	// req.gameSession.gold = 0;
-	// req.gameSession.inventory = [];
-	// req.gameSession.answeredQuestions = [];
-	// req.gameSession.playerDamage = 5;
 
 	res.render("map", { rows: result[0], id: currMap });
 });
@@ -170,26 +160,25 @@ app.post('/startencounter', async (req, res) => {
 	req.session.battleSession = {
 		enemyName: enemy.enemyName,
 		enemyHealth: enemy.enemyHealth,
-		enemyDMG: enemy.enemyDMG, 
+		enemyDMG: enemy.enemyDMG,
 		encounterQuestions: encounterQuestions,
 		answerdQuestions: [],
 		index: req.body.index,
 		row: req.body.row,
-		difficulty: req.body.difficulty	
+		difficulty: req.body.difficulty
 	};
 
 	res.redirect(`/question?encounterQuestions=${encodeURIComponent(JSON.stringify(encounterQuestions))}`);
-});	
-
+});
 
 app.get('/question', async (req, res) => {
-    try {	
+	try {
 
-        const randomIndex = Math.floor(Math.random() * req.session.battleSession.encounterQuestions.length);
+		const randomIndex = Math.floor(Math.random() * req.session.battleSession.encounterQuestions.length);
 		const question = req.session.battleSession.encounterQuestions[randomIndex];
-        questionID = question._id; // Assign the fetched question's ID to questionID
-				console.log(questionID);
-		
+		questionID = question._id; // Assign the fetched question's ID to questionID
+		console.log(questionID);
+
 		console.log("Encounter Questions before:", req.session.battleSession.encounterQuestions);
 
 		req.session.battleSession.encounterQuestions.splice(randomIndex, 1); // Remove the question from the encounterQuestions array
@@ -197,29 +186,28 @@ app.get('/question', async (req, res) => {
 		console.log("Encounter Questions:", req.session.battleSession.encounterQuestions);
 		console.log("Answered Questions:", req.session.battleSession.answerdQuestions);
 		console.log("Opening questions page");
-        res.render('question', { question: question, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth});
-    } catch (error) {
-        console.error('Error fetching question:', error);
-        res.status(500).send('Internal Server Error');
-    }
+		res.render('question', { question: question, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
+	} catch (error) {
+		console.error('Error fetching question:', error);
+		res.status(500).send('Internal Server Error');
+	}
 });
 
 app.post('/feedback', async (req, res) => {
-	
-    try {
-        const { optionIndex, questionID } = req.body;
+	try {
+		const { optionIndex, questionID } = req.body;
 
 		console.log("Option Index: " + optionIndex);
 		console.log("Question ID: " + questionID);
 
 		const parsedQuestionID = new ObjectId(questionID);
 
-        const question = await questionCollection.findOne({ _id: parsedQuestionID });
+		const question = await questionCollection.findOne({ _id: parsedQuestionID });
 
-        if (!question) {
-            console.error('No question found for ID:',parsedQuestionID);
-            return res.status(404).json({ error: 'No question found' });
-        }
+		if (!question) {
+			console.error('No question found for ID:', parsedQuestionID);
+			return res.status(404).json({ error: 'No question found' });
+		}
 
 		if (!question.options || !Array.isArray(question.options)) {
 			console.error('Invalid question data:', question);
@@ -239,18 +227,17 @@ app.post('/feedback', async (req, res) => {
 
 		if (selectedOption.isCorrect === true) {
 			result = true;
-        }
+		}
 
 		damageCalculator(result, req);
-		
-        res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
-		
+
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
+
 	} catch (error) {
 		console.error('Error fetching feedback:', error);
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
-
 
 app.post('/submitUser', async (req, res) => {
 	var username = req.body.username;
@@ -327,9 +314,7 @@ app.get('/loggedin', (req, res) => {
 	if (!req.session.authenticated) {
 		res.redirect('/login');
 	}
-	var html = `
-    You are logged in!
-    `;
+	var html = `You are logged in!`;
 	res.send(html);
 });
 
@@ -347,136 +332,63 @@ app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
 	const difficulty = req.session.battleSession.difficulty;
-	
-	
+
 	var result = await pathsCollection.find({ _id: currMap }).project({ ['r' + row + 'connect']: 1 }).toArray();
 	var arr = result[0]['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {
-		await pathsCollection.updateOne({ _id: currMap },
-			{
-				$push: { ['r' + (eval(row) + 1) + 'active']: element }
-			});
+		await pathsCollection.updateOne({ _id: currMap }, { $push: { ['r' + (eval(row) + 1) + 'active']: element } });
 	});
 
 	await pathsCollection.updateOne({ _id: currMap },
-		{
-			$set: { ['r' + row + 'active']: [0, 2, 4] }
-		});
+		{ $set: { ['r' + row + 'active']: [0, 2, 4] } });
 
 	await pathsCollection.updateOne({ _id: currMap },
-		{
-			$set: { ['row' + row + '.0.status']: "notChosen", ['row' + row + '.2.status']: "notChosen", ['row' + row + '.4.status']: "notChosen" }
-		});
+		{ $set: { ['row' + row + '.0.status']: "notChosen", ['row' + row + '.2.status']: "notChosen", ['row' + row + '.4.status']: "notChosen" } });
 
 	await pathsCollection.updateOne({ _id: currMap },
-		{
-			$set: { ['row' + row + '.' + index + '.status']: "chosen" }
-		});
+		{ $set: { ['row' + row + '.' + index + '.status']: "chosen" } });
 	res.render("victory");
 });
 
 app.post('/mapreset', async (req, res) => {
 	var id = req.body.id;
-
 	await pathsCollection.updateOne({ _id: new ObjectId(id) },
 		{
 			$set: {
-
 				"row0": [
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "circle",
-						"status": "chosen"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "empty"
-					}
+					{ "shape": "empty" },
+					{ "shape": "empty" },
+					{ "shape": "circle", "status": "chosen" },
+					{ "shape": "empty" },
+					{ "shape": "empty" }
 				],
 				"row1": [
-					{
-						"shape": "square",
-						"status": "unvisited"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "triangle",
-						"status": "unvisited"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "square",
-						"status": "unvisited"
-					}
+					{ "shape": "square", "status": "unvisited" },
+					{ "shape": "empty" },
+					{ "shape": "triangle", "status": "unvisited" },
+					{ "shape": "empty" },
+					{ "shape": "square", "status": "unvisited" }
 				],
 				"row2": [
-					{
-						"shape": "square",
-						"status": "unvisited"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "triangle",
-						"status": "unvisited"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "triangle",
-						"status": "unvisited"
-					}
+					{ "shape": "square", "status": "unvisited" },
+					{ "shape": "empty" },
+					{ "shape": "triangle", "status": "unvisited" },
+					{ "shape": "empty" },
+					{ "shape": "triangle", "status": "unvisited" }
 				],
 				"row3": [
-					{
-						"shape": "triangle",
-						"status": "unvisited"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "square",
-						"status": "unvisited"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "pentagon",
-						"status": "unvisited"
-					}
+					{ "shape": "triangle", "status": "unvisited" },
+					{ "shape": "empty" },
+					{ "shape": "square", "status": "unvisited" },
+					{ "shape": "empty" },
+					{ "shape": "pentagon", "status": "unvisited" }
 				],
 				"row4": [
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "hexagon",
-						"status": "unvisited"
-					},
-					{
-						"shape": "empty"
-					},
-					{
-						"shape": "empty"
-					}
+					{ "shape": "empty" },
+					{ "shape": "empty" },
+					{ "shape": "hexagon", "status": "unvisited" },
+					{ "shape": "empty" },
+					{ "shape": "empty" }
 				],
 				"r0active": [
 					2
@@ -487,105 +399,47 @@ app.post('/mapreset', async (req, res) => {
 					4
 				],
 				"r2active": [
-
 				],
 				"r3active": [
-
 				],
 				"r4active": [
-
 				],
 				"r0connect": [
-					[
-
-					],
-					[
-
-					],
-					[
-						0,
-						2,
-						4
-					],
-					[
-
-					],
-					[
-
-					]
+					[],
+					[],
+					[0, 2, 4],
+					[],
+					[]
 				],
 				"r1connect": [
-					[
-						0,
-						2
-					],
-					[
-
-					],
-					[
-						2
-					],
-					[
-
-					],
-					[
-						4
-					]
+					[0, 2],
+					[],
+					[2],
+					[],
+					[4]
 				],
 				"r2connect": [
-					[
-						0
-					],
-					[
-
-					],
-					[
-						2
-					],
-					[
-
-					],
-					[
-						2,
-						4
-					]
+					[0],
+					[],
+					[2],
+					[],
+					[2, 4]
 				],
 				"r3connect": [
-					[
-						2
-					],
-					[
-
-					],
-					[
-						2
-					],
-					[
-
-					],
-					[
-						2
-					]
+					[2],
+					[],
+					[2],
+					[],
+					[2]
 				],
 				"r4connect": [
-					[
-
-					],
-					[
-
-					],
-					[
-
-					],
-					[
-
-					],
-					[
-
-					]
+					[],
+					[],
+					[],
+					[],
+					[]
 				]
 			}
-
 		});
 	res.redirect('/map');
 });
