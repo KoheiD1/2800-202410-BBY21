@@ -128,7 +128,7 @@ app.get('/shop', async (req, res) => {
 app.get('/startGame', (req, res) => {
 	// When the player starts the game it creates a new game session
 	req.session.gameSession = {
-		playerHealth: 1000,
+		playerHealth: 10,
 		playerDMG: 5,
 		playerInventory: [],
 		playerCoins: 0
@@ -197,7 +197,7 @@ app.get('/question', async (req, res) => {
 		console.log("Encounter Questions:", req.session.battleSession.encounterQuestions);
 		console.log("Answered Questions:", req.session.battleSession.answerdQuestions);
 		console.log("Opening questions page");
-        res.render('question', { question: question, enemyHealth: req.session.battleSession.enemyHealth});
+        res.render('question', { question: question, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth});
     } catch (error) {
         console.error('Error fetching question:', error);
         res.status(500).send('Internal Server Error');
@@ -243,7 +243,7 @@ app.post('/feedback', async (req, res) => {
 
 		damageCalculator(result, req);
 		
-        res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth });
+        res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
 		
 	} catch (error) {
 		console.error('Error fetching feedback:', error);
@@ -347,7 +347,8 @@ app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
 	const difficulty = req.session.battleSession.difficulty;
-
+	
+	
 	var result = await pathsCollection.find({ _id: currMap }).project({ ['r' + row + 'connect']: 1 }).toArray();
 	var arr = result[0]['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {

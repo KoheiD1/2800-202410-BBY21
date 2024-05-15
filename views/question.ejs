@@ -65,6 +65,7 @@
                     .then(data => {
                         console.log('Feedback:', data.feedback);
                         enemyHealth = data.enemyHealth;
+                        playerHealth = data.playerHealth;
                         console.log("Feedback Result: ", data.result);
     
                         const modalFeedback = document.getElementById("modalFeedback");
@@ -107,8 +108,10 @@
         function closeModalFunction() {
             document.getElementById('feedbackModal').classList.add("hidden");
 
-            if(enemyHealth == 0){
+            if(enemyHealth <= 0){
                 window.location.href = '/victory';
+            }else if(playerHealth <= 0){
+                window.location.href = '/defeat';
             }else{
                 window.location.href = '/question';
             }
