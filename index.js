@@ -91,6 +91,7 @@ app.use((req, res, next) => {
 	next();
 });
 
+//Middleware to check if the game session is active
 function inGame(req, res, next) {
 	if (!req.session.gameSession != null) {
 		req.session.gameSession = null;
@@ -101,6 +102,7 @@ function inGame(req, res, next) {
 		next();
 	}
 }
+
 
 app.get('/', inGame, (req, res) => {
 	res.render("index");
@@ -134,7 +136,7 @@ app.get('/startGame', (req, res) => {
 	res.redirect('/map');
 });
 
-app.get('/map', async (req, res) => {
+app.get('/map',  async (req, res) => {
 	const result = await pathsCollection.find({ _id: currMap }).project({
 		row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
 		r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
@@ -159,16 +161,16 @@ app.get('/login', (req, res) => {
 
 var questionID; // Define questionID at the module level to make it accessible across routes
 
-app.get('/startencounter', async (req, res) => {
+app.post('/startencounter', async (req, res) => {
 	// When the player starts the game it creates a new game session
 	let enemies = await enemiesCollection.find().toArray();
-	var enemy = chooseEnemy(req, 1, enemies);
+	console.log("Difficulty: " + req.body.difficulty);
+	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
 
 	req.session.battleSession = {
 		enemyName: enemy.enemyName,
 		enemyHealth: enemy.enemyHealth,
-		enemyDMG: enemy.enemyDMG,
-		enemyDifficulty: enemy.enemyDifficulty, 
+		enemyDMG: enemy.enemyDMG, 
 	};
 
 	console.log("enemy name: " + req.session.battleSession.enemyName);

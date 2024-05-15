@@ -31,8 +31,9 @@ function coinDistribution(req) {
 
 function chooseEnemy(req, difficulty, enemies) {
     fightablteEnemies = [];
+    
     enemies.forEach(enemy => {
-        if(enemy.difficulty <= difficulty){
+        if(enemy.difficulty == difficulty){
             fightablteEnemies.push(enemy);
         }
     });

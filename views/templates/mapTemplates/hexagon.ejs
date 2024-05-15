@@ -1,7 +1,7 @@
 <% switch(status) {
   case 'unvisited' : %>
   <div>
-    <form action="/encounter" method="POST">
+    <form action="/startencounter" method="POST">
       <input type="hidden" name="row" value="<%- row %>">
       <input type="hidden" name="difficulty" value="hexagon">
       <input type="hidden" name="index" value="<%- index %>">
