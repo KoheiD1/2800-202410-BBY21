@@ -1,37 +1,19 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
 <div class="grid grid-rows-9 p-2">
   <%- include("templates/mapTemplates/row", {arr: rows.row4, active: rows.r4active, row: 4}) %>
-  <div class="grid grid-cols-5">
-    <div></div>
-    <div><img class="object-contain" src="/right.svg" alt="home"></div>
-    <div><img class="object-contain" src="/middle.svg" alt="home"></div>
-    <div><img class="object-contain" src="/left.svg" alt="home"></div>
-    <div></div>
-  </div>
+  <%- include("templates/mapTemplates/connections", {rowConnect: rows.r3connect}) %>
   <%- include("templates/mapTemplates/row", {arr: rows.row3, active: rows.r3active, row: 3}) %>
-  <div class="grid grid-cols-5">
-    <div><img class="object-contain" src="/middle.svg" alt="home"></div>
-    <div></div>
-    <div><img class="object-contain" src="/middle.svg" alt="home"></div>
-    <div><img class="object-contain" src="/left.svg" alt="home"></div>
-    <div><img class="object-contain" src="/middle.svg" alt="home"></div>
-  </div>
+  <%- include("templates/mapTemplates/connections", {rowConnect: rows.r2connect}) %>
   <%- include("templates/mapTemplates/row", {arr: rows.row2, active: rows.r2active, row: 2}) %>
-  <div class="grid grid-cols-5">
-    <div><img class="object-contain" src="/middle.svg" alt="home"></div>
-    <div><img class="object-contain" src="/right.svg" alt="home"></div>
-    <div><img class="object-contain" src="/middle.svg" alt="home"></div>
-    <div></div>
-    <div><img class="object-contain" src="/middle.svg" alt="home"></div>
-  </div>
+  <%- include("templates/mapTemplates/connections", {rowConnect: rows.r1connect}) %>
   <%- include("templates/mapTemplates/row", {arr: rows.row1, active: rows.r1active, row: 1}) %>
-  <div class="grid grid-cols-5">
-    <div></div>
-    <div><img class="object-contain" src="/left.svg" alt="home"></div>
-    <div><img class="object-contain" src="/middle.svg" alt="home"></div>
-    <div><img class="object-contain" src="/right.svg" alt="home"></div>
-    <div></div>
-  </div>
+  <%- include("templates/mapTemplates/connections", {rowConnect: rows.r0connect}) %>
   <%- include("templates/mapTemplates/row", {arr: rows.row0, active: rows.r0active, row: 0}) %>
+</div>
+<div>
+  <form action="/mapreset" method="post"> 
+    <input type="hidden" name="id" value="<%- id %>">
+    <input type="image" src="/reset.png" class="w-full" alt="home">
+  </form>
 </div>
 <%- include("templates/footer") %>

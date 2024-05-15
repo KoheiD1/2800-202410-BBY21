@@ -15,13 +15,41 @@ function damageCalculator(choice, req) {
 }
 
 function coinDistribution(req) {
-    var coins = Math.floor(Math.random() * 10) + 1;
+    var coins = 10;
     req.session.gameSession.playerCoins += coins;
 }
 
+// function damageMultiplier(req) {
+//     var playerDamage = req.session.gameSession.playerDMG;
+//     var playerInventory = req.session.gameSession.playerInventory;
+    
+//     playerInventory.forEach(item => {
+//         item.
+//     });
+
+// }
+
+function purchaseItem(req, item) {
+    console.log("item price: " + item.price);
+    if(purchasable(req.session.gameSession.playerCoins, item.price)){
+        req.session.gameSession.playerCoins -= item.price;
+        req.session.gameSession.playerInventory.push(item);
+    }else{
+        return false;
+    }
+}
+
+function purchasable(coins, price){
+    if(coins >= price){
+        return true;
+    }else{
+        return false;
+    }
+}
 
 
 module.exports = {
     damageCalculator,
-    coinDistribution
+    coinDistribution,
+    purchaseItem
 };

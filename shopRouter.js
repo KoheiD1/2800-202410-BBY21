@@ -3,12 +3,15 @@ const router = express.Router();
 const ejs = require('ejs');
 
 router.use(express.urlencoded({extended: false}));
+const {purchaseItem } = require('./game');
 
 
 
 module.exports = function(itemCollection, userCollection) {
     router.get('/shop', async (req, res) => {
         res.locals.userProfilePic = req.session.profile_pic;
+        res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+        res.locals.gameStarted = req.session.gameSession ? true : false;
         if(req.session.authenticated) {
             let items = await itemCollection.find().toArray();
             let itemsPicked = new Array(3);
@@ -58,9 +61,11 @@ module.exports = function(itemCollection, userCollection) {
         }
 
         result[0].itemList[result[0].itemList.length] = item;
-        userCollection.updateOne({username: name}, { $set : {itemList: result[0].itemList}});
+        if(!purchaseItem(req, item)){
+           
+        }
 
-        res.redirect('/');
+        res.redirect('/shop');
     });
 
     router.get("/itemAdder", (req, res) => {
@@ -76,7 +81,8 @@ module.exports = function(itemCollection, userCollection) {
         item.type = req.body.itemName;
 
         if(item.type == "") {
-            res.redirect("/itemAdder?msg=Name Needed");
+            history.back();
+            res.send("Item Name Needed");
         }
 
         item.effects = [];
@@ -103,10 +109,11 @@ module.exports = function(itemCollection, userCollection) {
         item.price = req.body.price;
 
         if(item.price == "") {
-            res.redirect("/itemAdder?msg=Price Needed");
+            history.back();
+            res.send("Price Needed");
         }
 
-        await itemCollection.insertOne(item);
+        // await itemCollection.insertOne(item);
 
         let string = "/itemAdder?msg=Item Added&pwd=" + process.env.ITEM_PASSWORD;
         res.redirect(string);
