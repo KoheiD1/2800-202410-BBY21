@@ -163,6 +163,7 @@ app.get('/startencounter', (req, res) => {
 	req.session.battleSession = {
 		enemyHealth: 100,
 		enemyDMG: 10,
+		answeredQuestions: [],
 	};
 	res.redirect('/question');
 });
