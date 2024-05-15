@@ -207,16 +207,17 @@ app.post('/feedback', async (req, res) => {
             return res.status(500).json({ error: 'Invalid optionIndex' });
         }
 
-        let feedback;
-        if (selectedOption.isCorrect) {
-            feedback = "Success! You chose the correct option.";
-        } else {
-            feedback = "Sorry, the option you chose is incorrect.";
+		const feedback = selectedOption.feedback || "No feedback available."
+
+		let result = false;
+
+		if (selectedOption.isCorrect === true) {
+			result = true;
         }
 
         console.log("Feedback:", feedback);
 
-        res.json({ feedback: feedback });
+        res.json({ feedback: feedback, result: result});
 
     } catch (error) {
         console.error('Error fetching feedback:', error);

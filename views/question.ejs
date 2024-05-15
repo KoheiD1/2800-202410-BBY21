@@ -34,6 +34,7 @@
             <div class="flex justify-end">
                 <button id="closeModal" class="text-blue-500 hover:text-gray-700 z-50" onclick="closeModalFunction()">Done</button>
             </div>
+            
             <p id="modalFeedback" class="mt-4"></p>
         </div>
     </div>
@@ -63,10 +64,12 @@
                     .then(response => response.json())
                     .then(data => {
                         console.log('Feedback:', data.feedback);
+
+                        console.log("Feedback Result: ", data.result);
     
                         const modalFeedback = document.getElementById("modalFeedback");
                         modalFeedback.textContent = data.feedback;
-                        openModal(); // Open the modal
+                        openModal(data.result); // Open the modal
 
                         console.log("Opened Feedback");
     
@@ -78,9 +81,34 @@
             });
         });
     
-        function openModal() {
-    document.getElementById('feedbackModal').classList.remove("hidden");
-}
+        function openModal(correct) {
+            const feedbackModal = document.getElementById('feedbackModal');
+            feedbackModal.classList.remove("hidden");
+
+            // Get the modal feedback element
+            const modalFeedback = document.getElementById("modalFeedback");
+
+            // Check if correct is true
+            if (correct === true) {
+                // If correct, display "Correct" in a big h2 element at the top
+                const h2Element = document.createElement('h2');
+                h2Element.textContent = "Correct";
+                h2Element.style.fontSize = "2rem"; // Set font size to be big
+                h2Element.style.textAlign = "center"; // Center the text
+                h2Element.style.marginTop = "1rem"; // Add top margin
+                modalFeedback.insertBefore(h2Element, modalFeedback.firstChild);
+            } else {
+                const h2Element = document.createElement('h2');
+                h2Element.textContent = "Wrong";
+                h2Element.style.fontSize = "2rem"; // Set font size to be big
+                h2Element.style.textAlign = "center"; // Center the text
+                h2Element.style.marginTop = "1rem"; // Add top margin
+                modalFeedback.insertBefore(h2Element, modalFeedback.firstChild);
+            }
+        }
+
+
+
 
     
         function closeModalFunction() {
