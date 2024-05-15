@@ -79,7 +79,8 @@ module.exports = function(itemCollection, userCollection) {
         item.type = req.body.itemName;
 
         if(item.type == "") {
-            res.redirect("/itemAdder?msg=Name Needed");
+            history.back();
+            res.send("Item Name Needed");
         }
 
         item.effects = [];
@@ -106,12 +107,13 @@ module.exports = function(itemCollection, userCollection) {
         item.price = req.body.price;
 
         if(item.price == "") {
-            res.redirect("/itemAdder?msg=Price Needed");
+            history.back();
+            res.send("Price Needed");
         }
 
-        await itemCollection.insertOne(item);
+        // await itemCollection.insertOne(item);
 
-        let string = "/itemAdder?msg=Item Added" + item;
+        let string = "/itemAdder?msg=Item Added&pwd=" + process.env.ITEM_PASSWORD;
         res.redirect(string);
     });
 
