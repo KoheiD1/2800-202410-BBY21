@@ -29,6 +29,20 @@ function coinDistribution(req) {
 
 // }
 
+function chooseEnemy(req, difficulty, enemies) {
+    fightablteEnemies = [];
+    
+    enemies.forEach(enemy => {
+        if(enemy.difficulty == difficulty){
+            fightablteEnemies.push(enemy);
+        }
+    });
+
+    var rand = Math.floor(Math.random() * fightablteEnemies.length);
+    return fightablteEnemies[rand];
+};
+
+
 function purchaseItem(req, item) {
     console.log("item price: " + item.price);
     if(purchasable(req.session.gameSession.playerCoins, item.price)){
@@ -51,5 +65,6 @@ function purchasable(coins, price){
 module.exports = {
     damageCalculator,
     coinDistribution,
-    purchaseItem
+    purchaseItem,
+    chooseEnemy
 };

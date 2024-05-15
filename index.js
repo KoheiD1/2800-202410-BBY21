@@ -35,6 +35,7 @@ const userCollection = database.db(mongodb_database).collection('users');
 const itemCollection = database.db(mongodb_database).collection('items');
 const pathsCollection = database.db(mongodb_database).collection('paths');
 const questionCollection = database.db(mongodb_database).collection('questions');
+const enemiesCollection = database.db(mongodb_database).collection('enemies');
 
 app.use(express.urlencoded({ extended: false }));
 
@@ -77,7 +78,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, purchaseItem } = require('./game');
+const { damageCalculator, coinDistribution, purchaseItem, chooseEnemy} = require('./game');
 
 
 // Middleware to set the user profile picture and authentication status in the response locals
@@ -90,6 +91,7 @@ app.use((req, res, next) => {
 	next();
 });
 
+//Middleware to check if the game session is active
 function inGame(req, res, next) {
 	if (!req.session.gameSession != null) {
 		req.session.gameSession = null;
@@ -100,6 +102,7 @@ function inGame(req, res, next) {
 		next();
 	}
 }
+
 
 app.get('/', inGame, (req, res) => {
 	res.render("index");
@@ -125,7 +128,7 @@ app.get('/shop', async (req, res) => {
 app.get('/startGame', (req, res) => {
 	// When the player starts the game it creates a new game session
 	req.session.gameSession = {
-		playerHealth: 1000,
+		playerHealth: 10,
 		playerDMG: 5,
 		playerInventory: [],
 		playerCoins: 0
@@ -133,7 +136,7 @@ app.get('/startGame', (req, res) => {
 	res.redirect('/map');
 });
 
-app.get('/map', async (req, res) => {
+app.get('/map',  async (req, res) => {
 	const result = await pathsCollection.find({ _id: currMap }).project({
 		row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
 		r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
@@ -158,27 +161,43 @@ app.get('/login', (req, res) => {
 
 var questionID; // Define questionID at the module level to make it accessible across routes
 
-app.get('/startencounter', (req, res) => {
+app.post('/startencounter', async (req, res) => {
 	// When the player starts the game it creates a new game session
+	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 5 } }]).toArray();
+	let enemies = await enemiesCollection.find().toArray();
+	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
+
 	req.session.battleSession = {
-		enemyHealth: 100,
-		enemyDMG: 10,
-		answeredQuestions: [],
+		enemyName: enemy.enemyName,
+		enemyHealth: enemy.enemyHealth,
+		enemyDMG: enemy.enemyDMG, 
+		encounterQuestions: encounterQuestions,
+		answerdQuestions: [],
+		index: req.body.index,
+		row: req.body.row,
+		difficulty: req.body.difficulty	
 	};
-	res.redirect('/question');
-});
+
+	res.redirect(`/question?encounterQuestions=${encodeURIComponent(JSON.stringify(encounterQuestions))}`);
+});	
 
 
 app.get('/question', async (req, res) => {
-	try {
+    try {	
 
-		const answeredQuestions = [];
-
-        const question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).next();
+        const randomIndex = Math.floor(Math.random() * req.session.battleSession.encounterQuestions.length);
+		const question = req.session.battleSession.encounterQuestions[randomIndex];
         questionID = question._id; // Assign the fetched question's ID to questionID
 				console.log(questionID);
+		
+		console.log("Encounter Questions before:", req.session.battleSession.encounterQuestions);
+
+		req.session.battleSession.encounterQuestions.splice(randomIndex, 1); // Remove the question from the encounterQuestions array
+		req.session.battleSession.answerdQuestions.push(question); // Add the question ID to the answerdQuestions array
+		console.log("Encounter Questions:", req.session.battleSession.encounterQuestions);
+		console.log("Answered Questions:", req.session.battleSession.answerdQuestions);
 		console.log("Opening questions page");
-        res.render('question', { question: question});
+        res.render('question', { question: question, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth});
     } catch (error) {
         console.error('Error fetching question:', error);
         res.status(500).send('Internal Server Error');
@@ -222,10 +241,10 @@ app.post('/feedback', async (req, res) => {
 			result = true;
         }
 
-		console.log("Feedback:", feedback);
-
-        res.json({ feedback: feedback, result: result});
-
+		damageCalculator(result, req);
+		
+        res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
+		
 	} catch (error) {
 		console.error('Error fetching feedback:', error);
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -324,11 +343,12 @@ app.post('/encounter', (req, res) => {
 	res.render("encounter", { difficulty: req.body.difficulty, index: req.body.index, row: req.body.row });
 });
 
-app.post('/victory', async (req, res) => {
-	const index = req.body.index;
-	const row = req.body.row;
-	const difficulty = req.body.difficulty;
-
+app.get('/victory', async (req, res) => {
+	const index = req.session.battleSession.index;
+	const row = req.session.battleSession.row;
+	const difficulty = req.session.battleSession.difficulty;
+	
+	
 	var result = await pathsCollection.find({ _id: currMap }).project({ ['r' + row + 'connect']: 1 }).toArray();
 	var arr = result[0]['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {
