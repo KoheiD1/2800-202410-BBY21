@@ -106,118 +106,13 @@ app.get('/', inGame, (req, res) => {
 });
 
 app.use('/profile', profileRoutes);
+
 app.get('/createUser', (req, res) => {
 	res.render("createUser");
 });
 
 app.get('/login', (req, res) => {
 	res.render("login");
-});
-
-var questionID; // Define questionID at the module level to make it accessible across routes
-
-app.post('/startencounter', async (req, res) => {
-	// When the player starts the game it creates a new game session
-	await levelOneCollection.deleteMany({});
-	
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 15 } }]).toArray();
-
-	await levelOneCollection.insertMany(encounterQuestions);
-
-	//console.log("Amount of questions: " + encounterQuestions.length);
-	let enemies = await enemiesCollection.find().toArray();
-	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
-
-	req.session.battleSession = {
-		enemyName: enemy.enemyName,
-		enemyHealth: enemy.enemyHealth,
-		enemyDMG: enemy.enemyDMG,
-		answerdQuestions: [],
-		index: req.body.index,
-		row: req.body.row,
-		difficulty: req.body.difficulty
-	};
-
-	//console.log("battleSession: " + JSON.stringify(req.session.battleSession));
-
-	res.redirect('/question');
-});
-
-app.get('/question', async (req, res) => {
-    try {
-        const battleSession = req.session.battleSession;
-        const gameSession = req.session.gameSession;
-
-        //console.log("Battle Session: " + JSON.stringify(battleSession));
-
-        battleSession.answeredQuestions = battleSession.answeredQuestions || [];
-
-        const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
-
-        //console.log("answeredQuestions: " + battleSession.answeredQuestions);
-
-        if (!question) {
-            res.redirect('/map');
-            return;
-        }
-
-        await levelOneCollection.deleteOne({ _id: question._id });
-
-
-        res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth });
-    } catch (error) {
-        console.error('Error fetching question:', error);
-        res.redirect('/map');
-    }
-});
-
-
-
-app.post('/feedback', async (req, res) => {
-	try {
-		const { optionIndex, questionID } = req.body;
-
-		//console.log("Option Index: " + optionIndex);
-		//console.log("Question ID: " + questionID);
-
-		const parsedQuestionID = new ObjectId(questionID);
-
-		const question = await questionCollection.findOne({ _id: parsedQuestionID });
-
-		if (!question) {
-			console.error('No question found for ID:', parsedQuestionID);
-			return res.status(404).json({ error: 'No question found' });
-		}
-
-		if (!question.options || !Array.isArray(question.options)) {
-			console.error('Invalid question data:', question);
-			return res.status(500).json({ error: 'Invalid question data' });
-		}
-
-		const selectedOption = question.options[optionIndex];
-
-		if (!selectedOption) {
-			console.error('Invalid optionIndex:', optionIndex);
-			return res.status(500).json({ error: 'Invalid optionIndex' });
-		}
-
-		const feedback = selectedOption.feedback || "No feedback available."
-
-		let result = false;
-
-		if (selectedOption.isCorrect === true) {
-			result = true;
-		}
-
-		damageCalculator(result, req);
-		coinDistribution(req);
-
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
-
-	} catch (error) {
-		console.error('Error fetching feedback:', error);
-		res.status(500).json({ error: 'Internal Server Error' });
-	}
 });
 
 app.post('/submitUser', async (req, res) => {
@@ -248,10 +143,6 @@ app.post('/submitUser', async (req, res) => {
 	req.session.cookie.maxAge = expireTime;
 
 	res.redirect('profile');
-});
-
-app.get('/login', (req, res) => {
-	res.render("login");
 });
 
 app.post('/loggingin', async (req, res) => {
@@ -335,8 +226,10 @@ app.get('/map', async (req, res) => {
 
 app.post('/startencounter', async (req, res) => {
 	// When the player starts the game it creates a new game session
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 0 } }]).toArray();
-	console.log("Amount of questions: " + encounterQuestions.length);
+	await levelOneCollection.deleteMany({});
+	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 15 } }]).toArray();
+	await levelOneCollection.insertMany(encounterQuestions);
+
 	let enemies = await enemiesCollection.find().toArray();
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
 
@@ -344,7 +237,6 @@ app.post('/startencounter', async (req, res) => {
 		enemyName: enemy.enemyName,
 		enemyHealth: enemy.enemyHealth,
 		enemyDMG: enemy.enemyDMG,
-		encounterQuestions: encounterQuestions,
 		answerdQuestions: [],
 		index: req.body.index,
 		row: req.body.row,
@@ -355,32 +247,20 @@ app.post('/startencounter', async (req, res) => {
 
 app.get('/question', async (req, res) => {
 	try {
-		const battleSession = req.session.battleSession;
-		const gameSession = req.session.gameSession;
+			const battleSession = req.session.battleSession;
+			const gameSession = req.session.gameSession;
+			battleSession.answeredQuestions = battleSession.answeredQuestions || [];
+			const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
 
-		battleSession.answeredQuestions = battleSession.answeredQuestions || [];
-		let question = null;
-		do {
-			question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).toArray();
-			question = question[0];
-			if (!question) break;
-		} while (battleSession.answeredQuestions.includes(question._id));
-
-		// If question is null, redirect to map
-		if (!question) {
-			res.redirect('/map');
-			return;
-		}
-		const questionID = question._id; // Assign the fetched question's ID to questionID
-
-		// Add the question ID to answeredQuestions array
-		battleSession.answeredQuestions.push(questionID);
-
-		// Render the question page with necessary data
-		res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth });
+			if (!question) {
+					res.redirect('/map');
+					return;
+			}
+			await levelOneCollection.deleteOne({ _id: question._id });
+			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth });
 	} catch (error) {
-		// Handle errors by logging and redirecting
-		res.redirect('/map');
+			console.error('Error fetching question:', error);
+			res.redirect('/map');
 	}
 });
 
@@ -416,6 +296,7 @@ app.post('/feedback', async (req, res) => {
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
+
 
 app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
