@@ -105,159 +105,8 @@ app.get('/', inGame, (req, res) => {
 });
 
 app.use('/profile', profileRoutes);
-
-app.get('/shop', async (req, res) => {
-	let items = await itemCollection.find().toArray();
-	let itemsPicked = new Array(3);
-	for (let i = 0; i < 3 && i < items.length; i++) {
-		let rand;
-		do {
-			rand = parseInt(Math.random() * items.length);
-		} while (items[rand] == null);
-
-		itemsPicked[i] = items[rand];
-		items[rand] = null;
-	}
-	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2] });
-});
-
-app.get('/startGame', (req, res) => {
-	// When the player starts the game it creates a new game session
-	req.session.gameSession = {
-		playerHealth: 100,
-		playerDMG: 5,
-		playerInventory: [],
-		playerCoins: 0,
-		mapSet: false,
-		mapID: null
-	}
-	res.redirect('/map');
-});
-
-app.get('/map', async (req, res) => {
-
-	if (!req.session.gameSession.mapSet) {
-		const result = await pathsCollection.find({ _id: currMap }).project({
-			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
-			r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
-			r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
-		}).toArray();
-		
-		await userRunsCollection.insertOne({ path: result[0]}).then(result => {
-			req.session.gameSession.mapID = result.insertedId;});
-		await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID }, { $set: { email: req.session.email } });
-
-	 	req.session.gameSession.mapSet = true;
-	}
-	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
-	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID });
-});
-
 app.get('/createUser', (req, res) => {
 	res.render("createUser");
-});
-
-app.get('/login', (req, res) => {
-	res.render("login");
-});
-
-var questionID; // Define questionID at the module level to make it accessible across routes
-
-app.post('/startencounter', async (req, res) => {
-	// When the player starts the game it creates a new game session
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 0 } }]).toArray();
-	console.log("Amount of questions: " + encounterQuestions.length);
-	let enemies = await enemiesCollection.find().toArray();
-	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
-
-	req.session.battleSession = {
-		enemyName: enemy.enemyName,
-		enemyHealth: enemy.enemyHealth,
-		enemyDMG: enemy.enemyDMG,
-		encounterQuestions: encounterQuestions,
-		answerdQuestions: [],
-		index: req.body.index,
-		row: req.body.row,
-		difficulty: req.body.difficulty
-	};
-
-	res.redirect('/question');
-});
-
-app.get('/question', async (req, res) => {
-    try {
-        
-        const battleSession = req.session.battleSession;
-        const gameSession = req.session.gameSession;
-
-        battleSession.answeredQuestions = battleSession.answeredQuestions || [];
-
-        let question = null;
-        do {
-
-            question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).toArray();
-            question = question[0]; 
-
-            if (!question) break;
-
-        } while (battleSession.answeredQuestions.includes(question._id));
-
-        // If question is null, redirect to map
-        if (!question) {
-            res.redirect('/map');
-            return;
-        }
-
-        const questionID = question._id; // Assign the fetched question's ID to questionID
-
-        // Add the question ID to answeredQuestions array
-        battleSession.answeredQuestions.push(questionID);
-
-        // Render the question page with necessary data
-        res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth });
-    } catch (error) {
-        // Handle errors by logging and redirecting
-        res.redirect('/map');
-    }
-});
-
-
-
-
-app.post('/feedback', async (req, res) => {
-	try {
-		const { optionIndex, questionID } = req.body;
-
-		const parsedQuestionID = new ObjectId(questionID);
-
-		const question = await questionCollection.findOne({ _id: parsedQuestionID });
-
-		if (!question) {
-			return res.status(404).json({ error: 'No question found' });
-		}
-
-		if (!question.options || !Array.isArray(question.options)) {
-			return res.status(500).json({ error: 'Invalid question data' });
-		}
-
-		const selectedOption = question.options[optionIndex];
-
-		if (!selectedOption) {
-			return res.status(500).json({ error: 'Invalid optionIndex' });
-		}
-
-		const feedback = selectedOption.feedback || "No feedback available."
-		let result = false;
-
-		if (selectedOption.isCorrect === true) {
-			result = true;
-		}
-		damageCalculator(result, req);
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
-
-	} catch (error) {
-		res.status(500).json({ error: 'Internal Server Error' });
-	}
 });
 
 app.post('/submitUser', async (req, res) => {
@@ -288,6 +137,10 @@ app.post('/submitUser', async (req, res) => {
 	req.session.cookie.maxAge = expireTime;
 
 	res.redirect('profile');
+});
+
+app.get('/login', (req, res) => {
+	res.render("login");
 });
 
 app.post('/loggingin', async (req, res) => {
@@ -337,15 +190,131 @@ app.get('/logout', (req, res) => {
 	res.redirect('/');
 });
 
+app.get('/startGame', (req, res) => {
+	// When the player starts the game it creates a new game session
+	req.session.gameSession = {
+		playerHealth: 100,
+		playerDMG: 5,
+		playerInventory: [],
+		playerCoins: 0,
+		mapSet: false,
+		mapID: null
+	}
+	res.redirect('/map');
+});
+
+app.get('/map', async (req, res) => {
+	if (!req.session.gameSession.mapSet) {
+		const result = await pathsCollection.find({ _id: currMap }).project({
+			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
+			r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
+			r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
+		}).toArray();
+
+		await userRunsCollection.insertOne({ path: result[0] }).then(result => {
+			req.session.gameSession.mapID = result.insertedId;
+		});
+		await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID }, { $set: { email: req.session.email } });
+
+		req.session.gameSession.mapSet = true;
+	}
+	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
+	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID });
+});
+
+app.post('/startencounter', async (req, res) => {
+	// When the player starts the game it creates a new game session
+	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 0 } }]).toArray();
+	console.log("Amount of questions: " + encounterQuestions.length);
+	let enemies = await enemiesCollection.find().toArray();
+	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
+
+	req.session.battleSession = {
+		enemyName: enemy.enemyName,
+		enemyHealth: enemy.enemyHealth,
+		enemyDMG: enemy.enemyDMG,
+		encounterQuestions: encounterQuestions,
+		answerdQuestions: [],
+		index: req.body.index,
+		row: req.body.row,
+		difficulty: req.body.difficulty
+	};
+	res.redirect('/question');
+});
+
+app.get('/question', async (req, res) => {
+	try {
+		const battleSession = req.session.battleSession;
+		const gameSession = req.session.gameSession;
+
+		battleSession.answeredQuestions = battleSession.answeredQuestions || [];
+		let question = null;
+		do {
+			question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).toArray();
+			question = question[0];
+			if (!question) break;
+		} while (battleSession.answeredQuestions.includes(question._id));
+
+		// If question is null, redirect to map
+		if (!question) {
+			res.redirect('/map');
+			return;
+		}
+		const questionID = question._id; // Assign the fetched question's ID to questionID
+
+		// Add the question ID to answeredQuestions array
+		battleSession.answeredQuestions.push(questionID);
+
+		// Render the question page with necessary data
+		res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth });
+	} catch (error) {
+		// Handle errors by logging and redirecting
+		res.redirect('/map');
+	}
+});
+
+app.post('/feedback', async (req, res) => {
+	try {
+		const { optionIndex, questionID } = req.body;
+		const parsedQuestionID = new ObjectId(questionID);
+		const question = await questionCollection.findOne({ _id: parsedQuestionID });
+
+		if (!question) {
+			return res.status(404).json({ error: 'No question found' });
+		}
+
+		if (!question.options || !Array.isArray(question.options)) {
+			return res.status(500).json({ error: 'Invalid question data' });
+		}
+
+		const selectedOption = question.options[optionIndex];
+		if (!selectedOption) {
+			return res.status(500).json({ error: 'Invalid optionIndex' });
+		}
+
+		const feedback = selectedOption.feedback || "No feedback available."
+		let result = false;
+
+		if (selectedOption.isCorrect === true) {
+			result = true;
+		}
+		damageCalculator(result, req);
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
+
+	} catch (error) {
+		res.status(500).json({ error: 'Internal Server Error' });
+	}
+});
+
 app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
 	const difficulty = req.session.battleSession.difficulty;
 
-	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path : 1 }).toArray();
+	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
 	var arr = result[0].path['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {
-		await userRunsCollection.updateOne({ _id:  new ObjectId(req.session.gameSession.mapID) }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
+		await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
 	});
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
@@ -359,6 +328,10 @@ app.get('/victory', async (req, res) => {
 	res.render("victory");
 });
 
+app.get('/defeat', (req, res) => {
+	res.render("defeat");
+});
+
 app.post('/mapreset', async (req, res) => {
 	var id = req.body.id;
 	const result = await pathsCollection.find({ _id: currMap }).project({
@@ -368,13 +341,24 @@ app.post('/mapreset', async (req, res) => {
 	}).toArray();
 	await userRunsCollection.updateOne({ _id: new ObjectId(id) },
 		{
-			$set: {path: result[0]}
+			$set: { path: result[0] }
 		});
 	res.redirect('/map');
 });
 
-app.get('/defeat', (req, res) => {
-	res.render("defeat");
+app.get('/shop', async (req, res) => {
+	let items = await itemCollection.find().toArray();
+	let itemsPicked = new Array(3);
+	for (let i = 0; i < 3 && i < items.length; i++) {
+		let rand;
+		do {
+			rand = parseInt(Math.random() * items.length);
+		} while (items[rand] == null);
+
+		itemsPicked[i] = items[rand];
+		items[rand] = null;
+	}
+	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2] });
 });
 
 app.use(express.static(__dirname + "/public"));
