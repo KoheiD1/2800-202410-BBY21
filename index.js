@@ -145,15 +145,11 @@ app.get('/map', async (req, res) => {
 		
 		await userRunsCollection.insertOne({ path: result[0]}).then(result => {
 			req.session.gameSession.mapID = result.insertedId;});
-		console.log("req.session.mapid : " + req.session.gameSession.mapID);
 		await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID }, { $set: { email: req.session.email } });
 
 	 	req.session.gameSession.mapSet = true;
 	}
-	// req.session.gameSession.mapSet = false;
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
-	// console.log("req.session.mapid : " + req.session.gameSession.mapID);
-	// console.log(result[0]);
 	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID });
 });
 
@@ -185,8 +181,6 @@ app.post('/startencounter', async (req, res) => {
 		difficulty: req.body.difficulty
 	};
 
-	console.log("battleSession: " + JSON.stringify(req.session.battleSession));
-
 	res.redirect('/question');
 });
 
@@ -195,8 +189,6 @@ app.get('/question', async (req, res) => {
         
         const battleSession = req.session.battleSession;
         const gameSession = req.session.gameSession;
-
-        console.log("Battle Session: " + JSON.stringify(battleSession));
 
         battleSession.answeredQuestions = battleSession.answeredQuestions || [];
 
@@ -210,8 +202,6 @@ app.get('/question', async (req, res) => {
 
         } while (battleSession.answeredQuestions.includes(question._id));
 
-		console.log("answerdQuestions: " + battleSession.answeredQuestions);
-
         // If question is null, redirect to map
         if (!question) {
             res.redirect('/map');
@@ -219,7 +209,6 @@ app.get('/question', async (req, res) => {
         }
 
         const questionID = question._id; // Assign the fetched question's ID to questionID
-        console.log("Question ID: " + questionID);
 
         // Add the question ID to answeredQuestions array
         battleSession.answeredQuestions.push(questionID);
@@ -228,7 +217,6 @@ app.get('/question', async (req, res) => {
         res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth });
     } catch (error) {
         // Handle errors by logging and redirecting
-        console.error('Error fetching question:', error);
         res.redirect('/map');
     }
 });
@@ -240,44 +228,34 @@ app.post('/feedback', async (req, res) => {
 	try {
 		const { optionIndex, questionID } = req.body;
 
-		console.log("Option Index: " + optionIndex);
-		console.log("Question ID: " + questionID);
-
 		const parsedQuestionID = new ObjectId(questionID);
 
 		const question = await questionCollection.findOne({ _id: parsedQuestionID });
 
 		if (!question) {
-			console.error('No question found for ID:', parsedQuestionID);
 			return res.status(404).json({ error: 'No question found' });
 		}
 
 		if (!question.options || !Array.isArray(question.options)) {
-			console.error('Invalid question data:', question);
 			return res.status(500).json({ error: 'Invalid question data' });
 		}
 
 		const selectedOption = question.options[optionIndex];
 
 		if (!selectedOption) {
-			console.error('Invalid optionIndex:', optionIndex);
 			return res.status(500).json({ error: 'Invalid optionIndex' });
 		}
 
 		const feedback = selectedOption.feedback || "No feedback available."
-
 		let result = false;
 
 		if (selectedOption.isCorrect === true) {
 			result = true;
 		}
-
 		damageCalculator(result, req);
-
 		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
 
 	} catch (error) {
-		console.error('Error fetching feedback:', error);
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
@@ -296,7 +274,6 @@ app.post('/submitUser', async (req, res) => {
 
 	const validationResult = schema.validate({ username, email, password });
 	if (validationResult.error != null) {
-		console.log(validationResult.error);
 		res.redirect("/createUser");
 		return;
 	}
@@ -304,14 +281,12 @@ app.post('/submitUser', async (req, res) => {
 	var hashedPassword = await bcrypt.hash(password, saltRounds);
 
 	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword });
-	console.log("Inserted user");
 
 	req.session.authenticated = true;
 	req.session.username = username;
 	req.session.email = email;
 	req.session.cookie.maxAge = expireTime;
 
-	var html = "successfully created user";
 	res.redirect('profile');
 });
 
@@ -322,21 +297,17 @@ app.post('/loggingin', async (req, res) => {
 	const schema = Joi.string().max(20).required();
 	const validationResult = schema.validate(email);
 	if (validationResult.error != null) {
-		console.log(validationResult.error);
 		res.redirect("/login");
 		return;
 	}
 
 	const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, _id: 1, profile_pic: 1 }).toArray();
 
-	console.log(result);
 	if (result.length != 1) {
-		console.log("user not found");
 		res.redirect("/login");
 		return;
 	}
 	if (await bcrypt.compare(password, result[0].password)) {
-		console.log("correct password");
 		req.session.authenticated = true;
 		req.session.email = email;
 		req.session.profile_pic = result[0].profile_pic;
@@ -347,7 +318,6 @@ app.post('/loggingin', async (req, res) => {
 		return;
 	}
 	else {
-		console.log("incorrect password");
 		res.redirect("/login");
 		return;
 	}
@@ -373,7 +343,6 @@ app.get('/victory', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path : 1 }).toArray();
-	console.log(result[0]);
 	var arr = result[0].path['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {
 		await userRunsCollection.updateOne({ _id:  new ObjectId(req.session.gameSession.mapID) }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
@@ -392,94 +361,14 @@ app.get('/victory', async (req, res) => {
 
 app.post('/mapreset', async (req, res) => {
 	var id = req.body.id;
+	const result = await pathsCollection.find({ _id: currMap }).project({
+		row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
+		r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
+		r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
+	}).toArray();
 	await userRunsCollection.updateOne({ _id: new ObjectId(id) },
 		{
-			$set: {
-				"path.row0": [
-					{ "shape": "empty" },
-					{ "shape": "empty" },
-					{ "shape": "circle", "status": "chosen" },
-					{ "shape": "empty" },
-					{ "shape": "empty" }
-				],
-				"path.row1": [
-					{ "shape": "square", "status": "unvisited" },
-					{ "shape": "empty" },
-					{ "shape": "triangle", "status": "unvisited" },
-					{ "shape": "empty" },
-					{ "shape": "square", "status": "unvisited" }
-				],
-				"path.row2": [
-					{ "shape": "square", "status": "unvisited" },
-					{ "shape": "empty" },
-					{ "shape": "triangle", "status": "unvisited" },
-					{ "shape": "empty" },
-					{ "shape": "triangle", "status": "unvisited" }
-				],
-				"path.row3": [
-					{ "shape": "triangle", "status": "unvisited" },
-					{ "shape": "empty" },
-					{ "shape": "square", "status": "unvisited" },
-					{ "shape": "empty" },
-					{ "shape": "pentagon", "status": "unvisited" }
-				],
-				"path.row4": [
-					{ "shape": "empty" },
-					{ "shape": "empty" },
-					{ "shape": "hexagon", "status": "unvisited" },
-					{ "shape": "empty" },
-					{ "shape": "empty" }
-				],
-				"path.r0active": [
-					2
-				],
-				"path.r1active": [
-					0,
-					2,
-					4
-				],
-				"path.r2active": [
-				],
-				"path.r3active": [
-				],
-				"path.r4active": [
-				],
-				"path.r0connect": [
-					[],
-					[],
-					[0, 2, 4],
-					[],
-					[]
-				],
-				"path.r1connect": [
-					[0, 2],
-					[],
-					[2],
-					[],
-					[4]
-				],
-				"path.r2connect": [
-					[0],
-					[],
-					[2],
-					[],
-					[2, 4]
-				],
-				"path.r3connect": [
-					[2],
-					[],
-					[2],
-					[],
-					[2]
-				],
-				"path.r4connect": [
-					[],
-					[],
-					[],
-					[],
-					[]
-				]
-			}
+			$set: {path: result[0]}
 		});
 	res.redirect('/map');
 });
