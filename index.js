@@ -11,6 +11,7 @@ const saltRounds = 12;
 const port = process.env.PORT || 3000;
 
 const app = express();
+
 //const profileRoutes = require('./profileRoutes');
 // const shopRouter = require('./shopRouter.js');
 const Joi = require("joi");
@@ -147,6 +148,19 @@ app.get('/createUser', (req, res) => {
 
 app.get('/login', (req, res) => {
 	res.render("login");
+});
+
+const emailRoute = require('./emailRoute');
+app.use(express.json());
+app.use(emailRoute);
+
+app.get('/forgotPassword', (req, res) => {
+	res.render("forgotPassword");
+});
+
+app.get('/resetPassword', (req, res) => {
+	const token = req.query.token;
+	res.render('resetPassword', { token: token });
 });
 
 var questionID; // Define questionID at the module level to make it accessible across routes
