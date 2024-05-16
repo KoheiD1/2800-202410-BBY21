@@ -205,7 +205,7 @@ app.get('/startGame', async (req, res) => {
 	
 	try {
 		await new Promise((resolve, reject) => {
-			if (req.session.gameSession.mapSet) {
+			if (!req.session.gameSession.mapSet) {
 				resolve();
 			} else {
 				reject(new Error('Game session map is not set'));
