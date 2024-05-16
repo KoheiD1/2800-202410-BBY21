@@ -36,6 +36,7 @@ const itemCollection = database.db(mongodb_database).collection('items');
 const pathsCollection = database.db(mongodb_database).collection('paths');
 const questionCollection = database.db(mongodb_database).collection('questions');
 const enemiesCollection = database.db(mongodb_database).collection('enemies');
+const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -153,8 +154,13 @@ var questionID; // Define questionID at the module level to make it accessible a
 
 app.post('/startencounter', async (req, res) => {
 	// When the player starts the game it creates a new game session
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 0 } }]).toArray();
-	console.log("Amount of questions: " + encounterQuestions.length);
+	await levelOneCollection.deleteMany({});
+	
+	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 15 } }]).toArray();
+
+	await levelOneCollection.insertMany(encounterQuestions);
+
+	//console.log("Amount of questions: " + encounterQuestions.length);
 	let enemies = await enemiesCollection.find().toArray();
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
 
@@ -162,56 +168,40 @@ app.post('/startencounter', async (req, res) => {
 		enemyName: enemy.enemyName,
 		enemyHealth: enemy.enemyHealth,
 		enemyDMG: enemy.enemyDMG,
-		encounterQuestions: encounterQuestions,
 		answerdQuestions: [],
 		index: req.body.index,
 		row: req.body.row,
 		difficulty: req.body.difficulty
 	};
 
-	console.log("battleSession: " + JSON.stringify(req.session.battleSession));
+	//console.log("battleSession: " + JSON.stringify(req.session.battleSession));
 
 	res.redirect('/question');
 });
 
 app.get('/question', async (req, res) => {
     try {
-        
         const battleSession = req.session.battleSession;
         const gameSession = req.session.gameSession;
 
-        console.log("Battle Session: " + JSON.stringify(battleSession));
+        //console.log("Battle Session: " + JSON.stringify(battleSession));
 
         battleSession.answeredQuestions = battleSession.answeredQuestions || [];
 
-        let question = null;
-        do {
+        const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
 
-            question = await questionCollection.aggregate([{ $sample: { size: 1 } }]).toArray();
-            question = question[0]; 
+        //console.log("answeredQuestions: " + battleSession.answeredQuestions);
 
-            if (!question) break;
-
-        } while (battleSession.answeredQuestions.includes(question._id));
-
-		console.log("answerdQuestions: " + battleSession.answeredQuestions);
-
-        // If question is null, redirect to map
         if (!question) {
             res.redirect('/map');
             return;
         }
 
-        const questionID = question._id; // Assign the fetched question's ID to questionID
-        console.log("Question ID: " + questionID);
+        await levelOneCollection.deleteOne({ _id: question._id });
 
-        // Add the question ID to answeredQuestions array
-        battleSession.answeredQuestions.push(questionID);
 
-        // Render the question page with necessary data
         res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth });
     } catch (error) {
-        // Handle errors by logging and redirecting
         console.error('Error fetching question:', error);
         res.redirect('/map');
     }
@@ -219,13 +209,12 @@ app.get('/question', async (req, res) => {
 
 
 
-
 app.post('/feedback', async (req, res) => {
 	try {
 		const { optionIndex, questionID } = req.body;
 
-		console.log("Option Index: " + optionIndex);
-		console.log("Question ID: " + questionID);
+		//console.log("Option Index: " + optionIndex);
+		//console.log("Question ID: " + questionID);
 
 		const parsedQuestionID = new ObjectId(questionID);
 
