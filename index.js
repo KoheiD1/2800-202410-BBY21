@@ -36,6 +36,7 @@ const itemCollection = database.db(mongodb_database).collection('items');
 const pathsCollection = database.db(mongodb_database).collection('paths');
 const questionCollection = database.db(mongodb_database).collection('questions');
 const enemiesCollection = database.db(mongodb_database).collection('enemies');
+const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -126,19 +127,34 @@ app.get('/startGame', (req, res) => {
 		playerHealth: 100,
 		playerDMG: 5,
 		playerInventory: [],
-		playerCoins: 0
+		playerCoins: 0,
+		mapSet: false,
+		mapID: null
 	}
 	res.redirect('/map');
 });
 
 app.get('/map', async (req, res) => {
-	const result = await pathsCollection.find({ _id: currMap }).project({
-		row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
-		r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
-		r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
-	}).toArray();
 
-	res.render("map", { rows: result[0], id: currMap });
+	if (!req.session.gameSession.mapSet) {
+		const result = await pathsCollection.find({ _id: currMap }).project({
+			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
+			r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
+			r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
+		}).toArray();
+		
+		await userRunsCollection.insertOne({ path: result[0]}).then(result => {
+			req.session.gameSession.mapID = result.insertedId;});
+		console.log("req.session.mapid : " + req.session.gameSession.mapID);
+		await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID }, { $set: { email: req.session.email } });
+
+	 	req.session.gameSession.mapSet = true;
+	}
+	// req.session.gameSession.mapSet = false;
+	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
+	console.log("req.session.mapid : " + req.session.gameSession.mapID);
+	console.log(result[0]);
+	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID });
 });
 
 app.get('/createUser', (req, res) => {
@@ -168,7 +184,7 @@ app.post('/startencounter', async (req, res) => {
 		difficulty: req.body.difficulty
 	};
 
-	res.redirect(`/question?encounterQuestions=${encodeURIComponent(JSON.stringify(encounterQuestions))}`);
+	res.redirect(`/question`);
 });
 
 app.get('/question', async (req, res) => {
@@ -324,115 +340,111 @@ app.get('/logout', (req, res) => {
 	res.redirect('/');
 });
 
-app.post('/encounter', (req, res) => {
-	res.render("encounter", { difficulty: req.body.difficulty, index: req.body.index, row: req.body.row });
-});
-
 app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
 	const difficulty = req.session.battleSession.difficulty;
 
-	var result = await pathsCollection.find({ _id: currMap }).project({ ['r' + row + 'connect']: 1 }).toArray();
-	var arr = result[0]['r' + row + 'connect'][index];
+	var result = await userRunsCollection.find({ _id: req.session.gameSession.mapID }).project({ path : 1 }).toArray();
+	var arr = result[0][path]['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {
-		await pathsCollection.updateOne({ _id: currMap }, { $push: { ['r' + (eval(row) + 1) + 'active']: element } });
+		await userRunsCollection.updateOne({ _id:  req.session.gameSession.mapID }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
 	});
 
-	await pathsCollection.updateOne({ _id: currMap },
-		{ $set: { ['r' + row + 'active']: [0, 2, 4] } });
+	await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID },
+		{ $set: { ['path.r' + row + 'active']: [0, 2, 4] } });
 
-	await pathsCollection.updateOne({ _id: currMap },
-		{ $set: { ['row' + row + '.0.status']: "notChosen", ['row' + row + '.2.status']: "notChosen", ['row' + row + '.4.status']: "notChosen" } });
+	await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID },
+		{ $set: { ['path.row' + row + '.0.status']: "notChosen", ['row' + row + '.2.status']: "notChosen", ['row' + row + '.4.status']: "notChosen" } });
 
-	await pathsCollection.updateOne({ _id: currMap },
-		{ $set: { ['row' + row + '.' + index + '.status']: "chosen" } });
+	await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID },
+		{ $set: { ['path.row' + row + '.' + index + '.status']: "chosen" } });
 	res.render("victory");
 });
 
 app.post('/mapreset', async (req, res) => {
 	var id = req.body.id;
-	await pathsCollection.updateOne({ _id: new ObjectId(id) },
+	await userRunsCollection.updateOne({ _id: new ObjectId(id) },
 		{
 			$set: {
-				"row0": [
+				"path.row0": [
 					{ "shape": "empty" },
 					{ "shape": "empty" },
 					{ "shape": "circle", "status": "chosen" },
 					{ "shape": "empty" },
 					{ "shape": "empty" }
 				],
-				"row1": [
+				"path.row1": [
 					{ "shape": "square", "status": "unvisited" },
 					{ "shape": "empty" },
 					{ "shape": "triangle", "status": "unvisited" },
 					{ "shape": "empty" },
 					{ "shape": "square", "status": "unvisited" }
 				],
-				"row2": [
+				"path.row2": [
 					{ "shape": "square", "status": "unvisited" },
 					{ "shape": "empty" },
 					{ "shape": "triangle", "status": "unvisited" },
 					{ "shape": "empty" },
 					{ "shape": "triangle", "status": "unvisited" }
 				],
-				"row3": [
+				"path.row3": [
 					{ "shape": "triangle", "status": "unvisited" },
 					{ "shape": "empty" },
 					{ "shape": "square", "status": "unvisited" },
 					{ "shape": "empty" },
 					{ "shape": "pentagon", "status": "unvisited" }
 				],
-				"row4": [
+				"path.row4": [
 					{ "shape": "empty" },
 					{ "shape": "empty" },
 					{ "shape": "hexagon", "status": "unvisited" },
 					{ "shape": "empty" },
 					{ "shape": "empty" }
 				],
-				"r0active": [
+				"path.r0active": [
 					2
 				],
-				"r1active": [
+				"path.r1active": [
 					0,
 					2,
 					4
 				],
-				"r2active": [
+				"path.r2active": [
 				],
-				"r3active": [
+				"path.r3active": [
 				],
-				"r4active": [
+				"path.r4active": [
 				],
-				"r0connect": [
+				"path.r0connect": [
 					[],
 					[],
 					[0, 2, 4],
 					[],
 					[]
 				],
-				"r1connect": [
+				"path.r1connect": [
 					[0, 2],
 					[],
 					[2],
 					[],
 					[4]
 				],
-				"r2connect": [
+				"path.r2connect": [
 					[0],
 					[],
 					[2],
 					[],
 					[2, 4]
 				],
-				"r3connect": [
+				"path.r3connect": [
 					[2],
 					[],
 					[2],
 					[],
 					[2]
 				],
-				"r4connect": [
+				"path.r4connect": [
 					[],
 					[],
 					[],
