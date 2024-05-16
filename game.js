@@ -4,6 +4,16 @@ function damageCalculator(choice, req) {
     var enemyDamage = req.session.battleSession.enemyDMG;
     var playerHealth = req.session.gameSession.playerHealth;
     var playerDamage = req.session.gameSession.playerDMG;
+    var playerInventory = req.session.gameSession.playerInventory;
+
+    //Calculates the player's damage with the items in the inventory
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "damage") {
+                playerDamage +=  item[item.effects[i]];
+            }
+        }
+    });
     
     if (choice) {
         enemyHealth -= playerDamage;
@@ -15,7 +25,7 @@ function damageCalculator(choice, req) {
 }
 
 function coinDistribution(req) {
-    var coins = 10;
+    var coins = 100;
     req.session.gameSession.playerCoins += coins;
 }
 

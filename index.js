@@ -230,6 +230,7 @@ app.post('/feedback', async (req, res) => {
 		}
 
 		damageCalculator(result, req);
+		coinDistribution(req);
 
 		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
 
