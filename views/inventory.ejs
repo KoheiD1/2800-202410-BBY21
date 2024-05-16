@@ -1,24 +1,21 @@
-<%- include('templates/header', {overflowVariable: "overflow-hidden" }) %>
+<%- include('templates/header', {overflowVariable: "flex flex-col h-screen" }) %>
 <dialog class="size-52 text-xl grid">
     <h1>Hello</h1>
     <div></div>
     <br>
     <button class="">close</button>
 </dialog>
-<div class="">
-    <div class="absolute inset-0 z-0 mx-5 mt-5 mb-36 bg-[url('/backpack.png')] bg-no-repeat bg-contain">
-        <!-- <img src="/backpack.png" alt="Image" class="h-full w-full"> -->
-        <div id="items" class="grid grid-cols-4 grid-rows-8 h-full pb-16 p-7">
-            <% for(let i=0; i < items.length; i++) { %>
-                <!-- <% console.log(items[0]) %> -->
-                <%- include('templates/inventoryItem', {item: items[i]}) %>
-            <% } %>
-        </div>
+<div class="relative flex-grow bg-no-repeat bg-contain bg-center" style="background-image: url('/backpack.png');">
+    <div id="items" class="grid grid-cols-4 grid-rows-8 h-full p-7">
+        <% for(let i=0; i < items.length; i++) { %>
+            <%- include('templates/inventoryItem', {item: items[i]}) %>
+        <% } %>
     </div>
-    <div class="flex justify-center align-bottom">
-        
-        <button onclick="history.back()" class="btn btn-blue flex align-bottom">Back</button>
-    </div>
+</div>
+<!-- Container for the button -->
+<div class="flex justify-center items-center h-20 bg-white">
+    <button onclick="history.back()" class="btn btn-blue">Back</button>
+</div>
     
 
     <script>
