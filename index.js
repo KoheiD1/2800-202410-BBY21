@@ -152,8 +152,8 @@ app.get('/map', async (req, res) => {
 	}
 	// req.session.gameSession.mapSet = false;
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
-	console.log("req.session.mapid : " + req.session.gameSession.mapID);
-	console.log(result[0]);
+	// console.log("req.session.mapid : " + req.session.gameSession.mapID);
+	// console.log(result[0]);
 	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID });
 });
 
@@ -372,19 +372,20 @@ app.get('/victory', async (req, res) => {
 	const row = req.session.battleSession.row;
 	const difficulty = req.session.battleSession.difficulty;
 
-	var result = await userRunsCollection.find({ _id: req.session.gameSession.mapID }).project({ path : 1 }).toArray();
-	var arr = result[0][path]['r' + row + 'connect'][index];
+	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path : 1 }).toArray();
+	console.log(result[0]);
+	var arr = result[0].path['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {
-		await userRunsCollection.updateOne({ _id:  req.session.gameSession.mapID }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
+		await userRunsCollection.updateOne({ _id:  new ObjectId(req.session.gameSession.mapID) }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
 	});
 
-	await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID },
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + row + 'active']: [0, 2, 4] } });
 
-	await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID },
-		{ $set: { ['path.row' + row + '.0.status']: "notChosen", ['row' + row + '.2.status']: "notChosen", ['row' + row + '.4.status']: "notChosen" } });
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.row' + row + '.0.status']: "notChosen", ['path.row' + row + '.2.status']: "notChosen", ['path.row' + row + '.4.status']: "notChosen" } });
 
-	await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID },
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.row' + row + '.' + index + '.status']: "chosen" } });
 	res.render("victory");
 });
