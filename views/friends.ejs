@@ -1,4 +1,5 @@
 <%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
+
   <body class="bg-gray-100">
     <style>
       body {
@@ -8,22 +9,30 @@
         min-height: 100vh;
       }
     </style>
-    <div class="max-w-4xl mx-auto py-8">
-      <h1 class="text-3xl px-4 font-bold mb-4">Friends List</h1>
-      <ul>
-        <% if (friendsList && friendsList.length> 0) { %>
-          <% friendsList.forEach(friend=> { %>
-            <li class="py-2 px-4 text-md flex items-center justify-between"
-              style="background-image: url('/username-box.png'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 50px;">
-              <span class="text-gray-900" onclick="getProfileInfo('<%= friend %>')">
-                <%= friend%>
-              </span>
-            </li>
-          <% }); %>
-        <% } else { %>
-          <li class="text-gray-900 px-4">No friends to display</li>
-        <% } %>
-      </ul>
+    <div class="grid grid-flow-row ">
+      <div class="m-2">
+        <h1 class="text-3xl px-4 font-bold mb-4 mx-auto text-center">Friends List</h1>
+        <ul>
+          <% if (friendsList && friendsList.length> 0) { %>
+            <% friendsList.forEach(friend=> { %>
+              <li class="py-2 px-4 text-md flex items-center justify-between max-w-md mx-auto"
+                style="background-image: url('/username-box.png'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 50px;">
+                <span class="text-gray-900" onclick="getProfileInfo('<%= friend %>')">
+                  <%= friend%>
+                </span>
+              </li>
+              <% }); %>
+                <% } else { %>
+                  <li class="text-gray-900 px-4">No friends to display</li>
+                  <% } %>
+        </ul>
+      </div>
+      <div class="mt-10 place-self-center">
+        <form action="/profile">
+          <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+            value="Back to Profile">
+        </form>
+      </div>
     </div>
     <script>
       function getProfileInfo(friendName) {
@@ -45,4 +54,4 @@
       }
     </script>
   </body>
-<%- include("templates/footer") %>
+  <%- include("templates/footer") %>
