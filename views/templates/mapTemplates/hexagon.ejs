@@ -1,0 +1,39 @@
+<% switch(status) {
+  case 'unvisited' : %>
+  <div>
+    <form action="/startencounter" method="POST">
+      <input type="hidden" name="row" value="<%- row %>">
+      <input type="hidden" name="difficulty" value="hexagon">
+      <input type="hidden" name="index" value="<%- index %>">
+      <input type="image" src="/hexagon_black.svg" class="w-full" alt="home">
+    </form>
+  </div>
+  <% break;
+  case 'chosen' : %>
+  <div>
+    <!-- <form action="/encounter" method="POST">
+      <input type="hidden" name="difficulty" value="hexagon">
+      <input type="image" src="/hexagon_green.svg" class="w-full" alt="home">
+    </form> -->
+    <img src="/hexagon_green.svg" class="w-full" alt="home">
+  </div>
+  <% break;
+  case 'notChosen' : %>
+  <div>
+    <!-- <form action="/encounter" method="POST">
+      <input type="hidden" name="difficulty" value="hexagon">
+      <input type="image" src="/hexagon_red.svg" class="w-full" alt="home">
+    </form> -->
+    <img src="/hexagon_red.svg" class="w-full" alt="home">
+  </div>
+  <% break;
+  case 'inactive' : %>
+  <div>
+    <!-- <form action="/encounter" method="POST">
+      <input type="hidden" name="difficulty" value="hexagon">
+      <input type="image" src="/hexagon_black.svg" class="w-full" alt="home">
+    </form> -->
+    <img src="/hexagon_black.svg" class="w-full" alt="home">
+  </div>
+  <% break;
+} %>

@@ -1,126 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User List</title>
-    <!-- Include Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-   
-
-    <style>
-        body {
-            background-image: url('/indexBG.png'); 
-            background-size: cover;
-            background-position: center;
-            min-height: 100vh;
-        }
-
-        /* Style for modal overlay */
-        .modal-overlay {
-            z-index: 50;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-            display: none; /* Initially hidden */
-        }
-    </style>
-</head>
+<%- include("templates/header", {overflowVariable: '' }) %>
 <body class="bg-gray-100">
-    <div class="max-w-4xl mx-auto py-8">
-        <h1 class="text-3xl px-4 font-bold mb-4">Users List</h1>
-        <ul class="divide-y divide-black">
-            <% if (allUsers && allUsers.length > 0) { %>
-                <% allUsers.forEach(user => { %>
-                    <li class="py-2 px-4 text-md flex items-center justify-between" onclick="getProfileInfo('<%= user %>')">
-                        <span class="text-gray-900"><%= user%></span>
-                        <img class="w-8 h-8 cursor-pointer" src="user-add.png" alt="Add Friend" onclick="addFriend('<%= user %>'); this.parentNode.style.display = 'none';">
+  <style>
+    body {
+      background-image: url('/indexBG.png');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+    }
 
-                        <!-- You can add more elements or buttons here for each user if needed -->
-                    </li>
-                <% }); %>
+    /* Style for modal overlay */
+    .modal-overlay {
+      z-index: 50;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      /* Semi-transparent black background */
+      display: none;
+      /* Initially hidden */
+    }
+  </style>
+  <div class="max-w-4xl mx-auto py-8">
+    <h1 class="text-3xl px-4 font-bold mb-4">Users List</h1>
+    <ul>
+      <% if (allUsers && allUsers.length> 0) { %>
+        <% allUsers.forEach(user=> { %>
+          <li class="py-2 px-4 text-md flex items-center justify-between"
+            style="background-image: url('/username-box.png'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 50px;">
+            <span class="text-gray-900" onclick="getProfileInfo('<%= user %>')">
+              <%= user%>
+            </span>
+            <img class="w-8 h-8 cursor-pointer" src="user-add.png" alt="Add Friend"
+              onclick="addFriend('<%= user %>'); this.parentNode.style.display = 'none';">
+          </li>
+          <% }); %>
             <% } else { %>
-                <li class="px-4 text-gray-900">No users to display</li>
-            <% } %>
-        </ul>
-    </div>
+              <li class="px-4 text-gray-900">No users to display</li>
+              <% } %>
+    </ul>
+  </div>
 
-    <!-- Success Modal -->
-    <div id="successModal" class="fixed z-50 inset-0 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="bg-white p-6 rounded-lg w-full max-w-md">
-                <div class="mb-4">
-                    <h2 class="text-lg font-bold">Success</h2>
-                </div>
-                <div class="mb-4">
-                    <p class="text-gray-700">Friend added successfully!</p>
-                </div>
-                <div class="flex justify-end">
-                    <button onclick="closeModal('successModal')" class="bg-blue-500 text-white rounded-md px-4 py-2">OK</button>
-                </div>
-            </div>
+  <!-- Success Modal -->
+  <div id="successModal" class="fixed z-50 inset-0 overflow-y-auto hidden">
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <div class="bg-white p-6 rounded-lg w-full max-w-md">
+        <div class="mb-4">
+          <h2 class="text-lg font-bold">Success</h2>
         </div>
+        <div class="mb-4">
+          <p class="text-gray-700">Friend added successfully!</p>
+        </div>
+        <div class="flex justify-end">
+          <button onclick="closeModal('successModal')" class="bg-blue-500 text-white rounded-md px-4 py-2">OK</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Modal Overlay -->
-    <div id="modalOverlay" class="modal-overlay"></div>
+  <!-- Modal Overlay -->
+  <div id="modalOverlay" class="modal-overlay"></div>
 
-    <script>
-        function getProfileInfo(friendName) {
-    fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
+  <script>
+    function getProfileInfo(friendName) {
+      fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
         method: 'GET'
-    })
-    .then(response => {
-        if (!response.ok) {
+      })
+        .then(response => {
+          if (!response.ok) {
             throw new Error('Failed to get friend profile');
-        }
-        // Redirect to the friend profile page
-        //window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
-        window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
-    })
-    .catch(error => {
-        console.error('Error updating friend profile:', error);
-        alert('Failed to load friend profile');
-    });
-}
+          }
+          // Redirect to the friend profile page
+          //window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
+          window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
+        })
+        .catch(error => {
+          console.error('Error updating friend profile:', error);
+          alert('Failed to load friend profile');
+        });
+    }
 
+    function addFriend(username) {
+      // Send an AJAX request to your server to add the user to the friends list
+      fetch('/addFriend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: username }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to add user to friends list');
+          }
 
-        function addFriend(username) {
-            // Send an AJAX request to your server to add the user to the friends list
-            fetch('/addFriend', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: username }),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to add user to friends list');
-                }
+          openModal('successModal');
+        })
+        .catch(error => {
+          console.error('Error adding user to friends list:', error.message);
+          alert('Failed to add user to friends list');
+        });
+    }
 
-                openModal('successModal');
-            })
-            .catch(error => {
-                console.error('Error adding user to friends list:', error.message);
-                alert('Failed to add user to friends list');
-            });
-        }
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.remove('hidden');
+      document.getElementById('modalOverlay').classList.remove('hidden');
+    }
 
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
-            document.getElementById('modalOverlay').classList.remove('hidden');
-        }
+    // Function to close modal
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+      document.getElementById('modalOverlay').classList.add('hidden');
+    }
 
-        // Function to close modal
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-            document.getElementById('modalOverlay').classList.add('hidden');
-        }
-
-    </script>
+  </script>
 </body>
-</html>
+<%- include("templates/footer") %>

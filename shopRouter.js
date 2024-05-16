@@ -3,10 +3,15 @@ const router = express.Router();
 const ejs = require('ejs');
 
 router.use(express.urlencoded({extended: false}));
+const {purchaseItem } = require('./game');
+
 
 
 module.exports = function(itemCollection, userCollection) {
     router.get('/shop', async (req, res) => {
+        res.locals.userProfilePic = req.session.profile_pic;
+        res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+        res.locals.gameStarted = req.session.gameSession ? true : false;
         if(req.session.authenticated) {
             let items = await itemCollection.find().toArray();
             let itemsPicked = new Array(3);
@@ -56,12 +61,63 @@ module.exports = function(itemCollection, userCollection) {
         }
 
         result[0].itemList[result[0].itemList.length] = item;
-        userCollection.updateOne({username: name}, { $set : {itemList: result[0].itemList}});
+        if(!purchaseItem(req, item)){
+           
+        }
 
-        res.redirect('/');
+        res.redirect('/shop');
     });
 
-    
+    router.get("/itemAdder", (req, res) => {
+        if(req.query.pwd == process.env.ITEM_PASSWORD) {
+            res.render("itemAdder", {msg: req.query.msg});
+        } else {
+            res.send("this page does not exist");
+        }
+    });
+
+    router.post("/addItem", async (req, res) => {
+        let item = {};
+        item.type = req.body.itemName;
+
+        if(item.type == "") {
+            history.back();
+            res.send("Item Name Needed");
+        }
+
+        item.effects = [];
+
+        for(let i = 1; i < 4; i++) {
+            let effectName = 'effect' + i;
+            let name = req.body[effectName];
+            if(name != "") {
+                item.effects[item.effects.length] = name;
+                item[item.effects[item.effects.length - 1]] = new Array(1);
+                item[item.effects[item.effects.length - 1]][0] = req.body[effectName + '-1'];
+                let effectMax = req.body[effectName + '-2'];
+                if(effectMax != "") {
+                    item[item.effects[item.effects.length - 1]][1] = req.body[effectName + '-2'];
+                }
+            } else {
+                if(i == 1) {
+                    res.redirect("/itemAdder?msg=Effect Needed");
+                }
+                break;
+            }
+        }
+
+        item.price = req.body.price;
+
+        if(item.price == "") {
+            history.back();
+            res.send("Price Needed");
+        }
+
+        // await itemCollection.insertOne(item);
+
+        let string = "/itemAdder?msg=Item Added&pwd=" + process.env.ITEM_PASSWORD;
+        res.redirect(string);
+    });
 
     return router;
 }

@@ -28,6 +28,7 @@ module.exports = function(userCollection) {
             const userName = req.session.username;
             
             await userCollection.updateOne({ username: userName }, { $set: { profile_pic: profilePictureUrl } });
+            req.session.profile_pic = profilePictureUrl;
             res.sendStatus(200); 
         } catch (error) {
             console.error('Error updating profile picture:', error);

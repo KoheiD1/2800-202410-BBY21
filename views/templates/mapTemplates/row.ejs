@@ -1,0 +1,11 @@
+<div class="grid grid-cols-5">
+  <% var index = 0; %>
+  <% arr.forEach((item) => { %>
+    <% if (!(active.includes(index))) { %>
+      <%- include("./shape", {shape: item.shape, status: "inactive", index: index, row: row}) %>
+    <% } else { %>
+      <%- include("./shape", {shape: item.shape, status: item.status, index: index, row: row}) %>
+    <% } %>
+    <% index++; %>
+  <%}); %>
+</div>
