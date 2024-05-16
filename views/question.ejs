@@ -48,6 +48,7 @@
     <script>
         var enemyHealth = <%= enemyHealth %>;
         var playerHealth = <%= playerHealth %>;
+        var maxEnemyHealth = <%= maxEnemyHealth %>;
 
         renderHealth(); // Render health bars
         document.addEventListener("DOMContentLoaded", function () {
@@ -75,6 +76,8 @@
                         console.log('Feedback:', data.feedback);
                         enemyHealth = data.enemyHealth;
                         playerHealth = data.playerHealth;
+                        maxEnemyHealth = data.maxEnemyHealth;
+                        console.log("Max Enemy Health: ", maxEnemyHealth);  
                         console.log("Feedback Result: ", data.result);
 
                         const modalFeedback = document.getElementById("modalFeedback");
@@ -98,15 +101,19 @@
             var healthbarLeft = document.getElementById("healthbar-left");
             var healthbarRight = document.getElementById("healthbar-right");
 
+            
+
             var fillsLeft = healthbarLeft.querySelectorAll(".healthbar_fill");
             var fillsRight = healthbarRight.querySelectorAll(".healthbar_fill");
             console.log(playerHealth, enemyHealth);
             var healthLeft = playerHealth;
             var healthRight = enemyHealth;
+            var enemyMaxHP = maxEnemyHealth;
+           
             var maxHp = 100;
 
             var percentLeft = healthLeft / maxHp * 100;
-            var percentRight = healthRight / maxHp * 100;
+            var percentRight = healthRight / enemyMaxHP * 100;
             var leftFill = healthbarLeft.querySelector(".healthbar_fill");
             var rightFill = healthbarRight.querySelector(".healthbar_fill");
             leftFill.style.width = percentLeft + "%";

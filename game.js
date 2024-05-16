@@ -24,9 +24,29 @@ function damageCalculator(choice, req) {
     }
 }
 
-function coinDistribution(req) {
-    var coins = 100;
-    req.session.gameSession.playerCoins += coins;
+    var coinsReceived = false
+function coinDistribution(req, difficulty) {
+    if(!coinsReceived){
+        switch(difficulty) {
+            case "triangle":
+                req.session.gameSession.playerCoins += 5;
+                break;
+            case "square":
+                req.session.gameSession.playerCoins += 10;
+                break;
+            case "pentagon":
+                req.session.gameSession.playerCoins += 20;
+                break;
+            case "hexagon":
+                req.session.gameSession.playerCoins += 50;
+                break;
+        }
+    }   
+   coinsReceived = true;
+}
+
+function resetCoinsReceived() {
+    coinsReceived = false;
 }
 
 // function damageMultiplier(req) {
@@ -76,5 +96,6 @@ module.exports = {
     damageCalculator,
     coinDistribution,
     purchaseItem,
-    chooseEnemy
+    chooseEnemy,
+    resetCoinsReceived
 };

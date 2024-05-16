@@ -42,7 +42,7 @@ const levelOneCollection = database.db(mongodb_database).collection('level-1-que
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 
-const currMap = new ObjectId("663e7a12dad64c6bf7d9f544");
+const currMap = new ObjectId("66467f92599dd72ac79fcec9");
 
 var mongoStore = MongoStore.create({
 	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -77,7 +77,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, purchaseItem, chooseEnemy } = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived} = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -196,7 +196,7 @@ app.get('/startGame', (req, res) => {
 	// When the player starts the game it creates a new game session
 	req.session.gameSession = {
 		playerHealth: 100,
-		playerDMG: 5,
+		playerDMG: 20,
 		playerInventory: [],
 		playerCoins: 0,
 		mapSet: false,
@@ -229,7 +229,7 @@ app.post('/startencounter', async (req, res) => {
 	await levelOneCollection.deleteMany({});
 	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 15 } }]).toArray();
 	await levelOneCollection.insertMany(encounterQuestions);
-
+	resetCoinsReceived()
 	let enemies = await enemiesCollection.find().toArray();
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
 
@@ -237,6 +237,7 @@ app.post('/startencounter', async (req, res) => {
 		enemyName: enemy.enemyName,
 		enemyHealth: enemy.enemyHealth,
 		enemyDMG: enemy.enemyDMG,
+		maxEnemyHealth: enemy.enemyHealth,
 		answerdQuestions: [],
 		index: req.body.index,
 		row: req.body.row,
@@ -257,7 +258,7 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth });
+			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth});
 	} catch (error) {
 			console.error('Error fetching question:', error);
 			res.redirect('/map');
@@ -290,13 +291,40 @@ app.post('/feedback', async (req, res) => {
 			result = true;
 		}
 		damageCalculator(result, req);
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
+		
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth });
 
 	} catch (error) {
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
 
+app.post('/preshop', async (req, res) => {
+	req.session.battleSession = {
+		index: req.body.index,
+		row: req.body.row,
+	};
+	
+	const index = req.session.battleSession.index;
+	const row = req.session.battleSession.row;
+
+	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
+	var arr = result[0].path['r' + row + 'connect'][index];
+	arr.forEach(async (element) => {
+		await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
+	});
+
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.r' + row + 'active']: [0, 2, 4] } });
+
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.row' + row + '.0.status']: "notChosen", ['path.row' + row + '.2.status']: "notChosen", ['path.row' + row + '.4.status']: "notChosen" } });
+
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.row' + row + '.' + index + '.status']: "chosen" } });
+	
+	res.redirect('/shop');
+});
 
 app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
@@ -308,6 +336,10 @@ app.get('/victory', async (req, res) => {
 	arr.forEach(async (element) => {
 		await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
 	});
+
+	//distribute coins depending on difficulty
+	coinDistribution(req, difficulty);
+	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + row + 'active']: [0, 2, 4] } });
