@@ -10,10 +10,13 @@ function damageCalculator(choice, req) {
     playerInventory.forEach(item => {
         for(let i = 0; i < item.effects.length; i++) {
             if(item.effects[i] == "damage") {
-                playerDamage +=  item[item.effects[i]];
+                playerDamage +=  parseInt(item[item.effects[i]]);
             }
         }
     });
+
+    console.log("Player Damage: " + playerDamage);
+    console.log("Enemy Health: " + enemyDamage);
     
     if (choice) {
         enemyHealth -= playerDamage;
