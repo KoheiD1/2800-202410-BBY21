@@ -11,6 +11,7 @@ const saltRounds = 12;
 const port = process.env.PORT || 3000;
 
 const app = express();
+
 //const profileRoutes = require('./profileRoutes');
 // const shopRouter = require('./shopRouter.js');
 const Joi = require("joi");
@@ -113,6 +114,109 @@ app.get('/createUser', (req, res) => {
 
 app.get('/login', (req, res) => {
 	res.render("login");
+});
+
+const emailRoute = require('./emailRoute');
+app.use(express.json());
+app.use(emailRoute);
+
+app.get('/forgotPassword', (req, res) => {
+	res.render("forgotPassword");
+});
+
+app.get('/resetPassword', (req, res) => {
+	const token = req.query.token;
+	res.render('resetPassword', { token: token });
+});
+
+var questionID; // Define questionID at the module level to make it accessible across routes
+
+app.post('/startencounter', async (req, res) => {
+	// When the player starts the game it creates a new game session
+	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 10 } }]).toArray();
+	let enemies = await enemiesCollection.find().toArray();
+	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
+
+	req.session.battleSession = {
+		enemyName: enemy.enemyName,
+		enemyHealth: enemy.enemyHealth,
+		enemyDMG: enemy.enemyDMG,
+		encounterQuestions: encounterQuestions,
+		answerdQuestions: [],
+		index: req.body.index,
+		row: req.body.row,
+		difficulty: req.body.difficulty
+	};
+
+	res.redirect(`/question?encounterQuestions=${encodeURIComponent(JSON.stringify(encounterQuestions))}`);
+});
+
+app.get('/question', async (req, res) => {
+	try {
+
+		const randomIndex = Math.floor(Math.random() * req.session.battleSession.encounterQuestions.length);
+		const question = req.session.battleSession.encounterQuestions[randomIndex];
+		questionID = question._id; // Assign the fetched question's ID to questionID
+		console.log(questionID);
+
+		console.log("Encounter Questions before:", req.session.battleSession.encounterQuestions);
+
+		req.session.battleSession.encounterQuestions.splice(randomIndex, 1); // Remove the question from the encounterQuestions array
+		req.session.battleSession.answerdQuestions.push(question); // Add the question ID to the answerdQuestions array
+		console.log("Encounter Questions:", req.session.battleSession.encounterQuestions);
+		console.log("Answered Questions:", req.session.battleSession.answerdQuestions);
+		console.log("Opening questions page");
+		res.render('question', { question: question, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
+	} catch (error) {
+		console.error('Error fetching question:', error);
+		res.status(500).send('Internal Server Error');
+	}
+});
+
+app.post('/feedback', async (req, res) => {
+	try {
+		const { optionIndex, questionID } = req.body;
+
+		console.log("Option Index: " + optionIndex);
+		console.log("Question ID: " + questionID);
+
+		const parsedQuestionID = new ObjectId(questionID);
+
+		const question = await questionCollection.findOne({ _id: parsedQuestionID });
+
+		if (!question) {
+			console.error('No question found for ID:', parsedQuestionID);
+			return res.status(404).json({ error: 'No question found' });
+		}
+
+		if (!question.options || !Array.isArray(question.options)) {
+			console.error('Invalid question data:', question);
+			return res.status(500).json({ error: 'Invalid question data' });
+		}
+
+		const selectedOption = question.options[optionIndex];
+
+		if (!selectedOption) {
+			console.error('Invalid optionIndex:', optionIndex);
+			return res.status(500).json({ error: 'Invalid optionIndex' });
+		}
+
+		const feedback = selectedOption.feedback || "No feedback available."
+
+		let result = false;
+
+		if (selectedOption.isCorrect === true) {
+			result = true;
+		}
+
+		damageCalculator(result, req);
+
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
+
+	} catch (error) {
+		console.error('Error fetching feedback:', error);
+		res.status(500).json({ error: 'Internal Server Error' });
+	}
 });
 
 app.post('/submitUser', async (req, res) => {
