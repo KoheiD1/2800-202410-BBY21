@@ -1,42 +1,10 @@
-<%- include('templates/header', {overflowVariable: "flex flex-col h-screen" }) %>
-    <dialog class="size-80 text-xl grid flex justify-center">
-        <h1></h1>
-        <div></div>
-        <br>
-        <button class="">close</button>
-    </dialog>
-    <div class="bg-[url('/indexBG.png')] bg-no-repeat bg-cover bg-contain bg-screen">
-        <div class="relative flex-grow bg-no-repeat bg-contain bg-center" style="background-image: url('/backpack.png');">
-            <div id="items" class="grid grid-cols-4 grid-rows-8 h-full p-7 py-12 pb-14">
-                <% for(let i=0; i < items.length; i++) { %>
+<%- include('templates/header', {overflowVariable: "overflow-hidden" }) %>
+    <div class="grid grid-rows-10 h-screen">
+        <div class="row-span-7 bg-[url('/backpack.png')] bg-no-repeat bg-contain bg-center">
+            <div class="grid grid-cols-4 grid-rows-8 h-full w-full py-6 px-16">
+                <% for(let i = 0; i < items.length; i++) { %>
                     <%- include('templates/inventoryItem', {item: items[i]}) %>
-                        <% } %>
+                <% } %>
             </div>
         </div>
-        <!-- Container for the button -->
-        <div class="flex justify-center items-center h-20 bg-white">
-            <button onclick="history.back()" class="btn btn-blue">Back</button>
-        </div>
-    </div>
-
-
-    <script>
-        const dialog = document.querySelector('dialog');
-        const items = document.querySelector("#items");
-        // console.log(items.children[0]);
-        for (let i = 0; i < items.children.length; i++) {
-            // console.log(items.children[i].children[0].innerHTML);
-            items.children[i].addEventListener('click', () => {
-                dialog.getElementsByTagName("h1")[0].innerHTML = items.children[i].children[0].innerHTML;
-                let userItems = (<% - JSON.stringify(items) %>);
-                // console.log(userItems);
-                dialog.getElementsByTagName("div")[0].innerHTML = userItems[i].effects;
-                dialog.showModal();
-                dialog.getElementsByTagName("button")[0].addEventListener('click', () => {
-                    dialog.getElementsByTagName("h1")[0].innerHTML = "";
-                    dialog.close();
-                });
-            });
-        }
-    </script>
     </div>
