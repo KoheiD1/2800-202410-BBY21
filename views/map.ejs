@@ -1,4 +1,4 @@
-<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<%- include("templates/headerloggedinMAP", { overflowVariable: '' }) %>
 <style>
   body {
     background-image: url('/indexBG.png');
@@ -8,14 +8,7 @@
     min-height: 100vh;
   }
 </style>
-<div class="-mt-14 pl-2">
-  <div class="flex justify-start">
-    <form action="/">
-      <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
-        value="Back to Main Menu">
-    </form>
-  </div>
-</div>
+
 <div class="grid grid-rows-9 p-2 max-w-md mx-auto">
   <%- include("templates/mapTemplates/row", {arr: path.row4, active: path.r4active, row: 4}) %>
   <%- include("templates/mapTemplates/connections", {rowConnect: path.r3connect}) %>

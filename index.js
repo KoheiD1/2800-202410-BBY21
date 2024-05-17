@@ -228,7 +228,6 @@ app.get('/startGame', async (req, res) => {
 
 		res.redirect('/map');
 	} catch (error) {
-		console.error('Error starting game:', error);
 		res.redirect('/');
 	}
 });
@@ -286,10 +285,8 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
-			console.log("max enemy health: " + battleSession.maxEnemyHealth);
 			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth});
 	} catch (error) {
-			console.error('Error fetching question:', error);
 			res.redirect('/map');
 	}
 });
