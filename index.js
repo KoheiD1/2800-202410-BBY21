@@ -129,52 +129,6 @@ app.get('/resetPassword', (req, res) => {
 	res.render('resetPassword', { token: token });
 });
 
-app.post('/feedback', async (req, res) => {
-	try {
-		const { optionIndex, questionID } = req.body;
-
-		console.log("Option Index: " + optionIndex);
-		console.log("Question ID: " + questionID);
-
-		const parsedQuestionID = new ObjectId(questionID);
-
-		const question = await questionCollection.findOne({ _id: parsedQuestionID });
-
-		if (!question) {
-			console.error('No question found for ID:', parsedQuestionID);
-			return res.status(404).json({ error: 'No question found' });
-		}
-
-		if (!question.options || !Array.isArray(question.options)) {
-			console.error('Invalid question data:', question);
-			return res.status(500).json({ error: 'Invalid question data' });
-		}
-
-		const selectedOption = question.options[optionIndex];
-
-		if (!selectedOption) {
-			console.error('Invalid optionIndex:', optionIndex);
-			return res.status(500).json({ error: 'Invalid optionIndex' });
-		}
-
-		const feedback = selectedOption.feedback || "No feedback available."
-
-		let result = false;
-
-		if (selectedOption.isCorrect === true) {
-			result = true;
-		}
-
-		damageCalculator(result, req);
-
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
-
-	} catch (error) {
-		console.error('Error fetching feedback:', error);
-		res.status(500).json({ error: 'Internal Server Error' });
-	}
-});
-
 app.post('/submitUser', async (req, res) => {
 	var username = req.body.username;
 	var email = req.body.email;
