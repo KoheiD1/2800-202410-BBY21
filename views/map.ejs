@@ -1,19 +1,29 @@
-<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
-<div class="grid grid-rows-9 p-2">
-  <%- include("templates/mapTemplates/row", {arr: rows.row4, active: rows.r4active, row: 4}) %>
-  <%- include("templates/mapTemplates/connections", {rowConnect: rows.r3connect}) %>
-  <%- include("templates/mapTemplates/row", {arr: rows.row3, active: rows.r3active, row: 3}) %>
-  <%- include("templates/mapTemplates/connections", {rowConnect: rows.r2connect}) %>
-  <%- include("templates/mapTemplates/row", {arr: rows.row2, active: rows.r2active, row: 2}) %>
-  <%- include("templates/mapTemplates/connections", {rowConnect: rows.r1connect}) %>
-  <%- include("templates/mapTemplates/row", {arr: rows.row1, active: rows.r1active, row: 1}) %>
-  <%- include("templates/mapTemplates/connections", {rowConnect: rows.r0connect}) %>
-  <%- include("templates/mapTemplates/row", {arr: rows.row0, active: rows.r0active, row: 0}) %>
+<%- include("templates/headerloggedinMAP", { overflowVariable: '' }) %>
+<style>
+  body {
+    background-image: url('/indexBG.png');
+    background-size: cover;
+    background-position: top;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+</style>
+
+<div class="grid grid-rows-9 p-2 max-w-md mx-auto">
+  <%- include("templates/mapTemplates/row", {arr: path.row4, active: path.r4active, row: 4}) %>
+  <%- include("templates/mapTemplates/connections", {rowConnect: path.r3connect}) %>
+  <%- include("templates/mapTemplates/row", {arr: path.row3, active: path.r3active, row: 3}) %>
+  <%- include("templates/mapTemplates/connections", {rowConnect: path.r2connect}) %>
+  <%- include("templates/mapTemplates/row", {arr: path.row2, active: path.r2active, row: 2}) %>
+  <%- include("templates/mapTemplates/connections", {rowConnect: path.r1connect}) %>
+  <%- include("templates/mapTemplates/row", {arr: path.row1, active: path.r1active, row: 1}) %>
+  <%- include("templates/mapTemplates/connections", {rowConnect: path.r0connect}) %>
+  <%- include("templates/mapTemplates/row", {arr: path.row0, active: path.r0active, row: 0}) %>
 </div>
-<div>
-  <form action="/mapreset" method="post"> 
+<div class="grid max-w-md mx-auto">
+  <form action="/mapreset" method="post" class="mx-auto"> 
     <input type="hidden" name="id" value="<%- id %>">
-    <input type="image" src="/reset.png" class="w-full" alt="home">
+    <input type="image" src="/reset.png" class="w-50 mt-10" alt="home">
   </form>
 </div>
 <%- include("templates/footer") %>

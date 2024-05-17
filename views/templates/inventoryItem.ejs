@@ -1,6 +1,16 @@
+<<<<<<< HEAD
 <div class="flex justify-center text-center items-center hover:text-xl">
     <h1><%= item.type %></h1>
     <% for(let i = 0; i < item.effects.length; i++) { %>
         <!-- <h4><%= item.effects[i] %>: <%= item[item.effects[i]] %></h4> -->
     <% } %>
+=======
+<div class="bg-blue-500 mb-4 mt-4 p-2 justify-center">
+    <h1 class="flex justify-center font-bold"><%= item.type %></h1>
+    <div class="grid justify-center">
+        <% for(let i = 0; i < item.effects.length; i++) { %>
+            <h4 class="flex"><%= item.effects[i] %>: <%= item[item.effects[i]] %></h4>
+        <% } %>
+    </div>
+>>>>>>> c37851266aaee6f398786e2f0ad2ac20ac8a1280
 </div>

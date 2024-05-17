@@ -4,6 +4,19 @@ function damageCalculator(choice, req) {
     var enemyDamage = req.session.battleSession.enemyDMG;
     var playerHealth = req.session.gameSession.playerHealth;
     var playerDamage = req.session.gameSession.playerDMG;
+    var playerInventory = req.session.gameSession.playerInventory;
+
+    //Calculates the player's damage with the items in the inventory
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "damage") {
+                playerDamage +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+    console.log("Player Damage: " + playerDamage);
+    console.log("Enemy Health: " + enemyDamage);
     
     if (choice) {
         enemyHealth -= playerDamage;
@@ -14,10 +27,36 @@ function damageCalculator(choice, req) {
     }
 }
 
+<<<<<<< HEAD
 function coinDistribution(req) {
     var coins = 10;
     console.log("coins: " + coins);
     req.session.gameSession.playerCoins += coins;
+=======
+    var coinsReceived = false
+function coinDistribution(req, difficulty) {
+    if(!coinsReceived){
+        switch(difficulty) {
+            case "triangle":
+                req.session.gameSession.playerCoins += 5;
+                break;
+            case "square":
+                req.session.gameSession.playerCoins += 10;
+                break;
+            case "pentagon":
+                req.session.gameSession.playerCoins += 20;
+                break;
+            case "hexagon":
+                req.session.gameSession.playerCoins += 50;
+                break;
+        }
+    }   
+   coinsReceived = true;
+}
+
+function resetCoinsReceived() {
+    coinsReceived = false;
+>>>>>>> c37851266aaee6f398786e2f0ad2ac20ac8a1280
 }
 
 // function damageMultiplier(req) {
@@ -29,6 +68,20 @@ function coinDistribution(req) {
 //     });
 
 // }
+
+function chooseEnemy(req, difficulty, enemies) {
+    fightablteEnemies = [];
+    
+    enemies.forEach(enemy => {
+        if(enemy.difficulty == difficulty){
+            fightablteEnemies.push(enemy);
+        }
+    });
+
+    var rand = Math.floor(Math.random() * fightablteEnemies.length);
+    return fightablteEnemies[rand];
+};
+
 
 function purchaseItem(req, item) {
     console.log("item price: " + item.price);
@@ -52,5 +105,7 @@ function purchasable(coins, price){
 module.exports = {
     damageCalculator,
     coinDistribution,
-    purchaseItem
+    purchaseItem,
+    chooseEnemy,
+    resetCoinsReceived
 };

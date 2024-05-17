@@ -1,11 +1,10 @@
 <% switch(status) {
   case 'unvisited' : %>
   <div>
-    <form action="/startencounter" method="POST">
+    <form action="/preshop" method="post">
       <input type="hidden" name="row" value="<%- row %>">
-      <input type="hidden" name="difficulty" value="triangle">
       <input type="hidden" name="index" value="<%- index %>">
-      <input type="image" src="/triangle_black.svg" class="w-full" alt="home">
+      <input type="image" src="/shop.svg" class="w-full" alt="home">
     </form>
   </div>
   <% break;
@@ -15,7 +14,7 @@
       <input type="hidden" name="difficulty" value="triangle">
       <input type="image" src="/triangle_green.svg" class="w-full" alt="home">
     </form> -->
-    <img src="/triangle_green.svg" class="w-full" alt="home">
+    <img src="/shop_green.svg" class="w-full" alt="home">
   </div>
   <% break;
   case 'notChosen' : %>
@@ -24,7 +23,7 @@
       <input type="hidden" name="difficulty" value="triangle">
       <input type="image" src="/triangle_red.svg" class="w-full" alt="home">
     </form> -->
-    <img src="/triangle_red.svg" class="w-full" alt="home">
+    <img src="/shop_red.svg" class="w-full" alt="home">
   </div>
   <% break;
   case 'inactive' : %>
@@ -33,7 +32,7 @@
       <input type="hidden" name="difficulty" value="triangle">
       <input type="image" src="/triangle_black.svg" class="w-full" alt="home">
     </form> -->
-    <img src="/triangle_black.svg" class="w-full" alt="home">
+    <img src="/shop.svg" class="w-full" alt="home">
   </div>
   <% break;
 } %>

@@ -1,83 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
-    <!-- Include Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        
-        body {
-            background-image: url('/indexBG.png'); 
-            background-size: cover;
-            background-position: center;
-            min-height: 100vh;
-        }
-    </style>
-</head>
+<%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
 <body class="bg-gray-100">
-    <div class="max-w-md mx-auto rounded-lg overflow-hidden">
-        <div class="px-4 py-8">
-            <div class="text-center">
-                <!-- Add outline to the profile picture -->
-                <img id="profileImg" class="h-28 w-28 rounded-full bg-white mx-auto border-2 border-gray-500 cursor-pointer" src="<%= userProfilePic %>" alt="">
-                <h1 class="text-2xl font-bold mt-4"><%= friendName %></h1>
-                <p class="text-sm text-gray-600 mt-2">Web Developer</p>
-            </div>  
-        </div>
+  <style>
+    body {
+      background-image: url('/indexBG.png');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+    }
+  </style>
+  <div class="max-w-md mx-auto rounded-lg overflow-hidden">
+    <div class="px-4 py-8">
+      <div class="text-center">
+        <!-- Add outline to the profile picture -->
+        <img id="profileImg" class="h-28 w-28 rounded-full bg-white mx-auto border-2 border-gray-500 cursor-pointer"
+          src="<%= userProfilePic %>" alt="">
+        <h1 class="text-2xl font-bold mt-4">
+          <%= friendName %>
+        </h1>
+        <p class="text-sm text-gray-600 mt-2">Web Developer</p>
+      </div>
     </div>
-    
-    <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
-        <!-- Use a span with an ID to dynamically update the button text -->
-        <button type="submit" onclick="toggleFriend('<%= friendName %>')" id="friendButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-            <% if (isFriend) { %>
-                Remove Friend
-            <% } else { %>
-                Add Friend
-            <% } %>
-        </button>           
-    </div>
+  </div>
 
-    <!-- Add a hidden input field to store the currentUser value -->
-    <input type="hidden" id="currentUser" value="<%= currentUser %>">
+  <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
+    <!-- Use a span with an ID to dynamically update the button text -->
+    <button type="submit" onclick="toggleFriend('<%= friendName %>')" id="friendButton"
+      class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+      <% if (isFriend) { %>
+        Remove Friend
+        <% } else { %>
+          Add Friend
+          <% } %>
+    </button>
+  </div>
 
-
-    <script>
-
+  <!-- Add a hidden input field to store the currentUser value -->
+  <input type="hidden" id="currentUser" value="<%= currentUser %>">
+  <script>
     function toggleFriend(username) {
-        fetch('/toggleFriend', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username: username }),
-        })
+      fetch('/toggleFriend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: username }),
+      })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to toggle friend status');
-            }
-            return response.json();
+          if (!response.ok) {
+            throw new Error('Failed to toggle friend status');
+          }
+          return response.json();
         })
         .then(data => {
-            updateButtonText(username, data.removed);
+          updateButtonText(username, data.removed);
         })
         .catch(error => {
-            console.error('Error toggling friend status:', error.message);
-            alert('Failed to toggle friend status');
+          console.error('Error toggling friend status:', error.message);
+          alert('Failed to toggle friend status');
         });
     }
 
     function updateButtonText(username, removed) {
-        const friendButton = document.getElementById('friendButton');
-        const isFriend = !removed;
-        if (isFriend) {
-            friendButton.textContent = 'Remove Friend';
-        } else {
-            friendButton.textContent = 'Add Friend';
-        }
+      const friendButton = document.getElementById('friendButton');
+      const isFriend = !removed;
+      if (isFriend) {
+        friendButton.textContent = 'Remove Friend';
+      } else {
+        friendButton.textContent = 'Add Friend';
+      }
     }
-
-    </script>
+  </script>
 </body>
-</html>
+<%- include("templates/footer") %>

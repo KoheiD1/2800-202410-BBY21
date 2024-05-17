@@ -1,62 +1,62 @@
-
-    <% if (authenticated) { %>
-        <%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden'}) %>
-        <div class="relative flex justify-center h-screen">
-            <div class="z-10">
-                <h1 class="text-6xl md:text-8xl lg:text-10xl xl:text-12xl text-black title-font">CODECRYPT</h1>
-                <!-- Add the route to the game Start Button is here -->
-                <button onclick="window.location.href='/startGame'" class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Start Game</button>
-            </div>
-        </div>
-        <% } else { %>
-        <%- include("templates/header", { overflowVariable: 'overflow-hidden' }) %>
-        <div class="relative flex justify-center h-screen overflow-hidden">
-            <div class="z-10">
-                <h1 class="text-6xl md:text-8xl lg:text-10xl xl:text-12xl text-black title-font">CODECRYPT</h1>
-                <button onclick="window.location.href='/login'" class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Login</button>
-                <button onclick="window.location.href='/createUser'" class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Signup</button>
-            </div>
-        <% } %>
-        
-    <style>
-        @font-face {
-            font-family: 'titlefont';
-            src: url('startgame.ttf') format('truetype'); 
-        }
-    
-        .title-font {
-            font-family: 'titlefont', sans-serif; 
-        }
-   
-        @keyframes bounce-slow {
-        0%, 100% {
-            transform: translateY(0); /* Start and end position */
-        }
-        50% {
-            transform: translateY(-10px); /* Middle position */
-        }
-        }
-
-        .animate-bounce-slow {
-            animation: bounce-slow 3s infinite; /* Set the animation duration to 2 seconds */
-        }
-    
-        @font-face {
-            font-family: 'startfont';
-            src: url('titlefont.ttf') format('truetype'); 
-        }
-
-        .start-font {
-            font-family: 'startfont', sans-serif; 
-        }
-    </style>
-    
-    
-        <div class="fixed inset-0 bg-no-repeat bg-right z-0">
-            <img src="/mainIMG.png" alt="Image" class="w-full h-full object-cover">
-        </div>
+<% if (authenticated) { %>
+<%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
+<div class="relative flex justify-center h-screen">
+  <div class="z-10">
+    <h1 class="text-6xl md:text-8xl lg:text-10xl xl:text-12xl text-black title-font">CODECRYPT</h1>
+    <!-- Add the route to the game Start Button is here -->
+    <button onclick="window.location.href='/startGame'"
+      class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Start
+      Game</button>
+  </div>
+</div>
+<% } else { %>
+  <%- include("templates/header", { overflowVariable: 'overflow-hidden' }) %>
+    <div class="relative flex justify-center h-screen overflow-hidden">
+      <div class="z-10">
+        <h1 class="text-6xl md:text-8xl lg:text-10xl xl:text-12xl text-black title-font">CODECRYPT</h1>
+        <button onclick="window.location.href='/login'"
+          class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Login</button>
+        <button onclick="window.location.href='/createUser'"
+          class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Signup</button>
+      </div>
     </div>
-    
+<% } %>
+<div class="fixed inset-0 bg-no-repeat bg-right z-0">
+  <img src="/mainIMG.png" alt="Image" class="w-full h-full object-cover">
+</div>
+<style>
+  @font-face {
+  font-family: 'titlefont';
+  src: url('startgame.ttf') format('truetype');
+  }
+
+  .title-font {
+  font-family: 'titlefont', sans-serif;
+  }
+
+  @keyframes bounce-slow {0%,100% {
+  transform: translateY(0);
+  /* Start and end position */
+  }
+
+  50% {
+  transform: translateY(-10px);
+  /* Middle position */
+  }
+  }
+
+  .animate-bounce-slow {
+  animation: bounce-slow 3s infinite;
+  /* Set the animation duration to 2 seconds */
+  }
+
+  @font-face {
+  font-family: 'startfont';
+  src: url('titlefont.ttf') format('truetype');
+  }
+
+  .start-font {
+  font-family: 'startfont', sans-serif;
+  }
+</style>
 <%- include("templates/footer") %>
-
-

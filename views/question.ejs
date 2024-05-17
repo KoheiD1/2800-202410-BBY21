@@ -1,8 +1,20 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<style>
+    .hidden {
+    display: none;
+}
+
+</style>
 <body>
     <div class="flex flex-col justify-center items-center h-screen">
-        <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full"></div>
-
+        <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full relative">
+            <div id="healthbar-left" class="health-bar-left absolute bottom-2 left-4">
+              <%- include('healthbar.html') %>
+            </div>
+            <div id="healthbar-right" class="health-bar-right absolute top-2 right-4">
+              <%- include('healthbar.html') %>
+            </div>
+        </div>
         <div class="max-w-lg mx-auto p-8 bg-white rounded shadow-md h-1/2">
             <h1 class="text-2xl font-bold mb-4"><%= question.questionText %></h1>
             <ul>
@@ -21,7 +33,24 @@
         </div>
     </div>
 
+    <!-- Tailwind Modal -->
+    <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center z-10 hidden">
+        <div class="absolute inset-0 "></div>
+        <div class="bg-white rounded-lg p-8 max-w-md bg-gray-500">
+            <div class="flex justify-end">
+                <button id="closeModal" class="text-blue-500 hover:text-gray-700 z-50" onclick="closeModalFunction()">Done</button>
+            </div>
+            
+            <p id="modalFeedback" class="mt-4"></p>
+        </div>
+    </div>
+    
     <script>
+        var enemyHealth = <%= enemyHealth %>;
+        var playerHealth = <%= playerHealth %>;
+        var maxEnemyHealth = <%= maxEnemyHealth %>;
+
+        renderHealth(); // Render health bars
         document.addEventListener("DOMContentLoaded", function () {
             // Attach click event listener to each button inside the form
             document.querySelectorAll('.feedback-form button').forEach(button => {
@@ -44,7 +73,21 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Question associated with option:', data);
+                        console.log('Feedback:', data.feedback);
+                        enemyHealth = data.enemyHealth;
+                        playerHealth = data.playerHealth;
+                        maxEnemyHealth = data.maxEnemyHealth;
+                        console.log("Max Enemy Health: ", maxEnemyHealth);  
+                        console.log("Feedback Result: ", data.result);
+
+                        const modalFeedback = document.getElementById("modalFeedback");
+                        modalFeedback.textContent = data.feedback;
+                        openModal(data.result);
+                        
+                        renderHealth();
+
+                        console.log("Opened Feedback");
+
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -52,7 +95,100 @@
                 });
             });
         });
+        // Update health
+        
+        function renderHealth() {
+            var healthbarLeft = document.getElementById("healthbar-left");
+            var healthbarRight = document.getElementById("healthbar-right");
+
+            
+
+            var fillsLeft = healthbarLeft.querySelectorAll(".healthbar_fill");
+            var fillsRight = healthbarRight.querySelectorAll(".healthbar_fill");
+            console.log(playerHealth, enemyHealth);
+            var healthLeft = playerHealth;
+            var healthRight = enemyHealth;
+            var enemyMaxHP = maxEnemyHealth;
+           
+            var maxHp = 100;
+
+            var percentLeft = healthLeft / maxHp * 100;
+            var percentRight = healthRight / enemyMaxHP * 100;
+            var leftFill = healthbarLeft.querySelector(".healthbar_fill");
+            var rightFill = healthbarRight.querySelector(".healthbar_fill");
+            leftFill.style.width = percentLeft + "%";
+            rightFill.style.width = percentRight + "%";
+
+            // Update color
+            document.documentElement.style.setProperty('--bar-fill', '#57e705');
+            document.documentElement.style.setProperty('--bar-top',  '#6aff03');
+
+            // Update color for left health bar
+            if (percentLeft <= 50) { // Yellows
+                document.documentElement.style.setProperty('--bar-fill-left', '#d6ed20');
+                document.documentElement.style.setProperty('--bar-top-left',  '#d8ff48');   
+            }
+            if (percentLeft <= 25) { // Reds
+                document.documentElement.style.setProperty('--bar-fill-left', '#ec290a');
+                document.documentElement.style.setProperty('--bar-top-left',  '#ff3818');
+            }
+
+            // Update color for right health bar
+            if (percentRight <= 50) { // Yellows
+                document.documentElement.style.setProperty('--bar-fill-right', '#d6ed20');
+                document.documentElement.style.setProperty('--bar-top-right',  '#d8ff48');   
+            }
+            if (percentRight <= 25) { // Reds
+                document.documentElement.style.setProperty('--bar-fill-right', '#ec290a');
+                document.documentElement.style.setProperty('--bar-top-right',  '#ff3818');
+            }
+
+            fillsLeft.forEach(fill => {
+                fill.style.width = percentLeft + "%";
+            });
+
+            fillsRight.forEach(fill => {
+                fill.style.width = percentRight + "%";
+            });
+            console.log("Player: " + percentLeft + ", Enemy: " + percentRight);
+
+        }
+
+        function openModal(correct) {
+            const feedbackModal = document.getElementById('feedbackModal');
+            feedbackModal.classList.remove("hidden");
+
+            const modalFeedback = document.getElementById("modalFeedback");
+
+            if (correct === true) {
+                const h2Element = document.createElement('h2');
+                h2Element.textContent = "Correct";
+                h2Element.style.fontSize = "2rem";
+                h2Element.style.textAlign = "center";
+                h2Element.style.marginTop = "1rem";
+                modalFeedback.insertBefore(h2Element, modalFeedback.firstChild);
+            } else {
+                const h2Element = document.createElement('h2');
+                h2Element.textContent = "Wrong";
+                h2Element.style.fontSize = "2rem";
+                h2Element.style.textAlign = "center"; 
+                h2Element.style.marginTop = "1rem"; 
+                modalFeedback.insertBefore(h2Element, modalFeedback.firstChild);
+            }
+        }
+
+        function closeModalFunction() {
+            document.getElementById('feedbackModal').classList.add("hidden");
+
+            if(enemyHealth <= 0){
+                window.location.href = '/victory';
+            }else if(playerHealth <= 0){
+                window.location.href = '/defeat';
+            }else{
+                window.location.href = '/question';
+            }
+        }
     </script>
-     
+    
 </body>
 <%- include("templates/footer") %>
