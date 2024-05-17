@@ -1,49 +1,84 @@
-<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+
+<%- include("templates/headerloggedin", { overflowVariable: 'overflow-x-hidden' }) %>
 <style>
     .hidden {
-    display: none;
+        display: none;
+    }
+    .bg-gradient-to-b {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-rows: 5vh 10vh 16vh 10vh 5vh; /* Small top row, large middle row, small bottom row */
+    grid-template-columns: 30% 40% 30%; /* Two columns */
 }
 
+
+    #healthbar-left {
+        grid-row: 5; /* Place the health bar in the first row */
+        grid-column: 1;
+        }
+
+    #healthbar-right {
+        grid-row: 1; /* Place the health bar in the second row */
+        grid-column: 2;
+    }
+
+    #hero-container {
+        margin: 0;
+        grid-column: 1;
+        grid-row: 3;
+    }
+
 </style>
-<body>
-    <div class="flex flex-col justify-center items-center h-screen">
-        <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full relative">
-            <div id="healthbar-left" class="health-bar-left absolute bottom-2 left-4">
-              <%- include('healthbar.html') %>
+
+<body class="flex flex-col justify-center items-center mx-auto">
+    <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-[50vh] relative grid grid-cols-1 gap-2">
+        <div id="healthbar-left" class="health-bar-left flex flex-col items-center">
+            <div class="healthbar-wrapper max-w-full">
+                <%- include('healthbar.html') %>
             </div>
-            <div id="healthbar-right" class="health-bar-right absolute top-2 right-4">
-              <%- include('healthbar.html') %>
+            <div class="hero-container">
+              <%- include('hero.html') %>
             </div>
         </div>
-        <div class="max-w-lg mx-auto p-8 bg-white rounded shadow-md h-1/2">
-            <h1 class="text-2xl font-bold mb-4"><%= question.questionText %></h1>
-            <ul>
-                <% question.options.forEach((option, index) => { %>
-                    <li class="mb-2">
-                        <form id="<%= index %>" class="feedback-form" data-question-id="<%= question._id %>">
-                            <input type="hidden" name="option" value="<%= index %>">
-                            <button id="opt-btn" type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                <%= option.text %>
-                            </button>
-                        </form>
-                        <div id="feedbackResult<%= index %>"></div>
-                    </li>
-                <% }); %>
-            </ul>
+        <div id="healthbar-right" class="health-bar-right flex flex-col items-center">
+            <div class="healthbar-wrapper max-w-full">
+                <%- include('healthbar.html') %>
+            </div>
+            <div class="enemy-container">
+               
+            </div>
         </div>
     </div>
 
-    <!-- Tailwind Modal -->
+    <div class="max-w-lg mx-auto p-8 bg-white rounded shadow-md h-1/2">
+        <h1 class="text-2xl font-bold mb-4"><%= question.questionText %></h1>
+        <ul>
+            <% question.options.forEach((option, index) => { %>
+                <li class="mb-2">
+                    <form id="<%= index %>" class="feedback-form" data-question-id="<%= question._id %>">
+                        <input type="hidden" name="option" value="<%= index %>">
+                        <button id="opt-btn" type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <%= option.text %>
+                        </button>
+                    </form>
+                    <div id="feedbackResult<%= index %>"></div>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+
     <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center z-10 hidden">
-        <div class="absolute inset-0 "></div>
+        <div class="absolute inset-0"></div>
         <div class="bg-white rounded-lg p-8 max-w-md bg-gray-500">
             <div class="flex justify-end">
                 <button id="closeModal" class="text-blue-500 hover:text-gray-700 z-50" onclick="closeModalFunction()">Done</button>
             </div>
-            
             <p id="modalFeedback" class="mt-4"></p>
         </div>
     </div>
+</body>
+
     
     <script>
         var enemyHealth = <%= enemyHealth %>;
@@ -115,6 +150,8 @@
             // Update color
             document.documentElement.style.setProperty('--bar-fill', '#57e705');
             document.documentElement.style.setProperty('--bar-top',  '#6aff03');
+            
+
 
             // Update color for left health bar
             if (percentLeft <= 50) { // Yellows
