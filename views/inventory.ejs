@@ -4,42 +4,33 @@
             <div class="grid grid-cols-4 grid-rows-8 h-full w-full p-6 ">
                 <% for(let i=0; i < items.length; i++) { %>
                     <%- include('templates/inventoryItem', {item: items[i]}) %>
-                <% } %>
+                        <% } %>
             </div>
         </div>
         <div class="row-start-8 col-start-1 col-span-10 row-span-2 p-5">
             <div class="bg-slate-600 w-full h-full">
                 <div class="w-full text-center text-xl">Stats</div>
-                <div id="buffGrid" class="grid grid-rows-2 w-full h-full text-center">
-                    <!-- <div class="col-start-1 row-start-1">Damage</div>
-                    <div class="col-start-1">5</div>
-                    <div class="col-start-2 row-start-1">Speed</div>
-                    <div class="col-start-2">10</div> -->
-                </div>
+                <div id="buffGrid" class="grid grid-rows-2 w-full h-full text-center"></div>
             </div>
         </div>
         <div class="row-start-10 col-start-1 col-span-10 p-auto mx-auto">
             <button class="bg-red-600 rounded-lg text-3xl font-bold text-black"
                 onclick="window.location.href='/shop'">Back</button>
-
         </div>
     </div>
     <script>
-        let items = <%- JSON.stringify(items) %>;
-        if(items.length >= 1) {
+        let items = <% - JSON.stringify(items) %>;
+        if (items.length >= 1) {
             let grid = document.getElementById("buffGrid");
             let index = 1;
-            for(let i = 0; i < items.length; i++) {
-                for(let j = 0; j < items[i].effects.length - 1; j++) {
+            for (let i = 0; i < items.length; i++) {
+                for (let j = 0; j < items[i].effects.length - 1; j++) {
                     let effectName = items[i].effects[j];
                     let effects = grid.getElementsByClassName('row-start-1');
 
                     let found = false;
-                    // console.log('Length: ' + effects.length);
-                    for(let k = 0; k < effects.length; k++) {
-                        // console.log(effects[k].innerHTML);
-                        // console.log('K: ' + k);
-                        if(effects[k].innerHTML == effectName) {
+                    for (let k = 0; k < effects.length; k++) {
+                        if (effects[k].innerHTML == effectName) {
                             found = true;
                             let x = parseInt(grid.children[(k * 2) + 1].innerHTML);
                             x += parseInt(items[i][effectName]);
@@ -47,8 +38,7 @@
                         }
                     }
 
-                    if(found == false) {
-                        // console.log("adding: " + effectName);
+                    if (found == false) {
                         let div = document.createElement('div');
                         div.className = ('col-start-' + index + ' row-start-1');
                         div.innerHTML = effectName;
