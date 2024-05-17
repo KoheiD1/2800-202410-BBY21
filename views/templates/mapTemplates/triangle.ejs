@@ -1,7 +1,8 @@
 <% switch(status) {
   case 'unvisited' : %>
   <div>
-    <form action="/encounter" method="POST">
+    <form action="/startencounter" method="POST">
+      <input type="hidden" name="row" value="<%- row %>">
       <input type="hidden" name="difficulty" value="triangle">
       <input type="hidden" name="index" value="<%- index %>">
       <input type="image" src="/triangle_black.svg" class="w-full" alt="home">
@@ -30,7 +31,7 @@
   <div>
     <!-- <form action="/encounter" method="POST">
       <input type="hidden" name="difficulty" value="triangle">
-      <input type="image" src="/triangle_red.svg" class="w-full" alt="home">
+      <input type="image" src="/triangle_black.svg" class="w-full" alt="home">
     </form> -->
     <img src="/triangle_black.svg" class="w-full" alt="home">
   </div>

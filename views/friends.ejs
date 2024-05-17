@@ -1,61 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User List</title>
-    <!-- Include Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
+
+  <body class="bg-gray-100">
     <style>
-        body {
-            background-image: url('/indexBG.png'); 
-            background-size: cover;
-            background-position: center;
-            min-height: 100vh;
-        }
+      body {
+        background-image: url('/indexBG.png');
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+      }
     </style>
-</head>
-<body class="bg-gray-100">
-    <div class="max-w-4xl mx-auto py-8">
-        <h1 class="text-3xl px-4 font-bold mb-4">Friends List</h1>
+    <div class="grid grid-flow-row ">
+      <div class="m-2">
+        <h1 class="text-3xl px-4 font-bold mb-4 mx-auto text-center">Friends List</h1>
         <ul>
-            <% if (friendsList && friendsList.length > 0) { %>
-                <% friendsList.forEach(friend => { %>
-                    <li class="py-2 px-4 text-md flex items-center justify-between" style="background-image: url('/username-box.png'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 50px;">
-                        <span class="text-gray-900" onclick="getProfileInfo('<%= friend %>')"><%= friend%></span>
-                    </li>
-                <% }); %>
-            <% } else { %>
-                <li class="text-gray-900 px-4">No friends to display</li>
-            <% } %>
+          <% if (friendsList && friendsList.length> 0) { %>
+            <% friendsList.forEach(friend=> { %>
+              <li class="py-2 px-4 text-md flex items-center justify-between max-w-md mx-auto"
+                style="background-image: url('/username-box.png'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 50px;">
+                <span class="text-gray-900" onclick="getProfileInfo('<%= friend %>')">
+                  <%= friend%>
+                </span>
+              </li>
+              <% }); %>
+                <% } else { %>
+                  <li class="text-gray-900 px-4">No friends to display</li>
+                  <% } %>
         </ul>
+      </div>
+      <div class="mt-10 place-self-center">
+        <form action="/profile">
+          <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+            value="Back to Profile">
+        </form>
+      </div>
     </div>
-    
-    
-
-    
-    
     <script>
-        function getProfileInfo(friendName) {
-            fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
-                method: 'GET'
-            })
-            
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to get friend profile');
+      function getProfileInfo(friendName) {
+        fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
+          method: 'GET'
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to get friend profile');
             }
-       
-             window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
-            })
-            
-            .catch(error => {
-                console.error('Error updating friend profile:', error);
-                alert('Failed to load friend profile');
-            });
-        }
+
+            window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
+          })
+
+          .catch(error => {
+            console.error('Error updating friend profile:', error);
+            alert('Failed to load friend profile');
+          });
+      }
     </script>
-</body>
-</html>
-
-
+  </body>
+  <%- include("templates/footer") %>

@@ -3,6 +3,7 @@ const router = express.Router();
 
 module.exports = function(userCollection) {
     router.get('/profile', async (req, res) => {
+        res.locals.gameStarted = req.session.gameSession ? true : false;
         if (req.session.authenticated) {
             const userName = req.session.username;
             const userEmail = req.session.email;
@@ -28,6 +29,7 @@ module.exports = function(userCollection) {
             const userName = req.session.username;
             
             await userCollection.updateOne({ username: userName }, { $set: { profile_pic: profilePictureUrl } });
+            req.session.profile_pic = profilePictureUrl;
             res.sendStatus(200); 
         } catch (error) {
             console.error('Error updating profile picture:', error);
