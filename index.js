@@ -6,6 +6,7 @@ const MongoStore = require('connect-mongo');
 const ejs = require('ejs')
 const bcrypt = require('bcrypt');
 
+
 const saltRounds = 12;
 
 const port = process.env.PORT || 3000;
@@ -211,7 +212,6 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/startGame', async (req, res) => {
-<<<<<<< HEAD
 	// When the player starts the game it creates a new game session
 	req.session.gameSession = await {
 		mapSet: false,
@@ -230,21 +230,7 @@ app.get('/startGame', async (req, res) => {
 				reject(new Error('Game session map is not set'));
 			}
 		});
-=======
-    try {
-        // Assign session variables
-        await new Promise((resolve, reject) => {
-            req.session.gameSession = {
-                mapSet: false,
-                playerHealth: 100,
-                playerDMG: 25,
-                playerInventory: [],
-                playerCoins: 0,
-                mapID: null
-            }
-            resolve();
-        });
->>>>>>> 3e28257ac3b7a832a0997110dbff828d957b1924
+
 
         // Check if the map is set
         if (!req.session.gameSession.mapSet) {
