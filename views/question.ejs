@@ -1,56 +1,84 @@
-
 <%- include("templates/headerloggedin", { overflowVariable: 'overflow-x-hidden' }) %>
 <style>
     .hidden {
         display: none;
     }
     .bg-gradient-to-b {
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-rows: 5vh 10vh 16vh 10vh 5vh; /* Small top row, large middle row, small bottom row */
-    grid-template-columns: 30% 40% 30%; /* Two columns */
-    overflow: hidden;
-}
-
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-rows: 5vh 10vh 16vh 10vh 5vh; /* Adjust grid rows as needed */
+        grid-template-columns: 45% 5% 50%; /* Three columns */
+        overflow: hidden;
+        height: 50vh; /* Ensure the height is set correctly */
+    }
 
     #healthbar-left {
-        grid-row: 5; /* Place the health bar in the first row */
-        grid-column: 1;
-        }
+        grid-row: 5; /* Bottom row */
+        grid-column: 1; /* First column */
+        position: absolute;
+        top: -20px;
+        
+    }
 
     #healthbar-right {
-        grid-row: 1; /* Place the health bar in the second row */
-        grid-column: 2;
+        grid-row: 1; /* Top row */
+        grid-column: 3; /* Last column */
         position: absolute;
-        right: -70px;
+        right: -90px;
+        justify-self: end;
+       
+    }
+
+    #healthbar-right .healthbar-wrapper p {
+        padding-left: 8px;
+    }
+
+    #healthbar-left .healthbar-wrapper p {
+        padding-left: 8px;
     }
 
     #hero-container {
-        margin: 0;
-        grid-column: 1;
-        grid-row: 3;
+        grid-column: 1; /* Middle column */
+        grid-row: 3; /* Bottom row */
+        position: absolute;
+        width: 180px; /* Fixed width */
+        height: 180px; /* Fixed height */
+        
+
     }
 
+    #enemy-container {
+        grid-column: 3; /* Middle column */
+        grid-row: 1; /* Top row */
+        position: absolute;
+        width: 200px; /* Fixed width */
+        height: 200px; /* Fixed height */
+        top: -30px;
+        justify-self: end;
+        right: -10px;
+    }
 </style>
 
 <body class="flex flex-col justify-center items-center mx-auto">
-    <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-[50vh] relative grid grid-cols-1 gap-2">
+    <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-[50vh] relative grid gap-2">
         <div id="healthbar-left" class="health-bar-left flex flex-col items-center">
             <div class="healthbar-wrapper max-w-full">
+                <p>Hero</p>
                 <%- include('healthbar.html') %>
             </div>
-            <div class="hero-container">
-              <%- include('hero.html') %>
-            </div>
+        </div>
+        <div id="hero-container">
+            <%- include('hero.html') %>
         </div>
         <div id="healthbar-right" class="health-bar-right flex flex-col items-center">
             <div class="healthbar-wrapper max-w-full">
+                <p>Enemy</p>
                 <%- include('healthbar.html') %>
             </div>
-            <div class="enemy-container">
-               
-            </div>
+        </div>
+        <div id="enemy-container">
+            <%- include('enemy.html') %>
         </div>
     </div>
 
@@ -80,7 +108,6 @@
             <p id="modalFeedback" class="mt-4"></p>
         </div>
     </div>
-</body>
 
     
     <script>
