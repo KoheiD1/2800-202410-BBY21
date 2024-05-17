@@ -12,6 +12,7 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 
+
 //const profileRoutes = require('./profileRoutes');
 // const shopRouter = require('./shopRouter.js');
 const Joi = require("joi");
@@ -126,6 +127,7 @@ app.get('/forgotPassword', (req, res) => {
 	res.render("forgotPassword");
 });
 
+
 app.get('/resetPassword', (req, res) => {
 	const token = req.query.token;
 	res.render('resetPassword', { token: token });
@@ -209,6 +211,7 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/startGame', async (req, res) => {
+<<<<<<< HEAD
 	// When the player starts the game it creates a new game session
 	req.session.gameSession = await {
 		mapSet: false,
@@ -227,12 +230,36 @@ app.get('/startGame', async (req, res) => {
 				reject(new Error('Game session map is not set'));
 			}
 		});
+=======
+    try {
+        // Assign session variables
+        await new Promise((resolve, reject) => {
+            req.session.gameSession = {
+                mapSet: false,
+                playerHealth: 100,
+                playerDMG: 25,
+                playerInventory: [],
+                playerCoins: 0,
+                mapID: null
+            }
+            resolve();
+        });
+>>>>>>> 3e28257ac3b7a832a0997110dbff828d957b1924
 
-		res.redirect('/map');
-	} catch (error) {
-		res.redirect('/');
-	}
+        // Check if the map is set
+        if (!req.session.gameSession.mapSet) {
+            // If not set, redirect to '/map'
+            res.redirect('/map');
+        } else {
+            // If set, redirect to '/'
+            res.redirect('/');
+        }
+    } catch (error) {
+        // Handle any errors
+        res.redirect('/');
+    }
 });
+
 
 app.get('/map', async (req, res) => {
 	req.session.shop = null;
