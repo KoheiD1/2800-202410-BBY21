@@ -10,24 +10,41 @@ const {purchaseItem, coinDistribution} = require('./game');
 module.exports = function(itemCollection, userCollection) {
     router.get('/shop', async (req, res) => {
         if(req.session.authenticated) {
+            if(req.session.shop == null) {
+                req.session.shop = {
+                    itemsPicked: []
+                };
+                let items = await itemCollection.find().toArray();
+                let itemsPicked = new Array(3);
+                for(let i = 0; i < 3 && i < items.length; i++) {
+                    let rand;
+                    do {
+                        rand = parseInt(Math.random() * items.length);
+                    } while(items[rand] == null);
+                    req.session.shop.itemsPicked.push({
+                        type: items[rand].type,
+                        effects: items[rand].effects,
+                        price: items[rand].price
+                    });
+                        for(let j = 0; j < items[rand].effects.length; j++) {
+                            if(items[rand][items[rand].effects[j]].length > 1) {
+                                let x = parseInt(Math.random() * (parseInt(items[rand][items[rand].effects[j]][1]) - parseInt(items[rand][items[rand].effects[j]][0]))) + parseInt(items[rand][items[rand].effects[j]][0]);
+                                req.session.shop.itemsPicked[i][items[rand].effects[j]] = x;
+                            } else {
+                                req.session.shop.itemsPicked[i][items[rand].effects[j]] = items[rand][items[rand].effects[j]];
+                            }
+                        }
+                    items[rand] = null;
+                }
+            }
             coinDistribution(req);
 
             res.locals.userProfilePic = req.session.profile_pic;
             res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
             res.locals.gameStarted = req.session.gameSession ? true : false;
 
-            let items = await itemCollection.find().toArray();
-            let itemsPicked = new Array(3);
-            for(let i = 0; i < 3 && i < items.length; i++) {
-                let rand;
-                do {
-                    rand = parseInt(Math.random() * items.length);
-                } while(items[rand] == null);
-
-                itemsPicked[i] = items[rand];
-                items[rand] = null;
-            }
-            res.render('shop', {items: itemsPicked});
+            
+            res.render('shop', {items: req.session.shop.itemsPicked});
         } else {
             res.redirect('/login');
         }

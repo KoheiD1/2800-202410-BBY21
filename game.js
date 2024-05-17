@@ -27,12 +27,6 @@ function damageCalculator(choice, req) {
     }
 }
 
-<<<<<<< HEAD
-function coinDistribution(req) {
-    var coins = 10;
-    console.log("coins: " + coins);
-    req.session.gameSession.playerCoins += coins;
-=======
     var coinsReceived = false
 function coinDistribution(req, difficulty) {
     if(!coinsReceived){
@@ -56,7 +50,6 @@ function coinDistribution(req, difficulty) {
 
 function resetCoinsReceived() {
     coinsReceived = false;
->>>>>>> c37851266aaee6f398786e2f0ad2ac20ac8a1280
 }
 
 // function damageMultiplier(req) {
