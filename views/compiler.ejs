@@ -1,0 +1,20 @@
+<!-- views/compile.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Compiler</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <h1>Java Compiler</h1>
+    <form action="/compile" method="POST">
+        <textarea name="code" rows="10" cols="50"></textarea><br>
+        <button type="submit">Compile</button>
+    </form>
+    <div id="output"></div>
+</body>
+</html>
+
