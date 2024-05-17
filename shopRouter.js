@@ -9,8 +9,6 @@ const {purchaseItem, coinDistribution, resetCoinsReceived} = require('./game');
 
 module.exports = function(itemCollection, userCollection) {
     router.get('/shop', async (req, res) => {
-        resetCoinsReceived();
-        coinDistribution(req, 'hexagon');
         if(req.session.authenticated) {
             if(req.session.shop == null) {
                 req.session.shop = {
@@ -83,6 +81,9 @@ module.exports = function(itemCollection, userCollection) {
         }
 
         result[0].itemList[result[0].itemList.length] = item;
+        if(!purchaseItem(req, item)){
+           
+        }
 
         res.redirect('/shop');
     });
