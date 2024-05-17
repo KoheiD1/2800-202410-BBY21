@@ -210,7 +210,7 @@ app.get('/logout', (req, res) => {
 
 app.get('/startGame', async (req, res) => {
 	// When the player starts the game it creates a new game session
-	req.session.gameSession = {
+	req.session.gameSession = await {
 		mapSet: false,
 		playerHealth: 100,
 		playerDMG: 25,
