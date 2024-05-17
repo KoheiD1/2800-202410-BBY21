@@ -1,19 +1,23 @@
 <%- include("templates/headerloggedin", {overflowVariable: "" }) %>
-<div class="relative z-10">
-    <h1 class="flex justify-center text-3xl">Item Shop</h1>
-    <div class="grid grid-cols-1 grid-rows-3 m-5">
-        <% for(let i=0; i < items.length; i++) { %>
-            <%- include('templates/shopItem', {item: items[i]}) %>
-        <% } %>
+    <div class="relative z-10">
+        <h1 class="flex justify-center text-3xl">Item Shop</h1>
+        <div class="grid grid-cols-1 grid-rows-3 m-5">
+            <% for(let i=0; i < items.length; i++) { %>
+                <%- include('templates/shopItem', {item: items[i]}) %>
+                    <% } %>
+        </div>
     </div>
-</div>
-<div class="fixed inset-0 bg-no-repeat bg-right z-0">
-    <img src="/shelf.png" alt="Image" class="w-auto h-full object-cover">
-</div>
-<button onclick="window.location.href='/inventory'">Inventory</button>
-<div class="flex justify-center items-center z-20">
-    <a href="/map"
-      class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Back
-      to map</a>
-  </div>
-<%- include("templates/footer") %>
+    <div class="fixed inset-0 bg-no-repeat bg-right z-0">
+        <img src="/shelf.png" alt="Image" class="w-auto h-full object-cover">
+    </div>
+    <div class="flex justify-center items-center z-20">
+        <a href="/map"
+            class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Back
+            to map</a>
+    </div>
+    <br>
+    <div class="flex justify-center items-center z-20">
+        <a href="/inventory"
+            class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Inventory</a>
+    </div>
+    <%- include("templates/footer") %>

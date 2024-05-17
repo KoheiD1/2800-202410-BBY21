@@ -235,6 +235,7 @@ app.get('/startGame', async (req, res) => {
 });
 
 app.get('/map', async (req, res) => {
+	req.session.shop = null;
 	if (!req.session.gameSession.mapSet) {
 		const result = await pathsCollection.find({ _id: currMap }).project({
 			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
