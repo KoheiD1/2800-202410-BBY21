@@ -10,6 +10,7 @@
     display: grid;
     grid-template-rows: 5vh 10vh 16vh 10vh 5vh; /* Small top row, large middle row, small bottom row */
     grid-template-columns: 30% 40% 30%; /* Two columns */
+    overflow: hidden;
 }
 
 
@@ -21,6 +22,8 @@
     #healthbar-right {
         grid-row: 1; /* Place the health bar in the second row */
         grid-column: 2;
+        position: absolute;
+        right: -70px;
     }
 
     #hero-container {
