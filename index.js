@@ -12,10 +12,6 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 
-const bodyParser = require('body-parser');
-const { exec } = require('child_process');
-
-app.use(bodyParser.json());
 
 //const profileRoutes = require('./profileRoutes');
 // const shopRouter = require('./shopRouter.js');
@@ -131,24 +127,6 @@ app.get('/forgotPassword', (req, res) => {
 	res.render("forgotPassword");
 });
 
-app.post('/compile', (req, res) => {
-    const javaCode = req.body.code;
-
-    // Compile Java code
-    exec(`javac -d . Main.java`, { cwd: './temp' }, (error, stdout, stderr) => {
-        if (error) {
-            res.status(500).json({ error: stderr });
-        } else {
-            // Render the compiler EJS template with compilation output
-            res.render('compiler', { output: stdout });
-        }
-    });
-});
-
-// Route for rendering the compiler EJS template
-app.get('/compiler', (req, res) => {
-    res.render('compiler');
-});
 
 app.get('/resetPassword', (req, res) => {
 	const token = req.query.token;
