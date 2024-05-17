@@ -43,6 +43,8 @@ const levelOneCollection = database.db(mongodb_database).collection('level-1-que
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 
+app.use(express.static(__dirname + "/public"));
+
 const currMap = new ObjectId("66467f92599dd72ac79fcec9");
 
 var mongoStore = MongoStore.create({
@@ -411,7 +413,6 @@ app.get('/shop', async (req, res) => {
 	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2] });
 });
 
-app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
 	res.status(404);
