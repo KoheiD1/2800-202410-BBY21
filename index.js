@@ -129,50 +129,6 @@ app.get('/resetPassword', (req, res) => {
 	res.render('resetPassword', { token: token });
 });
 
-var questionID; // Define questionID at the module level to make it accessible across routes
-
-app.post('/startencounter', async (req, res) => {
-	// When the player starts the game it creates a new game session
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 10 } }]).toArray();
-	let enemies = await enemiesCollection.find().toArray();
-	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
-
-	req.session.battleSession = {
-		enemyName: enemy.enemyName,
-		enemyHealth: enemy.enemyHealth,
-		enemyDMG: enemy.enemyDMG,
-		encounterQuestions: encounterQuestions,
-		answerdQuestions: [],
-		index: req.body.index,
-		row: req.body.row,
-		difficulty: req.body.difficulty
-	};
-
-	res.redirect(`/question?encounterQuestions=${encodeURIComponent(JSON.stringify(encounterQuestions))}`);
-});
-
-app.get('/question', async (req, res) => {
-	try {
-
-		const randomIndex = Math.floor(Math.random() * req.session.battleSession.encounterQuestions.length);
-		const question = req.session.battleSession.encounterQuestions[randomIndex];
-		questionID = question._id; // Assign the fetched question's ID to questionID
-		console.log(questionID);
-
-		console.log("Encounter Questions before:", req.session.battleSession.encounterQuestions);
-
-		req.session.battleSession.encounterQuestions.splice(randomIndex, 1); // Remove the question from the encounterQuestions array
-		req.session.battleSession.answerdQuestions.push(question); // Add the question ID to the answerdQuestions array
-		console.log("Encounter Questions:", req.session.battleSession.encounterQuestions);
-		console.log("Answered Questions:", req.session.battleSession.answerdQuestions);
-		console.log("Opening questions page");
-		res.render('question', { question: question, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth });
-	} catch (error) {
-		console.error('Error fetching question:', error);
-		res.status(500).send('Internal Server Error');
-	}
-});
-
 app.post('/feedback', async (req, res) => {
 	try {
 		const { optionIndex, questionID } = req.body;
@@ -376,6 +332,7 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
+			console.log("max enemy health: " + battleSession.maxEnemyHealth);
 			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth});
 	} catch (error) {
 			console.error('Error fetching question:', error);
