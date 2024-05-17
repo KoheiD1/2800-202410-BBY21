@@ -1,5 +1,22 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
-<div class="grid grid-rows-9 p-2">
+<style>
+  body {
+    background-image: url('/indexBG.png');
+    background-size: cover;
+    background-position: top;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+</style>
+<div class="-mt-14 pl-2">
+  <div class="flex justify-start">
+    <form action="/">
+      <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+        value="Back to Main Menu">
+    </form>
+  </div>
+</div>
+<div class="grid grid-rows-9 p-2 max-w-md mx-auto">
   <%- include("templates/mapTemplates/row", {arr: path.row4, active: path.r4active, row: 4}) %>
   <%- include("templates/mapTemplates/connections", {rowConnect: path.r3connect}) %>
   <%- include("templates/mapTemplates/row", {arr: path.row3, active: path.r3active, row: 3}) %>
@@ -10,10 +27,10 @@
   <%- include("templates/mapTemplates/connections", {rowConnect: path.r0connect}) %>
   <%- include("templates/mapTemplates/row", {arr: path.row0, active: path.r0active, row: 0}) %>
 </div>
-<div>
-  <form action="/mapreset" method="post"> 
+<div class="grid max-w-md mx-auto">
+  <form action="/mapreset" method="post" class="mx-auto"> 
     <input type="hidden" name="id" value="<%- id %>">
-    <input type="image" src="/reset.png" class="w-full" alt="home">
+    <input type="image" src="/reset.png" class="w-50 mt-10" alt="home">
   </form>
 </div>
 <%- include("templates/footer") %>
