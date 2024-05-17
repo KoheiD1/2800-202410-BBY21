@@ -54,7 +54,6 @@
         position: absolute;
         width: 200px; /* Fixed width */
         height: 200px; /* Fixed height */
-        top: -30px;
         justify-self: end;
         right: -10px;
     }
@@ -69,7 +68,11 @@
             </div>
         </div>
         <div id="hero-container">
-            <%- include('hero.html') %>
+            <div class="container">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <image href="/kid.svg" x="0" y="0" width="100" height="100" />
+                </svg>
+              </div>
         </div>
         <div id="healthbar-right" class="health-bar-right flex flex-col items-center">
             <div class="healthbar-wrapper max-w-full">
@@ -78,7 +81,11 @@
             </div>
         </div>
         <div id="enemy-container">
-            <%- include('enemy.html') %>
+            <div class="container">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <image href="<%= enemyImage %>" x="0" y="0" width="100" height="100" />
+                </svg>
+              </div>
         </div>
     </div>
 

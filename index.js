@@ -267,6 +267,7 @@ app.post('/startencounter', async (req, res) => {
 		enemyHealth: enemy.enemyHealth,
 		enemyDMG: enemy.enemyDMG,
 		maxEnemyHealth: enemy.enemyHealth,
+		enemyImage: enemy.enemyImage,
 		answerdQuestions: [],
 		index: req.body.index,
 		row: req.body.row,
@@ -287,7 +288,7 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth});
+			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage});
 	} catch (error) {
 			res.redirect('/map');
 	}
