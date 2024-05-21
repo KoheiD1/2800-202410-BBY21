@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 12;
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 const app = express();
 
@@ -302,7 +302,7 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage});
+			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username});
 	} catch (error) {
 			res.redirect('/map');
 	}
