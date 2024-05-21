@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 12;
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 const app = express();
 
@@ -142,7 +142,7 @@ app.post('/submitUser', async (req, res) => {
 	const schema = Joi.object(
 		{
 			username: Joi.string().alphanum().max(20).required(),
-			email: Joi.string().email().max(20).required(),
+			email: Joi.string().email().max(320).required(),
 			password: Joi.string().max(20).required()
 		});
 
@@ -168,7 +168,7 @@ app.post('/loggingin', async (req, res) => {
 	var email = req.body.email;
 	var password = req.body.password;
 
-	const schema = Joi.string().max(20).required();
+	const schema = Joi.string().max(320).required();
 	const validationResult = schema.validate(email);
 	if (validationResult.error != null) {
 		res.redirect("/login");
@@ -303,7 +303,7 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage});
+			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username});
 	} catch (error) {
 			res.redirect('/map');
 	}
