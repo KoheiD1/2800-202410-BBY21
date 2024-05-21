@@ -1,49 +1,121 @@
-<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<%- include("templates/headerloggedin", { overflowVariable: 'overflow-x-hidden' }) %>
 <style>
     .hidden {
-    display: none;
-}
+        display: none;
+    }
+    .bg-gradient-to-b {
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-rows: 5vh 10vh 16vh 10vh 5vh; /* Adjust grid rows as needed */
+        grid-template-columns: 45% 5% 50%; /* Three columns */
+        overflow: hidden;
+        height: 50vh; /* Ensure the height is set correctly */
+    }
 
+    #healthbar-left {
+        grid-row: 5; /* Bottom row */
+        grid-column: 1; /* First column */
+        position: absolute;
+        top: -20px;
+        
+    }
+
+    #healthbar-right {
+        grid-row: 1; /* Top row */
+        grid-column: 3; /* Last column */
+        position: absolute;
+        right: -90px;
+        justify-self: end;
+       
+    }
+
+    #healthbar-right .healthbar-wrapper p {
+        padding-left: 8px;
+    }
+
+    #healthbar-left .healthbar-wrapper p {
+        padding-left: 8px;
+    }
+
+    #hero-container {
+        grid-column: 1; /* Middle column */
+        grid-row: 3; /* Bottom row */
+        position: absolute;
+        width: 180px; /* Fixed width */
+        height: 180px; /* Fixed height */
+        
+
+    }
+
+    #enemy-container {
+        grid-column: 3; /* Middle column */
+        grid-row: 1; /* Top row */
+        position: absolute;
+        width: 200px; /* Fixed width */
+        height: 200px; /* Fixed height */
+        justify-self: end;
+        right: -10px;
+    }
 </style>
-<body>
-    <div class="flex flex-col justify-center items-center h-screen">
-        <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-1/2 w-full relative">
-            <div id="healthbar-left" class="health-bar-left absolute bottom-2 left-4">
-              <%- include('healthbar.html') %>
-            </div>
-            <div id="healthbar-right" class="health-bar-right absolute top-2 right-4">
-              <%- include('healthbar.html') %>
+
+<body class="flex flex-col justify-center items-center mx-auto">
+    <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-[50vh] relative grid gap-2">
+        <div id="healthbar-left" class="health-bar-left flex flex-col items-center">
+            <div class="healthbar-wrapper max-w-full">
+                <p>Hero</p>
+                <%- include('healthbar.html') %>
             </div>
         </div>
-        <div class="max-w-lg mx-auto p-8 bg-white rounded shadow-md h-1/2">
-            <h1 class="text-2xl font-bold mb-4"><%= question.questionText %></h1>
-            <ul>
-                <% question.options.forEach((option, index) => { %>
-                    <li class="mb-2">
-                        <form id="<%= index %>" class="feedback-form" data-question-id="<%= question._id %>">
-                            <input type="hidden" name="option" value="<%= index %>">
-                            <button id="opt-btn" type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                <%= option.text %>
-                            </button>
-                        </form>
-                        <div id="feedbackResult<%= index %>"></div>
-                    </li>
-                <% }); %>
-            </ul>
+        <div id="hero-container">
+            <div class="container">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <image href="/kid.svg" x="0" y="0" width="100" height="100" />
+                </svg>
+              </div>
+        </div>
+        <div id="healthbar-right" class="health-bar-right flex flex-col items-center">
+            <div class="healthbar-wrapper max-w-full">
+                <p>Enemy</p>
+                <%- include('healthbar.html') %>
+            </div>
+        </div>
+        <div id="enemy-container">
+            <div class="container">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <image href="<%= enemyImage %>" x="0" y="0" width="100" height="100" />
+                </svg>
+              </div>
         </div>
     </div>
 
-    <!-- Tailwind Modal -->
+    <div class="max-w-lg mx-auto p-8 bg-white rounded shadow-md h-1/2">
+        <h1 class="text-2xl font-bold mb-4"><%= question.questionText %></h1>
+        <ul>
+            <% question.options.forEach((option, index) => { %>
+                <li class="mb-2">
+                    <form id="<%= index %>" class="feedback-form" data-question-id="<%= question._id %>">
+                        <input type="hidden" name="option" value="<%= index %>">
+                        <button id="opt-btn" type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <%= option.text %>
+                        </button>
+                    </form>
+                    <div id="feedbackResult<%= index %>"></div>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+
     <div id="feedbackModal" class="fixed inset-0 flex items-center justify-center z-10 hidden">
-        <div class="absolute inset-0 "></div>
-        <div class="bg-white rounded-lg p-8 max-w-md bg-gray-500">
+        <div class="absolute inset-0"></div>
+        <div class="bg-white rounded-lg p-8 max-w-md">
             <div class="flex justify-end">
                 <button id="closeModal" class="text-blue-500 hover:text-gray-700 z-50" onclick="closeModalFunction()">Done</button>
             </div>
-            
             <p id="modalFeedback" class="mt-4"></p>
         </div>
     </div>
+
     
     <script>
         var enemyHealth = <%= enemyHealth %>;
@@ -122,6 +194,8 @@
             // Update color
             document.documentElement.style.setProperty('--bar-fill', '#57e705');
             document.documentElement.style.setProperty('--bar-top',  '#6aff03');
+            
+
 
             // Update color for left health bar
             if (percentLeft <= 50) { // Yellows

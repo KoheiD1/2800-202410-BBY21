@@ -72,6 +72,7 @@ function chooseEnemy(req, difficulty, enemies) {
     });
 
     var rand = Math.floor(Math.random() * fightablteEnemies.length);
+    console.log("Enemy chosen: " + fightablteEnemies[rand].enemyName);
     return fightablteEnemies[rand];
 };
 

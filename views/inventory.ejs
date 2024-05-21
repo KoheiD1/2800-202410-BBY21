@@ -1,8 +1,56 @@
-<%- include("templates/headerloggedin", {overflowVariable: 'overflow-auto'}) %>
-<div class="grid">
-    <% for(let i = 0; i < items.length; i++) { %>
-        <%- include('templates/inventoryItem', {item: items[i]}) %>
-    <% } %>
-</div>
-<br>
-<button onclick="history.back()">Back</button>
+<%- include('templates/header', {overflowVariable: "overflow-hidden h-screen bg-[url('/wood.png')]" }) %>
+    <div class="grid grid-rows-10 grid-cols-10 h-full">
+        <div class="row-span-7 col-start-2 col-span-8 bg-[url('/backpack.png')] bg-no-repeat bg-contain bg-center">
+            <div class="grid grid-cols-4 grid-rows-8 h-full w-full p-6 ">
+                <% for(let i=0; i < items.length; i++) { %>
+                    <%- include('templates/inventoryItem', {item: items[i]}) %>
+                        <% } %>
+            </div>
+        </div>
+        <div class="row-start-8 col-start-1 col-span-10 row-span-2 p-5">
+            <div class="bg-slate-600 w-full h-full">
+                <div class="w-full text-center text-xl">Stats</div>
+                <div id="buffGrid" class="grid grid-rows-2 w-full h-full text-center"></div>
+            </div>
+        </div>
+        <div class="row-start-10 col-start-1 col-span-10 p-auto mx-auto">
+            <button class="bg-red-600 rounded-lg text-3xl font-bold text-black"
+                onclick="window.location.href='/shop'">Back</button>
+        </div>
+    </div>
+    <script>
+        let items = <%- JSON.stringify(items) %>;
+        if (items.length >= 1) {
+            let grid = document.getElementById("buffGrid");
+            let index = 1;
+            for (let i = 0; i < items.length; i++) {
+                for (let j = 0; j < items[i].effects.length - 1; j++) {
+                    let effectName = items[i].effects[j];
+                    let effects = grid.getElementsByClassName('row-start-1');
+
+                    let found = false;
+                    for (let k = 0; k < effects.length; k++) {
+                        if (effects[k].innerHTML == effectName) {
+                            found = true;
+                            let x = parseInt(grid.children[(k * 2) + 1].innerHTML);
+                            x += parseInt(items[i][effectName]);
+                            grid.children[(k * 2) + 1].innerHTML = x;
+                        }
+                    }
+
+                    if (found == false) {
+                        let div = document.createElement('div');
+                        div.className = ('col-start-' + index + ' row-start-1');
+                        div.innerHTML = effectName;
+                        grid.appendChild(div);
+
+                        let effectDiv = document.createElement('div');
+                        effectDiv.className = ('col-start-' + index);
+                        effectDiv.innerHTML = items[i][items[i].effects[j]];
+                        grid.appendChild(effectDiv);
+                        index++;
+                    }
+                }
+            }
+        }
+    </script>

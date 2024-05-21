@@ -3,6 +3,7 @@ const router = express.Router();
 
 module.exports = function(userCollection) {
     router.get('/profile', async (req, res) => {
+        res.locals.gameStarted = req.session.gameSession ? true : false;
         if (req.session.authenticated) {
             const userName = req.session.username;
             const userEmail = req.session.email;

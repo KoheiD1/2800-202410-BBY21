@@ -6,11 +6,14 @@ const MongoStore = require('connect-mongo');
 const ejs = require('ejs')
 const bcrypt = require('bcrypt');
 
+
 const saltRounds = 12;
 
 const port = process.env.PORT || 3000;
 
 const app = express();
+
+
 //const profileRoutes = require('./profileRoutes');
 // const shopRouter = require('./shopRouter.js');
 const Joi = require("joi");
@@ -41,6 +44,8 @@ const levelOneCollection = database.db(mongodb_database).collection('level-1-que
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
+
+app.use(express.static(__dirname + "/public"));
 
 const currMap = new ObjectId("66467f92599dd72ac79fcec9");
 
@@ -113,6 +118,20 @@ app.get('/createUser', (req, res) => {
 
 app.get('/login', (req, res) => {
 	res.render("login");
+});
+
+const emailRoute = require('./emailRoute');
+app.use(express.json());
+app.use(emailRoute);
+
+app.get('/forgotPassword', (req, res) => {
+	res.render("forgotPassword");
+});
+
+
+app.get('/resetPassword', (req, res) => {
+	const token = req.query.token;
+	res.render('resetPassword', { token: token });
 });
 
 app.post('/submitUser', async (req, res) => {
@@ -194,7 +213,7 @@ app.get('/logout', (req, res) => {
 
 app.get('/startGame', async (req, res) => {
 	// When the player starts the game it creates a new game session
-	req.session.gameSession = {
+	req.session.gameSession = await {
 		mapSet: false,
 		playerHealth: 100,
 		playerDMG: 25,
@@ -205,21 +224,31 @@ app.get('/startGame', async (req, res) => {
 	
 	try {
 		await new Promise((resolve, reject) => {
-			if (req.session.gameSession.mapSet) {
+			if (!req.session.gameSession.mapSet) {
 				resolve();
 			} else {
 				reject(new Error('Game session map is not set'));
 			}
 		});
 
-		res.redirect('/map');
-	} catch (error) {
-		console.error('Error starting game:', error);
-		res.redirect('/');
-	}
+
+        // Check if the map is set
+        if (!req.session.gameSession.mapSet) {
+            // If not set, redirect to '/map'
+            res.redirect('/map');
+        } else {
+            // If set, redirect to '/'
+            res.redirect('/');
+        }
+    } catch (error) {
+        // Handle any errors
+        res.redirect('/');
+    }
 });
 
+
 app.get('/map', async (req, res) => {
+	req.session.shop = null;
 	if (!req.session.gameSession.mapSet) {
 		const result = await pathsCollection.find({ _id: currMap }).project({
 			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
@@ -252,6 +281,7 @@ app.post('/startencounter', async (req, res) => {
 		enemyHealth: enemy.enemyHealth,
 		enemyDMG: enemy.enemyDMG,
 		maxEnemyHealth: enemy.enemyHealth,
+		enemyImage: enemy.enemyImage,
 		answerdQuestions: [],
 		index: req.body.index,
 		row: req.body.row,
@@ -272,9 +302,8 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth});
+			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage});
 	} catch (error) {
-			console.error('Error fetching question:', error);
 			res.redirect('/map');
 	}
 });
@@ -399,7 +428,6 @@ app.get('/shop', async (req, res) => {
 	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2] });
 });
 
-app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
 	res.status(404);
