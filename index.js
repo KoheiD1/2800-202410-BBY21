@@ -142,7 +142,7 @@ app.post('/submitUser', async (req, res) => {
 	const schema = Joi.object(
 		{
 			username: Joi.string().alphanum().max(20).required(),
-			email: Joi.string().email().max(20).required(),
+			email: Joi.string().email().max(320).required(),
 			password: Joi.string().max(20).required()
 		});
 
@@ -168,7 +168,7 @@ app.post('/loggingin', async (req, res) => {
 	var email = req.body.email;
 	var password = req.body.password;
 
-	const schema = Joi.string().max(20).required();
+	const schema = Joi.string().max(320).required();
 	const validationResult = schema.validate(email);
 	if (validationResult.error != null) {
 		res.redirect("/login");
