@@ -89,7 +89,7 @@ module.exports = function(itemCollection, userCollection) {
         console.log(item);
         purchaseItem(req, item);
 
-        res.redirect('/shop');
+        res.render("/shop");
     });
 
     router.get("/itemAdder", (req, res) => {
