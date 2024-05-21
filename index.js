@@ -283,6 +283,7 @@ app.post('/startencounter', async (req, res) => {
 		maxEnemyHealth: enemy.enemyHealth,
 		enemyImage: enemy.enemyImage,
 		answerdQuestions: [],
+		answerStreak: 0,
 		index: req.body.index,
 		row: req.body.row,
 		difficulty: req.body.difficulty
@@ -332,8 +333,18 @@ app.post('/feedback', async (req, res) => {
 
 		if (selectedOption.isCorrect === true) {
 			result = true;
+
 		}
+		if(!result){
+			req.session.battleSession.answerStreak = 0;
+		}	
+
 		damageCalculator(result, req);
+
+		if(result){
+			req.session.battleSession.answerStreak++;
+		}
+
 		
 		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth });
 

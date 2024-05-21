@@ -10,6 +10,11 @@ const {purchaseItem, coinDistribution, resetCoinsReceived} = require('./game');
 module.exports = function(itemCollection, userCollection) {
     router.get('/shop', async (req, res) => {
         if(req.session.authenticated) {
+            resetCoinsReceived();
+            coinDistribution(req, "hexagon");
+            console.log(req.session.gameSession.playerCoins);
+            res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+
             if(req.session.shop == null) {
                 req.session.shop = {
                     itemsPicked: []

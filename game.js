@@ -1,10 +1,14 @@
+const { cloudcontrolspartner } = require("googleapis/build/src/apis/cloudcontrolspartner");
+
 //Calculates the damage taken by the player and enemy
 function damageCalculator(choice, req) {
     var enemyHealth = req.session.battleSession.enemyHealth;
     var enemyDamage = req.session.battleSession.enemyDMG;
+    var answerStreak = req.session.battleSession.answerStreak;
     var playerHealth = req.session.gameSession.playerHealth;
     var playerDamage = req.session.gameSession.playerDMG;
     var playerInventory = req.session.gameSession.playerInventory;
+    var speedStatus = 0;
 
     //Calculates the player's damage with the items in the inventory
     playerInventory.forEach(item => {
@@ -12,14 +16,20 @@ function damageCalculator(choice, req) {
             if(item.effects[i] == "damage") {
                 playerDamage +=  parseInt(item[item.effects[i]]);
             }
+
+            if(item.effects[i] == "speed") {
+                speedStatus += parseInt(item[item.effects[i]]);
+            }
         }
     });
 
-    console.log("Player Damage: " + playerDamage);
+    console.log("Player Damage: " + playerDamage * (1 + (speedStatus/100 * answerStreak)));
     console.log("Enemy Health: " + enemyDamage);
+    console.log("Player Speed: " + speedStatus);
+    console.log("Answer Streak: " + answerStreak);
     
     if (choice) {
-        enemyHealth -= playerDamage;
+        enemyHealth -= playerDamage * (1 + (speedStatus/100 * answerStreak));
         req.session.battleSession.enemyHealth = enemyHealth;
     } else {
         playerHealth -= enemyDamage;
@@ -72,7 +82,6 @@ function chooseEnemy(req, difficulty, enemies) {
     });
 
     var rand = Math.floor(Math.random() * fightablteEnemies.length);
-    console.log("Enemy chosen: " + fightablteEnemies[rand].enemyName);
     return fightablteEnemies[rand];
 };
 
