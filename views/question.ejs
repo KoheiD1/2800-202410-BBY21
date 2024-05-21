@@ -1,5 +1,7 @@
-<%- include("templates/headerloggedin", { overflowVariable: 'overflow-x-hidden' }) %>
+<%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
     <style>
+
+
         .hidden {
             display: none;
         }
@@ -15,13 +17,11 @@
         }
 
         @keyframes flash {
-
             0%,
             50%,
             100% {
                 opacity: 1;
             }
-
             25%,
             75% {
                 opacity: 0;
@@ -141,7 +141,7 @@
             <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-[50vh] relative grid gap-2">
                 <div id="healthbar-left" class="health-bar-left flex flex-col items-center">
                     <div class="healthbar-wrapper max-w-full">
-                        <p id="heroInfo" class="pixelFont text-sm"><%=userName%></p>
+                        <p id="heroInfo" class="pixelFont text-xs pt-2 whitespace-normal break-words overflow-ellipsis"><%=userName%></p>
                         <%- include('healthbar.html') %>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                 </div>
                 <div id="healthbar-right" class="health-bar-right flex flex-col items-center">
                     <div class="healthbar-wrapper max-w-full">
-                        <p id="enemyInfo" class="pixelFont text-sm pt-2">
+                        <p id="enemyInfo" class="pixelFont text-xs pt-2 whitespace-normal break-words overflow-ellipsis">
                         </p>
                         <%- include('healthbar.html') %>
                     </div>
@@ -192,7 +192,7 @@
 
             <div id="feedbackContainer" class="hidden mx-auto p-8 rounded">
                 <p id="modalFeedback" class="mt-4"></p>
-                <div class="flex justify-center" id="modalButtons">
+                <div class="flex justify-center py-4" id="modalButtons">
                     <button id="learn-more" class="pixel-border text-black font-bold px-2 z-10" onclick="openModal()">
                         Learn More
                     </button>
@@ -229,6 +229,9 @@
             var playerHealth = <%= playerHealth %>;
             var maxEnemyHealth = <%= maxEnemyHealth %>;
             var difficulty = "<%= difficulty %>";
+
+            questionContainer.classList.remove("hidden");
+            feedbackContainer.classList.add("hidden");
 
             document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "             " + enemyHealth + "/" + maxEnemyHealth;
             document.getElementById('heroInfo').textContent = "<%=userName%> " + "             " + playerHealth + "/" + "100";
@@ -286,8 +289,6 @@
             function renderHealth() {
                 var healthbarLeft = document.getElementById("healthbar-left");
                 var healthbarRight = document.getElementById("healthbar-right");
-
-
 
                 var fillsLeft = healthbarLeft.querySelectorAll(".healthbar_fill");
                 var fillsRight = healthbarRight.querySelectorAll(".healthbar_fill");
@@ -378,8 +379,6 @@
                 const questionContainer = document.getElementById('questionContainer');
                 const feedbackContainer = document.getElementById('feedbackContainer');
 
-                questionContainer.classList.remove("hidden");
-                feedbackContainer.classList.add("hidden");
 
                 if (enemyHealth <= 0 && difficulty != "hexagon") {
                     window.location.href = '/victory';
