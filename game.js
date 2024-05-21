@@ -20,13 +20,10 @@ function damageCalculator(choice, req) {
             if(item.effects[i] == "speed") {
                 speedStatus += parseInt(item[item.effects[i]]);
             }
+            
         }
     });
 
-    console.log("Player Damage: " + playerDamage * (1 + (speedStatus/100 * answerStreak)));
-    console.log("Enemy Health: " + enemyDamage);
-    console.log("Player Speed: " + speedStatus);
-    console.log("Answer Streak: " + answerStreak);
     
     if (choice) {
         enemyHealth -= playerDamage * (1 + (speedStatus/100 * answerStreak));
@@ -35,6 +32,21 @@ function damageCalculator(choice, req) {
         playerHealth -= enemyDamage;
         req.session.gameSession.playerHealth = playerHealth;
     }
+}
+
+function calculateHealth(req) {
+    var playerInventory = req.session.gameSession.playerInventory;
+    var healthStatus = 0;
+
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "health") {
+                healthStatus +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+   return healthStatus;
 }
 
     var coinsReceived = false
@@ -110,5 +122,6 @@ module.exports = {
     coinDistribution,
     purchaseItem,
     chooseEnemy,
-    resetCoinsReceived
+    resetCoinsReceived,
+    calculateHealth
 };

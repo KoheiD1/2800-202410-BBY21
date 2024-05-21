@@ -82,7 +82,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived} = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth} = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -216,6 +216,7 @@ app.get('/startGame', async (req, res) => {
 	req.session.gameSession = await {
 		mapSet: false,
 		playerHealth: 100,
+		maxPlayerHealth: 100,
 		playerDMG: 25,
 		playerInventory: [],
 		playerCoins: 0,
@@ -303,7 +304,7 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty});
+			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: (gameSession.playerHealth + calculateHealth(req)) , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: (gameSession.maxPlayerHealth + calculateHealth(req))});
 	} catch (error) {
 			res.redirect('/map');
 	}
@@ -346,7 +347,7 @@ app.post('/feedback', async (req, res) => {
 		}
 
 		
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty });
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: (req.session.gameSession.playerHealth + calculateHealth(req)), maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty, maxPlayerHealth: (req.session.gameSession.maxPlayerHealth + calculateHealth(req))});
 
 	} catch (error) {
 		res.status(500).json({ error: 'Internal Server Error' });
