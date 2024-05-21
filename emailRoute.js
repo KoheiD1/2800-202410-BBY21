@@ -91,7 +91,29 @@ router.post('/forgotPassword', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send('Server error');
+        res.status(500).send(`
+            <html>
+            <head>
+                <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+                <style>
+                    body {
+                        background: url('/indexBG.png') no-repeat center center fixed;
+                        background-size: cover;
+                    }
+                </style>
+            </head>
+            <body class="bg-gray-100 flex items-center justify-center h-screen">
+                <div class="text-center">
+                    <div class="bg-red-100 text-red-700 p-5 rounded-lg shadow-lg">
+                        Server error
+                        <div class="mt-4">
+                            <a href="/" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Back to Main Menu</a>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
     }
 });
 
@@ -174,7 +196,29 @@ router.post('/resetPassword', async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send('Server error');
+        res.status(500).send(`
+            <html>
+            <head>
+                <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+                <style>
+                    body {
+                        background: url('/indexBG.png') no-repeat center center fixed;
+                        background-size: cover;
+                    }
+                </style>
+            </head>
+            <body class="bg-gray-100 flex items-center justify-center h-screen">
+                <div class="text-center">
+                    <div class="bg-red-100 text-red-700 p-5 rounded-lg shadow-lg">
+                        Server error
+                        <div class="mt-4">
+                            <a href="/" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Back to Main Menu</a>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `);
     }
 });
 
