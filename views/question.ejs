@@ -17,13 +17,11 @@
         }
 
         @keyframes flash {
-
             0%,
             50%,
             100% {
                 opacity: 1;
             }
-
             25%,
             75% {
                 opacity: 0;
@@ -194,7 +192,7 @@
 
             <div id="feedbackContainer" class="hidden mx-auto p-8 rounded">
                 <p id="modalFeedback" class="mt-4"></p>
-                <div class="flex justify-center" id="modalButtons">
+                <div class="flex justify-center py-4" id="modalButtons">
                     <button id="learn-more" class="pixel-border text-black font-bold px-2 z-10" onclick="openModal()">
                         Learn More
                     </button>
@@ -289,8 +287,6 @@
             function renderHealth() {
                 var healthbarLeft = document.getElementById("healthbar-left");
                 var healthbarRight = document.getElementById("healthbar-right");
-
-
 
                 var fillsLeft = healthbarLeft.querySelectorAll(".healthbar_fill");
                 var fillsRight = healthbarRight.querySelectorAll(".healthbar_fill");
