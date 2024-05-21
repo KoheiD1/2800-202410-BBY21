@@ -228,6 +228,7 @@
             var enemyHealth = <%= enemyHealth %>;
             var playerHealth = <%= playerHealth %>;
             var maxEnemyHealth = <%= maxEnemyHealth %>;
+            var difficulty = "<%= difficulty %>";
 
             document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "             " + enemyHealth + "/" + maxEnemyHealth;
             document.getElementById('heroInfo').textContent = "<%=userName%> " + "             " + playerHealth + "/" + "100";
@@ -260,6 +261,7 @@
                                 enemyHealth = data.enemyHealth;
                                 playerHealth = data.playerHealth;
                                 maxEnemyHealth = data.maxEnemyHealth;
+                                difficulty = data.difficulty;
                                 console.log("Max Enemy Health: ", maxEnemyHealth);
                                 console.log("Feedback Result: ", data.result);
 
@@ -379,11 +381,14 @@
                 questionContainer.classList.remove("hidden");
                 feedbackContainer.classList.add("hidden");
 
-                if (enemyHealth <= 0) {
+                if (enemyHealth <= 0 && difficulty != "hexagon") {
                     window.location.href = '/victory';
                 } else if (playerHealth <= 0) {
                     window.location.href = '/defeat';
-                } else {
+                } else if(enemyHealth <= 0 && difficulty == "hexagon"){
+                    window.location.href = '/leveup';
+                }
+                else{
                     window.location.href = '/question';
                 }
             }

@@ -303,7 +303,7 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username});
+			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty});
 	} catch (error) {
 			res.redirect('/map');
 	}
@@ -346,7 +346,7 @@ app.post('/feedback', async (req, res) => {
 		}
 
 		
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth });
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty });
 
 	} catch (error) {
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -403,6 +403,16 @@ app.get('/victory', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.row' + row + '.' + index + '.status']: "chosen" } });
+	res.render("victory");
+});
+
+app.get('/levelup', (req, res) => {
+	const difficulty = req.session.battleSession.difficulty;
+	coinDistribution(req, difficulty);
+	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+
+	req.session.gameSession.mapSet = false;
+	
 	res.render("victory");
 });
 
