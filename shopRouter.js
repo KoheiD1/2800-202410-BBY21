@@ -58,6 +58,7 @@ module.exports = function(itemCollection, userCollection) {
     router.get('/purchase',  async (req, res) => {
         let info = req.query.info;
         // res.redirect('/');
+        console.log(info);
         let name = req.session.username;
         let result = await userCollection.find({username: name}).toArray();
         console.log(result[0].itemList.length);
@@ -84,11 +85,10 @@ module.exports = function(itemCollection, userCollection) {
                 effect = true;
             }
         }
-
+        item.price = info.substring(info.lastIndexOf(',') + 1);
         result[0].itemList[result[0].itemList.length] = item;
-        if(!purchaseItem(req, item)){
-           
-        }
+        console.log(item);
+        purchaseItem(req, item);
 
         res.redirect('/shop');
     });
@@ -138,10 +138,18 @@ module.exports = function(itemCollection, userCollection) {
             res.send("Price Needed");
         }
 
-        // await itemCollection.insertOne(item);
+        await itemCollection.insertOne(item);
 
         let string = "/itemAdder?msg=Item Added&pwd=" + process.env.ITEM_PASSWORD;
         res.redirect(string);
+    });
+
+    router.get("/adminItems", (req, res) => {
+        if(req.query.pwd == process.env.ITEM_PASSWORD) {
+            itemCollection.find().toArray().then(items => {
+                res.render("adminItems", {items: items});
+            });
+        }
     });
 
     return router;

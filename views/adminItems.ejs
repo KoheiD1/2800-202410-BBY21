@@ -1,0 +1,25 @@
+<div>
+    <% for(let i = 0; i < items.length; i++) { %>
+            <div>
+                <h1 class="text-3xl"><%=items[i].type%></h1>
+                <% let string = items[i].type %>
+                <% for(let j = 0; j < items[i].effects.length; j++) { %>
+                    <%= items[i].effects[j] %>:
+                    <% string += ',' + items[i].effects[j] %>
+                    <% if(items[i][items[i].effects[j]].length > 1) { %>
+                        <% let x = parseInt(items[i][items[i].effects[j]][1]); %>
+                        <% string += ',' + x; %>
+                        <%- parseInt(items[i][items[i].effects[j]][1]) %>
+                    <% } else { %>
+                        <%= items[i][items[i].effects[j]] %>
+                        <% string += ',' + items[i][items[i].effects[j]]; %>
+                    <% } %>
+                    <br>
+                <% } %>
+                <% string += ',' + items[i].price %>
+                <% //console.log(string) %>
+                <button onclick="window.location.href='/purchase?info=<%- string %>'">Add</button>
+            </div>
+        </form>
+    <% } %>
+</div>
