@@ -32,7 +32,7 @@ function coinDistribution(req, difficulty) {
     if(!coinsReceived){
         switch(difficulty) {
             case "triangle":
-                req.session.gameSession.playerCoins += 5;
+                req.session.gameSession.playerCoins += 500;
                 break;
             case "square":
                 req.session.gameSession.playerCoins += 10;
