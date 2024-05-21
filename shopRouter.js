@@ -59,8 +59,6 @@ module.exports = function(itemCollection, userCollection) {
         // res.redirect('/');
         console.log(info);
         let name = req.session.username;
-        let result = await userCollection.find({username: name}).toArray();
-        console.log(result[0].itemList.length);
         let item = {type : info.substring(0, info.indexOf(',')),
                     effects : []};
         let effect = true;
@@ -85,7 +83,6 @@ module.exports = function(itemCollection, userCollection) {
             }
         }
         item.price = info.substring(info.lastIndexOf(',') + 1);
-        result[0].itemList[result[0].itemList.length] = item;
         console.log(item);
         purchaseItem(req, item);
 
