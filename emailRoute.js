@@ -34,9 +34,60 @@ router.post('/forgotPassword', async (req, res) => {
             // Send the reset password email
             await sendMail(email, 'Reset Password', `Click the link to reset your password: ${resetLink}`);
             
-            res.send('Password reset link sent to your email');
+            res.send(`
+                <html>
+                <head>
+                    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+                    <style>
+                        body {
+                            background-image: url('/indexBG.png');
+                            background-size: cover;
+                            background-position: center;
+                        }
+                    </style>
+                </head>
+                <body class="bg-gray-100 flex items-center justify-center h-screen">
+                    <div class="text-center">
+                        <div class="bg-green-100 text-green-700 p-5 rounded-lg shadow-lg">
+                            <p>Password reset link sent to your email</p>
+                            <a href="https://mail.${email.split('@')[1]}" class="mt-3 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out">
+                                Go to ${email.split('@')[1]}
+                            </a>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
         } else {
-            res.status(404).send('User not found');
+            res.send(`
+                <html>
+                <head>
+                    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+                    <style>
+                        body {
+                            background-image: url('/indexBG.png');
+                            background-size: cover;
+                            background-position: center;
+                        }
+                    </style>
+                </head>
+                <body class="bg-gray-100 flex items-center justify-center h-screen">
+                    <div class="text-center">
+                        <div class="bg-red-100 text-red-700 p-5 rounded-lg shadow-lg">
+                            <p>User not found</p>
+                            <div class="mt-3">
+                                <a href="/forgotPassword" class="inline-block bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-700 transition duration-300 ease-in-out">
+                                    Try Again
+                                </a>
+                                <a href="/login" class="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out ml-2">
+                                    Back to Login
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
         }
     } catch (error) {
         console.error(error);
@@ -58,9 +109,68 @@ router.post('/resetPassword', async (req, res) => {
             const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
             await userCollection.updateOne({ _id: user._id }, { $set: { password: hashedPassword }, $unset: { resetToken: "", resetTokenExpiry: "" } });
             
-            res.send('Password reset successful');
+            res.send(`
+                <html>
+                <head>
+                    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+                    <style>
+                        body {
+                            background-image: url('/indexBG.png');
+                            background-size: cover;
+                            background-position: center;
+                        }
+                    </style>
+                    <script>
+                        let countdown = 5;
+                        function updateCountdown() {
+                            document.getElementById('countdown').innerText = countdown;
+                            if (countdown > 0) {
+                                countdown--;
+                                setTimeout(updateCountdown, 1000);
+                            } else {
+                                window.location.href = '/login';
+                            }
+                        }
+                        window.onload = updateCountdown;
+                    </script>
+                </head>
+                <body class="bg-gray-100 flex items-center justify-center h-screen">
+                    <div class="text-center">
+                        <div class="bg-green-100 text-green-700 p-5 rounded-lg shadow-lg">
+                            <p>Password reset successful</p>
+                            <p>Redirecting to login in <span id="countdown">5</span> seconds...</p>
+                            <a href="/login" class="mt-3 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out">
+                                Login
+                            </a>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
         } else {
-            res.status(400).send('Invalid or expired reset token');
+            res.status(400).send(`
+                <html>
+                <head>
+                    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+                    <style>
+                        body {
+                            background: url('/indexBG.png') no-repeat center center fixed;
+                            background-size: cover;
+                        }
+                    </style>
+                </head>
+                <body class="bg-gray-100 flex items-center justify-center h-screen">
+                    <div class="text-center">
+                        <div class="bg-red-100 text-red-700 p-5 rounded-lg shadow-lg">
+                            Invalid or expired reset token
+                            <div class="mt-4">
+                                <a href="/login" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Back to Login</a>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
         }
     } catch (error) {
         console.error(error);
