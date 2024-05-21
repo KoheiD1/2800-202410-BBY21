@@ -23,14 +23,14 @@ module.exports = function(userCollection) {
                 { 
                     username: { $nin: excludedUsers }
                 },
-                { projection: { _id: 0, username: 1 } }
+                { projection: { _id: 0, username: 1, profile_pic: 1 } }
             ).toArray();
             
-            const allUsers = documents.map(doc => doc.username);
+            // const allUsers = documents.map(doc => doc.username);
             
-            console.log('Usernames:', allUsers);
+            // console.log('Usernames:', allUsers);
     
-            res.render("findFriends", { allUsers: allUsers });
+            res.render("findFriends", { allUsers: documents });
         } catch (err) {
             console.error('Error finding documents:', err);
             res.status(500).send('Internal Server Error');
