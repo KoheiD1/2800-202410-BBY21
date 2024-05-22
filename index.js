@@ -315,6 +315,16 @@ app.get('/question', async (req, res) => {
 	}
 });
 
+app.get('/getNewQuestion', async (req, res) => {
+	
+	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+	await levelOneCollection.deleteOne({ _id: question._id });
+
+
+	res.json({ question: question });
+	
+});
+
 app.post('/updateTotalDamage', async (req, res) => {
 	
 	const { playerDMG } = req.body;
