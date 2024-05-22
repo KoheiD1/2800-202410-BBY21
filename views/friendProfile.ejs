@@ -32,10 +32,17 @@
           Add Friend
           <% } %>
     </button>
-    <form action="/friends" class="pl-3">
-      <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
-        value="Back to Friends">
-    </form>
+    <% if (source == 'findFriends') { %>
+      <form action="/<%= source %>" class="pl-3">
+        <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+          value="Back to Add Friends">
+      </form>
+    <% } else { %>
+      <form action="/<%= source %>" class="pl-3">
+        <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+          value="Back to Friends List">
+      </form>
+    <% } %>
   </div>
 
   <!-- Add a hidden input field to store the currentUser value -->

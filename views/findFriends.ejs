@@ -35,8 +35,8 @@
               <li class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
                 style="background-image: url('/username-box.png');">
                 <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer" src="/<%= user.profile_pic %>" alt="profile picture"
-                onclick="getProfileInfo('<%= user.username %>')">
-                <span class="text-gray-900 text-3xl" onclick="getProfileInfo('<%= user.username %>')">
+                onclick="getProfileInfo('<%= user.username %>', 'findFriends')">
+                <span class="text-gray-900 text-3xl" onclick="getProfileInfo('<%= user.username %>', 'findFriends')">
                   <%= user.username%>
                 </span>
                 <img class="w-12 h-12 cursor-pointer" src="user-add.png" alt="Add Friend"
@@ -77,7 +77,7 @@
     <div id="modalOverlay" class="modal-overlay"></div>
 
     <script>
-      function getProfileInfo(friendName) {
+      function getProfileInfo(friendName, source) {
         fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
           method: 'GET'
         })
@@ -86,8 +86,7 @@
               throw new Error('Failed to get friend profile');
             }
             // Redirect to the friend profile page
-            //window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
-            window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
+            window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}&source=${source}`;
           })
           .catch(error => {
             console.error('Error updating friend profile:', error);
