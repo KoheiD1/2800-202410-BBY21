@@ -404,6 +404,16 @@ app.post('/preshop', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.row' + row + '.' + index + '.status']: "chosen" } });
 	
+	var oldConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+
+	oldConnections = oldConnections.path['r' + row + 'connect'][index]
+
+	for (var i = 0; i < oldConnections.length; i++){
+		oldConnections[i]++;
+	}
+
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.r' + row + 'connect.'+ index]: oldConnections } });
 	res.redirect('/shop');
 });
 
@@ -441,6 +451,21 @@ app.get('/victory', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + row + 'connect.'+ index]: oldConnections } });
+
+	// var prevConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+
+	// prevConnections = prevConnections.path['r' + (row-1) + 'connect']
+	
+	// for (var i = 0; i < prevConnections.length; i++){
+	// 	for (var n = 0; n < prevConnections.length.i; n++){
+	// 		prevConnections[n]--;
+	// 	}
+	// }
+
+
+	// await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+	// 	{ $set: { ['path.r' + (row-1) + 'connect.'+ index]: prevConnections } });
+	
 
 	res.render("victory");
 });
