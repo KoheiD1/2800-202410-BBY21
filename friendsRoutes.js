@@ -17,10 +17,9 @@ module.exports = function(userCollection) {
                     {  username: friendsList[i] },
                     { projection: { _id: 0, username: 1, profile_pic: 1 } }
                 ).toArray();
-                documents.push(temp);
+                documents.push(temp[0]);
             }
-
-            res.render("friends", { friendsList: documents[0] });
+            res.render("friends", { friendsList: documents });
         } else {
             res.redirect('/login');
         }
