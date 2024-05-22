@@ -95,11 +95,7 @@ app.use((req, res, next) => {
 	res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-	if(req.session.gameSession == undefined){
-		res.locals.gameStarted = false
-	}else{
-		res.locals.gameStarted = true
-	}
+	res.locals.gameStarted = req.session.gameSession ? req.session.gameSession.gameStarted : false;
 	next();
 });
 
@@ -277,6 +273,11 @@ app.post('/startencounter', async (req, res) => {
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
 	res.locals.gameStarted = true;
 
+	req.session.gameSession.playerHealth = req.session.gameSession.playerHealth + regenCalculator(req);
+	if(req.session.gameSession.playerHealth > (req.session.gameSession.maxPlayerHealth + calculateHealth(req))){
+		req.session.gameSession.playerHealth = (req.session.gameSession.maxPlayerHealth + calculateHealth(req));
+	}
+
 	req.session.battleSession = {
 		enemyName: enemy.enemyName,
 		enemyHealth: enemy.enemyHealth,
@@ -298,6 +299,7 @@ app.get('/question', async (req, res) => {
 			const gameSession = req.session.gameSession;
 			battleSession.answeredQuestions = battleSession.answeredQuestions || [];
 			const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+
 
 			if (!question) {
 					res.redirect('/map');
