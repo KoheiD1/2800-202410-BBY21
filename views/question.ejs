@@ -129,6 +129,10 @@
       grid-row: 1;
     }
 
+    #modalButtons {
+      margin: 20px;
+    }
+
     #enemy-container {
       grid-column: 3;
       /* Middle column */
@@ -232,6 +236,9 @@
       var maxEnemyHealth = <%= maxEnemyHealth %>;
       var difficulty = "<%= difficulty %>";
       var maxPlayerHealth = <%= maxPlayerHealth %>;
+
+      questionContainer.classList.remove("hidden");
+      feedbackContainer.classList.add("hidden");
 
       document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "             " + enemyHealth + "/" + maxEnemyHealth;
       document.getElementById('heroInfo').textContent = "<%=userName%> " + "             " + playerHealth + "/" + maxPlayerHealth;
@@ -381,9 +388,6 @@
       function closeFeedbackFunction() {
         const questionContainer = document.getElementById('questionContainer');
         const feedbackContainer = document.getElementById('feedbackContainer');
-
-        questionContainer.classList.remove("hidden");
-        feedbackContainer.classList.add("hidden");
 
         if (enemyHealth <= 0 && difficulty != "hexagon") {
           window.location.href = '/victory';
