@@ -1,14 +1,15 @@
-<div class="bg-blue-100 justify-center mt-5 inline-grid">
+<% let string = item.type %>
+<div class="bg-blue-100 justify-center p-5 my-4 inline-grid" onclick='showDialog(<%- JSON.stringify(item) %>)'>
     <div class='flex justify-center font-bold text-xl'><%= item.type %></div>
     <div class="text-center">
-        <% let string = item.type %>
+        
         <% for(let i = 0; i < item.effects.length; i++) { %>
             <% string += ',' + item.effects[i] %>
-            <%- include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: item[item.effects[i]]}) %>
+            <%- //include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: item[item.effects[i]]}) %>
             <% string += ',' + item[item.effects[i]] %>
         <% } %>
-        <%- include('shopItemBonus', {itemEffect: 'Price', effectBonus: item.price}) %>
+        <%- //include('shopItemBonus', {itemEffect: 'Price', effectBonus: item.price}) %>
         <% string += ',price,' + item.price %>
     </div>
-    <button onclick="window.location.href='/purchase?info=<%= string %>'" class="flex justify-center items-center align-bottom m-2 bg-green-700">Purchase</button>
+    <!-- <button onclick="window.location.href='/purchase?info=<%= string %>'" class="flex justify-center items-center align-bottom m-2 bg-green-700">Purchase</button> -->
 </div>

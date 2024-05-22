@@ -1,14 +1,24 @@
-<%- include("templates/headerloggedin", {overflowVariable: "" }) %>
-    <div class="relative z-10">
-        <h1 class="flex justify-center text-3xl">Item Shop</h1>
-        <div class="grid grid-cols-1 grid-rows-3 m-5">
-            <% for(let i=0; i < items.length; i++) { %>
-                <%- include('templates/shopItem', {item: items[i]}) %>
-                    <% } %>
+<%- include("templates/headerloggedin", {overflowVariable: "overflow-hidden" }) %>
+    <dialog class="w-80 text-center text-xl">
+        <div class="w-64 m-auto">
+            <h1 id="itemName" class="font-bold text-2xl"></h1>
+            <div id="desc"></div>
+            <div id="effects" class="p-1 border-black border-2 w-fit m-auto"></div>
+            <div id="price"></div>
+            <div id="button" class="flex justify-center align-bottom">
+                <button id="close" onclick="close()">Close</button>
+            </div>
         </div>
-    </div>
-    <div class="fixed inset-0 bg-no-repeat bg-right z-0">
-        <img src="/shelf.png" alt="Image" class="w-auto h-full object-cover">
+    </dialog>
+    <div class="">
+        <h1 class="flex justify-center text-3xl">Item Shop</h1>
+        <div class="bg-[url('/shelf.png')] bg-no-repeat bg-center bg-contain">
+            <div class="grid grid-cols-1 grid-rows-3 space-y-8 m-6 p-5 py-10 shopItem">
+                <% for(let i=0; i < items.length; i++) { %>
+                    <%- include('templates/shopItem', {item: items[i]}) %>
+                        <% } %>
+            </div>
+        </div>
     </div>
     <div class="flex justify-center items-center z-20">
         <a href="/map"
@@ -20,4 +30,29 @@
         <a href="/inventory"
             class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Inventory</a>
     </div>
+    <script>
+        function showDialog(string) {
+            let dialog = document.querySelector('dialog');
+            let item = string;
+            dialog.querySelector('#itemName').innerHTML = item.type;
+            dialog.querySelector('#desc').innerHTML = item.description;
+            let effects = dialog.querySelector('#effects');
+            effects.innerHTML = '';
+            for(let i = 0; i < item.effects.length; i++) {
+                let effect = document.createElement('p');
+                effect.innerHTML = item.effects[i] + ': ' + item[item.effects[i]];
+                effects.appendChild(effect);
+            }
+            dialog.querySelector('#price').innerHTML = 'Price: ' + item.price;
+            dialog.querySelector('#button').querySelector('#close').addEventListener('click', function () {
+                close();
+            });
+            dialog.showModal();
+        }
+
+        function close() {
+            let dialog = document.querySelector('dialog');
+            dialog.close();
+        }
+    </script>
     <%- include("templates/footer") %>

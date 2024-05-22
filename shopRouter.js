@@ -25,8 +25,10 @@ module.exports = function(itemCollection, userCollection) {
                     do {
                         rand = parseInt(Math.random() * items.length);
                     } while(items[rand] == null);
+                    console.log(items[rand]);
                     req.session.shop.itemsPicked.push({
                         type: items[rand].type,
+                        description: items[rand].description,
                         effects: items[rand].effects,
                         price: items[rand].price
                     });
@@ -41,7 +43,6 @@ module.exports = function(itemCollection, userCollection) {
                     items[rand] = null;
                 }
             }
-            coinDistribution(req);
 
             res.locals.userProfilePic = req.session.profile_pic;
             res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
