@@ -94,23 +94,12 @@ app.use((req, res, next) => {
 	res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-	res.locals.gameStarted = req.session.gameSession ? true : false;
+	res.locals.gameStarted = req.session.gameSession.gameStarted ? true : false;
 	next();
 });
 
-//Middleware to check if the game session is active
-function inGame(req, res, next) {
-	if (!req.session.gameSession != null) {
-		req.session.gameSession = null;
-		res.locals.gameStarted = req.session.gameSession ? true : false;
-		next();
-	}
-	else {
-		next();
-	}
-}
 
-app.get('/', inGame, (req, res) => {
+app.get('/', (req, res) => {
 	res.render("index");
 });
 
@@ -224,6 +213,7 @@ app.get('/startGame', async (req, res) => {
 		playerDMG: 25,
 		playerInventory: [],
 		playerCoins: 0,
+		gameStarted: true,
 		mapID: null
 	}
 	
@@ -280,6 +270,7 @@ app.post('/startencounter', async (req, res) => {
 	resetCoinsReceived()
 	let enemies = await enemiesCollection.find().toArray();
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
+	res.locals.gameStarted = true;
 
 	req.session.battleSession = {
 		enemyName: enemy.enemyName,
@@ -422,21 +413,15 @@ app.get('/levelup', (req, res) => {
 });
 
 app.get('/defeat', (req, res) => {
+	res.locals.gameStarted = false;
+	req.session.gameSession.gameStarted = false;
 	res.render("defeat");
 });
 
 app.post('/mapreset', async (req, res) => {
-	var id = req.body.id;
-	const result = await pathsCollection.find({ _id: currMap }).project({
-		row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
-		r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
-		r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
-	}).toArray();
-	await userRunsCollection.updateOne({ _id: new ObjectId(id) },
-		{
-			$set: { path: result[0] }
-		});
-	res.redirect('/map');
+	res.locals.gameStarted = false;
+	req.session.gameSession.gameStarted = false;
+	res.redirect('/');
 });
 
 app.get('/shop', async (req, res) => {
