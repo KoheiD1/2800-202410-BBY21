@@ -1,22 +1,22 @@
 .hoverglow:hover {
   border-radius: 50%;
   box-shadow:
-  inset 0px -2px 0px 30px rgb(255, 255, 255, 0.8),  /* inner white */
-  inset 1px -3px 0px 60px rgb(255, 0, 255, 0.8), /* middle magenta */
-  inset 2px -4px 0px 90px rgb(0, 255, 255, 0.8), /* outer cyan */
-  0px -2px 60px 30px #fff,  /* inner white */
-  1px -3px 100px 60px #f0f, /* middle magenta */
-  2px -4px 140px 90px #0ff; /* outer cyan */
+  inset 0px -2px 0px 30px rgb(255, 255, 255, 0.55),  /* inner white */
+  inset 1px -3px 0px 60px rgb(255, 0, 255, 0.55), /* middle magenta */
+  inset 2px -4px 0px 90px rgb(0, 255, 255, 0.55), /* outer cyan */
+  0px -2px 60px 15px #fff,  /* inner white */
+  1px -3px 100px 30px #f0f, /* middle magenta */
+  2px -4px 140px 45px #0ff; /* outer cyan */
   animation: glow 1.5s linear infinite alternate;
 }
 @keyframes glow{
   to {
     box-shadow:
-    inset 0px -2px 0px 30px rgb(255, 255, 255, 0.55),  /* inner white */
-    inset 1px -3px 0px 60px rgb(255, 0, 255, 0.55), /* middle magenta */
-    inset 2px -4px 0px 90px rgb(0, 255, 255, 0.55), /* outer cyan */
-    0px -2px 60px 15px #fff,  /* inner white */
-    1px -3px 100px 30px #f0f, /* middle magenta */
-    2px -4px 140px 45px #0ff; /* outer cyan */
+    inset 0px -2px 0px 30px rgb(255, 255, 255, 0.8),  /* inner white */
+    inset 1px -3px 0px 60px rgb(255, 0, 255, 0.8), /* middle magenta */
+    inset 2px -4px 0px 90px rgb(0, 255, 255, 0.8), /* outer cyan */
+    0px -2px 60px 30px #fff,  /* inner white */
+    1px -3px 100px 60px #f0f, /* middle magenta */
+    2px -4px 140px 90px #0ff; /* outer cyan */
   }
 }
