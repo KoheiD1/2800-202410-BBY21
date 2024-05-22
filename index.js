@@ -414,6 +414,45 @@ app.post('/preshop', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + row + 'connect.'+ index]: oldConnections } });
+
+		var prevConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+
+		var lastVisitedIndex = prevConnections.path['row' + (row-1)];
+	
+		for (var i = 0; i < lastVisitedIndex.length; i++){
+			if (lastVisitedIndex[i].status == "chosen"){
+				lastVisitedIndex = i;
+			}
+		}
+		prevConnections = prevConnections.path['r' + (row-1) + 'connect']
+		
+		if (row ==1){
+			for (var i = 0; i < prevConnections.length; i++){
+				for (var n = 0; n < prevConnections[i].length; n++){
+					if (prevConnections[i][n] == (parseInt(index)+1)) {
+		
+					} else {
+						console.log(prevConnections[i][n]);
+						console.log(parseInt(index)+1);
+						prevConnections[i][n]--;
+					}
+				}
+			}
+		}
+		else{
+			for (var n = 0; n < prevConnections[lastVisitedIndex].length; n++){
+				if (prevConnections[lastVisitedIndex][n] == (parseInt(index)+1)) {
+	
+				} else {
+					console.log(prevConnections[lastVisitedIndex][n]);
+					console.log(parseInt(index)+1);
+					prevConnections[lastVisitedIndex][n]--;
+				}
+			}
+		}
+		await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+			{ $set: { ['path.r' + (row-1) + 'connect']: prevConnections } });
+	
 	res.redirect('/shop');
 });
 
@@ -452,21 +491,46 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + row + 'connect.'+ index]: oldConnections } });
 
-	// var prevConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+	var prevConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
 
-	// prevConnections = prevConnections.path['r' + (row-1) + 'connect']
+	var lastVisitedIndex = prevConnections.path['row' + (row-1)];
+
+	for (var i = 0; i < lastVisitedIndex.length; i++){
+		if (lastVisitedIndex[i].status == "chosen"){
+			lastVisitedIndex = i;
+		}
+	}
+
+	prevConnections = prevConnections.path['r' + (row-1) + 'connect']
 	
-	// for (var i = 0; i < prevConnections.length; i++){
-	// 	for (var n = 0; n < prevConnections.length.i; n++){
-	// 		prevConnections[n]--;
-	// 	}
-	// }
-
-
-	// await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
-	// 	{ $set: { ['path.r' + (row-1) + 'connect.'+ index]: prevConnections } });
+	if (row ==1){
+		for (var i = 0; i < prevConnections.length; i++){
+			for (var n = 0; n < prevConnections[i].length; n++){
+				if (prevConnections[i][n] == (parseInt(index)+1)) {
 	
+				} else {
+					console.log(prevConnections[i][n]);
+					console.log(parseInt(index)+1);
+					prevConnections[i][n]--;
+				}
+			}
+		}
+	}
+	else{
+		for (var n = 0; n < prevConnections[lastVisitedIndex].length; n++){
+			if (prevConnections[lastVisitedIndex][n] == (parseInt(index)+1)) {
 
+			} else {
+				console.log(prevConnections[lastVisitedIndex][n]);
+				console.log(parseInt(index)+1);
+				prevConnections[lastVisitedIndex][n]--;
+			}
+		}
+	}
+
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.r' + (row-1) + 'connect']: prevConnections } });
+	
 	res.render("victory");
 });
 
