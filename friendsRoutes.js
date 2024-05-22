@@ -10,7 +10,17 @@ module.exports = function(userCollection) {
             const user = await userCollection.findOne({ username: userName });
             const friendsList = user.friendsList;
             
-            res.render("friends", { friendsList: friendsList });
+            var documents = [];
+
+            for (var i=0; i<friendsList.length; i++) {
+                var temp =  await userCollection.find(
+                    {  username: friendsList[i] },
+                    { projection: { _id: 0, username: 1, profile_pic: 1 } }
+                ).toArray();
+                documents.push(temp);
+            }
+
+            res.render("friends", { friendsList: documents[0] });
         } else {
             res.redirect('/login');
         }

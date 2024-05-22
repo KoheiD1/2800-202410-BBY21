@@ -1,18 +1,6 @@
 <%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
 
   <body class="bg-gray-100">
-    <style>
-      body {
-        background-image: url('/indexBG.png');
-        background-size: cover;
-        background-position: center;
-        min-height: 100vh;
-      }
-
-      .modal {
-        display: none;
-      }
-    </style>
     <div class="grid">
       <form class="p-2" action="/logout" method="get">
         <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded float-right">
@@ -74,15 +62,6 @@
             </button>
           </form>
         </div>
-        <!-- <ul class="px-4">
-            <% if (friendsList && friendsList.length > 0) { %>
-                <% friendsList.forEach(friend => { %>
-                    <li class="text-gray-900"><%= friend %></li>
-                <% }); %>
-            <% } else { %>
-                <li class="text-gray-900">No friends to display</li>
-            <% } %>
-        </ul> -->
       </div>
 
       <div class="mt-40 place-self-center">
@@ -112,12 +91,8 @@
       }
 
       function selectProfilePicture(pictureSrc) {
-        console.log(pictureSrc);
         document.getElementById('profileImg').src = pictureSrc;
         closeModal();
-
-        console.log("Making post request");
-
         fetch('/updateProfilePicture', {
           method: 'POST',
           headers: {
@@ -131,14 +106,24 @@
             if (!response.ok) {
               throw new Error('Failed to update profile picture');
             }
-
             // Optionally, handle success response
           })
           .catch(error => {
             console.error('Error updating profile picture:', error);
           });
       }
-
     </script>
   </body>
   <%- include("templates/footer") %>
+  <style>
+    body {
+      background-image: url('/indexBG.png');
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+    }
+
+    .modal {
+      display: none;
+    }
+  </style>
