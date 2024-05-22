@@ -93,11 +93,17 @@ const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, cal
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+	var username = req.session.username;
+	var email = req.session.email;
 	res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 	res.locals.gameStarted = req.session.gameSession ? req.session.gameSession.gameStarted : false;
+	const result = await userCollection.find({ email: email, username: username }).project({ slotsCurrency: 1 }).toArray();
+	if (result.length > 0) {
+		res.locals.slotsCurrency = result[0].slotsCurrency; 
+	} 
 	next();
 });
 
@@ -415,6 +421,7 @@ app.get('/levelup', (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
 	coinDistribution(req, difficulty);
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+	userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
 
 	req.session.gameSession.mapSet = false;
 	
