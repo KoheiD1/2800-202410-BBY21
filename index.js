@@ -89,7 +89,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth, regenCalculator} = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth, regenCalculator, itemDamage} = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -217,7 +217,8 @@ app.get('/startGame', async (req, res) => {
 		playerInventory: [],
 		playerCoins: 0,
 		gameStarted: true,
-		mapID: null
+		mapID: null,
+		totalDamage: 0,
 	}
 	
 	try {
@@ -308,10 +309,31 @@ app.get('/question', async (req, res) => {
 					return;
 			}
 			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: (gameSession.playerHealth + calculateHealth(req)) , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: (gameSession.maxPlayerHealth + calculateHealth(req))});
+			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: (gameSession.playerHealth + calculateHealth(req)) , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: (gameSession.maxPlayerHealth + calculateHealth(req)), totalDamage: gameSession.totalDamage, playerDMG: (gameSession.playerDMG + itemDamage(req)) });
 	} catch (error) {
 			res.redirect('/map');
 	}
+});
+
+app.post('/updateTotalDamage', async (req, res) => {
+	
+	const { playerDMG } = req.body;
+
+	console.log("Player Damage Server side: ", playerDMG)
+
+	if (!req.session.gameSession) {
+		req.session.gameSession = { totalDamage: 0 };
+	  }
+	  if (typeof req.session.gameSession.totalDamage !== 'number') {
+		req.session.gameSession.totalDamage = 0;
+	  }
+
+	
+	req.session.gameSession.totalDamage += playerDMG;
+	console.log("Total Damage Server side: ", req.session.gameSession.totalDamage);
+
+	res.json({ totalDamage: req.session.gameSession.totalDamage });
+	
 });
 
 app.post('/feedback', async (req, res) => {
@@ -423,12 +445,27 @@ app.get('/victory', async (req, res) => {
 	res.render("victory");
 });
 
-app.get('/levelup', (req, res) => {
+app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
 	coinDistribution(req, difficulty);
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 
 	req.session.gameSession.mapSet = false;
+
+	try {
+		const user = req.session.username;
+
+		const goldCollected = req.session.gameSession.playerCoins;
+
+		const totalDamage = req.session.gameSession.totalDamage;
+		
+		await userCollection.updateOne(
+			{ username: user },
+			{ $inc: { runsCompleted: 1, goldCollected: goldCollected, totalDamageDealt: totalDamage} }
+		);
+	} catch (error) {
+		console.error('Error updating user level:', error);
+	}
 	
 	res.render("victory");
 });
