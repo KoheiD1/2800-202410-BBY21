@@ -408,6 +408,18 @@ app.get('/victory', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.row' + row + '.' + index + '.status']: "chosen" } });
+
+	var oldConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+
+	oldConnections = oldConnections.path['r' + row + 'connect'][index]
+
+	for (var i = 0; i < oldConnections.length; i++){
+		oldConnections[i]++;
+	}
+
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.r' + row + 'connect.'+ index]: oldConnections } });
+
 	res.render("victory");
 });
 

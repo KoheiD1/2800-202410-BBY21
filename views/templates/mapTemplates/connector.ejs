@@ -1,14 +1,20 @@
 <% if (even) { %>
   <%  if (rowConnect[index][0] - index == 0 || rowConnect[index][1] - index == 0) { %>
     <div><img class="object-contain" src="/middle.svg" alt="home"></div>
+  <% } else if (rowConnect[index][0] - index == 1 || rowConnect[index][1] - index == 1) { %>
+    <div><img class="object-contain" src="/middle_active.svg" alt="home"></div>
   <% } else { %>
     <div></div>
   <% } %>
 <% } else { %>
   <%  if (rowConnect[index-1][0] - (index-1) == 2 || rowConnect[index-1][1] - (index-1) == 2 || rowConnect[index-1][2] - (index-1) == 2) { %>
     <div><img class="object-contain" src="/right.svg" alt="home"></div>
+  <% } else if (rowConnect[index-1][0] - (index-1) == -1 || rowConnect[index-1][1] - (index-1) == -1 || rowConnect[index-1][2] - (index-1) == -1) { %>
+    <div><img class="object-contain" src="/right_active.svg" alt="home"></div>
   <% } else if (rowConnect[index+1][0] - (index+1) == -2 || rowConnect[index+1][1] - (index+1) == -2 || rowConnect[index+1][2] - (index+1) == -2){ %>
     <div><img class="object-contain" src="/left.svg" alt="home"></div>
+  <% } else if (rowConnect[index+1][0] - (index+1) == 1 || rowConnect[index+1][1] - (index+1) == 1 || rowConnect[index+1][2] - (index+1) == 1) { %>
+    <div><img class="object-contain" src="/left_active.svg" alt="home"></div>
   <% } else { %>
   <div></div>  
   <% } %>
