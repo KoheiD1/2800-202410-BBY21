@@ -48,8 +48,10 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + "/public/css"));
 app.use(express.static(__dirname + "/public/monsters"));
-app.use(express.static(__dirname + "/public/pfp"));
+app.use(express.static(__dirname + "/public/profile/pfp"));
+app.use(express.static(__dirname + "/public/profile"));
 app.use(express.static(__dirname + "/public/mapAssets"));
+app.use(express.static(__dirname + "/public/ttf"));
 app.use(express.static(__dirname + "/public"));
 
 const currMap = new ObjectId("66467f92599dd72ac79fcec9");
