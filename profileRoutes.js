@@ -12,8 +12,12 @@ module.exports = function(userCollection) {
             const user = await userCollection.findOne({ username: userName });
             const userProfilePic = user ? user.profile_pic : 'profile-logo.png';
             const friendsList = user.friendsList; 
+            const userBio = user.bio;
+            console.log("User bio: ", userBio);
 
-            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList });
+            const userTitle = user.UserTitle;
+
+            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio});
         } else {
             res.redirect('/login');
         }
@@ -34,6 +38,26 @@ module.exports = function(userCollection) {
         } catch (error) {
             console.error('Error updating profile picture:', error);
             res.sendStatus(500); 
+        }
+    });
+
+    router.post('/updateProfile', async (req, res) => {
+        console.log("Updating profile...");
+        const { title, bio } = req.body;
+        
+        try {
+            const userName = req.session.username;
+
+            await userCollection.updateOne(
+                { username: userName },
+                { $set: { UserTitle: title, bio: bio } }
+            );
+            console.log("Profile updated successfully");
+    
+            res.status(200).send({ success: true, message: 'Profile updated successfully' });
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            res.status(500).send({ success: false, message: 'Failed to update profile' });
         }
     });
 
