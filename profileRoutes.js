@@ -15,12 +15,10 @@ module.exports = function(userCollection, userTitlesCollection) {
             const userProfilePic = user ? user.profile_pic : 'profile-logo.png';
             const friendsList = user.friendsList; 
             const userBio = user.bio;
-            console.log("User bio: ", userBio);
             
             userTitle = user.UserTitle;
 
             const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
-            console.log("User titles array: ", userTitlesArray);
             
             res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, userTitles: userTitlesArray});
         } else {

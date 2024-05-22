@@ -371,6 +371,9 @@
         feedbackParagraph.textContent = feedbackText;
 
         if (correct) {
+          
+          updateTotalDamage();
+
           if (enemyHealth < 0) {
             enemyHealth = 0;
           }
@@ -399,6 +402,26 @@
         else {
           window.location.href = '/question';
         }
+      }
+
+      function updateTotalDamage() {
+        var playerDMG = <%= playerDMG %>;
+        console.log("Player Damagegg: ", playerDMG);
+
+        fetch('/updateTotalDamage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ playerDMG: playerDMG })
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("Total Damage: ", data.totalDamage);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
       }
 
       // Open the modal

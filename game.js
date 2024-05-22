@@ -65,6 +65,22 @@ function regenCalculator(req) {
    return regenStatus;
 }
 
+function itemDamage(req) {
+    var playerInventory = req.session.gameSession.playerInventory;
+    var damageStatus = 0;
+
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "damage") {
+                damageStatus +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+   return damageStatus;
+}
+
+
     var coinsReceived = false
 function coinDistribution(req, difficulty) {
     if(!coinsReceived){
@@ -140,5 +156,6 @@ module.exports = {
     chooseEnemy,
     resetCoinsReceived,
     calculateHealth,
-    regenCalculator
+    regenCalculator,
+    itemDamage
 };
