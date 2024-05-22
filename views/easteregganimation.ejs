@@ -1,0 +1,123 @@
+<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+<div class="grid-container">
+    <!-- SVG image for the background -->
+    <img src="./easterEgg/gatchaMachine.svg" alt="Gatcha Machine" class="background-image">
+    <!-- Gatcha Ball -->
+    <img src="./easterEgg/gatchaBall.svg" alt="Gatcha Ball" class="gatchaBall animate__animated animate__delay-2s" onclick="window.location.href = '/capsuleOpening'">
+</div>
+
+<!-- Text below the gacha machine, outside the grid container -->
+<div class="strobing-text mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl">Click the ball!!</div>
+
+<style>
+    .grid-container {
+        position: relative;
+        display: grid;
+        place-items: center;
+        height: 50vh;
+        grid-template-columns: repeat(12, 1fr);
+        grid-template-rows: repeat(12, 1fr);
+    }
+
+    .gatchaBall {
+        width: 90%;
+        height: 90%;
+        z-index: 1;
+        grid-column: 7 / span 1;
+        grid-row: 9 / span 3;
+        visibility: hidden;
+        animation: rotateAndAppear 1.5s ease-out forwards;
+    }
+
+    @media screen and (max-width: 768px) {
+        .gatchaBall {
+            grid-column: 8 / span 1;
+            grid-row: 9 / span 3;
+        }
+    }
+
+    @media screen and (max-width: 576px) {
+        .gatchaBall {
+            grid-column: 8 / span 2;
+            grid-row: 9 / span 2;
+        }
+    }
+
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        z-index: 0;
+        animation: shake 1.5s;
+    }
+
+    @keyframes shake {
+        10%, 90% { transform: translate3d(-1px, 0, 0); }
+        20%, 80% { transform: translate3d(2px, 0, 0); }
+        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+        40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+
+    @keyframes rotateAndAppear {
+        0% { transform: rotate(0deg) scale(0); visibility: hidden; }
+        50% { transform: rotate(180deg) scale(0); }
+        100% { transform: rotate(360deg) scale(1); visibility: visible; }
+    }
+
+    @keyframes openCapsule {
+        0% { transform: scale(1); }
+        50% { transform: scale(0.5); }
+        100% { transform: scale(1); }
+    }
+
+    .strobing-text {
+        position: relative;
+        top: 20px;
+        font-size: 1.5em;
+        text-align: center;
+        visibility: hidden;
+        animation: strobe 1s infinite;
+    }
+
+    @keyframes strobe {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+
+    @font-face {
+    font-family: 'titlefont';
+    src: url('startgame.ttf') format('truetype');
+    }
+  
+    .title-font {
+    font-family: 'titlefont', sans-serif;
+    }
+  
+    
+   
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const gatchaBall = document.querySelector('.gatchaBall');
+        const strobingText = document.querySelector('.strobing-text');
+
+        // Set up a listener to make the text visible when the gacha ball animation ends
+        gatchaBall.addEventListener('animationend', (event) => {
+            if (event.animationName === 'rotateAndAppear') {
+                strobingText.style.visibility = 'visible';
+            }
+        });
+    });
+
+    function openCapsule() {
+    
+    }
+</script>
+
+<%- include("templates/footer") %>

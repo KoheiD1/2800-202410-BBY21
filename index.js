@@ -455,6 +455,18 @@ app.get('/shop', async (req, res) => {
 	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2] });
 });
 
+app.get('/gatchapage', async (req, res) => {
+	res.render('gatchaPage');
+});
+
+app.get('/easteregganimation', async (req, res) => {
+	res.render('easteregganimation');
+});
+
+app.get('/capsuleopening', async (req, res) => {
+	res.render('capsuleopening', {playerReward: 'mainCharSprite.png'});
+});
+
 
 app.get("*", (req, res) => {
 	res.status(404);
