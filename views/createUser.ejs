@@ -1,4 +1,5 @@
 <%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
+<link href="/defaultBG.css" rel="stylesheet" type="text/css">
 <body>
   <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
@@ -43,13 +44,6 @@
 </body>
 <%- include("templates/footer") %>
 <style>
-  body {
-    background-image: url('/indexBG.png');
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
-  }
-
   @font-face {
   font-family: 'titlefont';
   src: url('startgame.ttf') format('truetype');

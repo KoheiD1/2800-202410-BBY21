@@ -46,6 +46,7 @@ const userTitlesCollection = database.db(mongodb_database).collection('UserTitle
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 
+app.use(express.static(__dirname + "/public/css"));
 app.use(express.static(__dirname + "/public/monsters"));
 app.use(express.static(__dirname + "/public/pfp"));
 app.use(express.static(__dirname + "/public/mapAssets"));
