@@ -41,6 +41,7 @@ const questionCollection = database.db(mongodb_database).collection('questions')
 const enemiesCollection = database.db(mongodb_database).collection('enemies');
 const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
+const userTitlesCollection = database.db(mongodb_database).collection('UserTitles');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -65,7 +66,7 @@ app.use(session({
 ));
 
 const profileRoutes = require('./profileRoutes');
-app.use('/', profileRoutes(userCollection));
+app.use('/', profileRoutes(userCollection, userTitlesCollection));
 
 const friendProfileRoutes = require('./friendProfileRoutes');
 app.use('/', friendProfileRoutes(userCollection));

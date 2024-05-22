@@ -4,7 +4,6 @@
             display: none;
         }
 
-
         @font-face {
             font-family: 'basicPixel';
             src: url('Apple_.ttf') format('truetype');
@@ -96,6 +95,7 @@
             /* Last column */
             position: absolute;
             right: -90px;
+            top: 20px;
             justify-self: end;
 
         }
@@ -119,6 +119,14 @@
             height: 180px;
             /* Fixed height */
             top: -20px;
+        }
+
+        #enemyInfo {
+            position: absolute;
+            right: 32px;
+            grid-column: 1/4;
+            /* Middle column */
+            grid-row: 1;
         }
 
         #enemy-container {
@@ -152,6 +160,7 @@
                         </svg>
                     </div>
                 </div>
+                <p id="enemyInfo" class="pixelFont text-xs pt-2 whitespace-normal break-words overflow-ellipsis"></p>
                 <div id="healthbar-right" class="health-bar-right flex flex-col items-center">
                     <div class="healthbar-wrapper max-w-full">
                         <p id="enemyInfo" class="pixelFont text-sm pt-2">
