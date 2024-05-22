@@ -86,7 +86,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth} = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth, regenCalculator} = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -94,7 +94,11 @@ app.use((req, res, next) => {
 	res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-	res.locals.gameStarted = req.session.gameSession.gameStarted ? true : false;
+	if(req.session.gameSession == undefined){
+		res.locals.gameStarted = false
+	}else{
+		res.locals.gameStarted = true
+	}
 	next();
 });
 

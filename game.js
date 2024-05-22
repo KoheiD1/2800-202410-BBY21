@@ -1,4 +1,5 @@
 const { cloudcontrolspartner } = require("googleapis/build/src/apis/cloudcontrolspartner");
+const { func } = require("joi");
 
 //Calculates the damage taken by the player and enemy
 function damageCalculator(choice, req) {
@@ -47,6 +48,21 @@ function calculateHealth(req) {
     });
 
    return healthStatus;
+}
+
+function regenCalculator(req) {
+    var playerInventory = req.session.gameSession.playerInventory;
+    var regenStatus = 0;
+
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "cooling") {
+                regenStatus +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+   return regenStatus;
 }
 
     var coinsReceived = false
@@ -123,5 +139,6 @@ module.exports = {
     purchaseItem,
     chooseEnemy,
     resetCoinsReceived,
-    calculateHealth
+    calculateHealth,
+    regenCalculator
 };
