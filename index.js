@@ -42,6 +42,7 @@ const enemiesCollection = database.db(mongodb_database).collection('enemies');
 const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
 const userTitlesCollection = database.db(mongodb_database).collection('UserTitles');
+const pfpCollection = database.db(mongodb_database).collection('profile-pics');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -636,9 +637,10 @@ app.get('/capsuleopening', async (req, res) => {
     const result = await userCollection.findOne({ email: userEmail });
     const ownedProfilePics = result ? result.ownedProfilePics : [];
     const unOwnedProfilePics = [];
+	const allProfilePic = await pfpCollection.find().toArray();
 
-    for (let i = 1; i <= 10; i++) {
-        const fileName = `pfp-${i}.png`;
+    for (let i = 0; i < allProfilePic.length; i++) {
+        const fileName = allProfilePic[i].src;
         if (!ownedProfilePics.includes(fileName)) {
             unOwnedProfilePics.push(fileName);
         }
