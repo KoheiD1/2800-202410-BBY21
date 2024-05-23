@@ -19,6 +19,9 @@ module.exports = function(userCollection) {
             const friendProfilePic = friend ? friend.profile_pic : 'profile-logo.png';
             const friendBio = friend ? friend.bio : '';
             const friendTitle = friend ? friend.UserTitle : '';
+            const friendGold = friend ? friend.goldCollected : 0;
+            const friendRuns = friend ? friend.runsCompleted : 0;
+            const friendDamage = friend ? friend.totalDamageDealt : 0;
 
             if (req.session.authenticated) {
                 res.render("friendProfile", { 
@@ -28,7 +31,11 @@ module.exports = function(userCollection) {
                     isFriend: isFriend,
                     source: source,
                     friendBio: friendBio,
-                    friendTitle: friendTitle
+                    friendTitle: friendTitle,
+                    friendGold: friendGold,
+                    friendRuns: friendRuns,
+                    friendDamage: friendDamage
+
                 });
             } else {
                 res.redirect('/login');
