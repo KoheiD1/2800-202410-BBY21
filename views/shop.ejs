@@ -1,4 +1,4 @@
-<%- include("templates/headerloggedin", {overflowVariable: "overflow-hidden" }) %>
+<%- include("templates/headerloggedin", {overflowVariable: "overflow-hidden bg-[url('/wood.png')]" }) %>
     <dialog class="w-80 text-center text-xl">
         <div class="w-64 m-auto">
             <h1 id="itemName" class="font-bold text-2xl"></h1>
@@ -12,8 +12,8 @@
     </dialog>
     <div class="">
         <h1 class="flex justify-center text-3xl">Item Shop</h1>
-        <div class="bg-[url('/shelf.png')] bg-no-repeat bg-center bg-contain">
-            <div class="grid grid-cols-1 grid-rows-3 space-y-8 m-6 p-5 py-10 shopItem">
+        <div class="bg-[url('/shelf.png')] bg-no-repeat bg-center bg-contain mt-14">
+            <div class="grid grid-cols-1 grid-rows-3 space-y-3 m-6 p-5 py-10 shopItem">
                 <% for(let i=0; i < items.length; i++) { %>
                     <%- include('templates/shopItem', {item: items[i]}) %>
                         <% } %>
