@@ -17,6 +17,8 @@ module.exports = function(userCollection) {
 
             const friend = await userCollection.findOne({ username: friendName });
             const friendProfilePic = friend ? friend.profile_pic : 'profile-logo.png';
+            const friendBio = friend ? friend.bio : '';
+            const friendTitle = friend ? friend.UserTitle : '';
 
             if (req.session.authenticated) {
                 res.render("friendProfile", { 
@@ -24,7 +26,9 @@ module.exports = function(userCollection) {
                     userProfilePic: friendProfilePic, 
                     currentUser: currentUser,
                     isFriend: isFriend,
-                    source: source
+                    source: source,
+                    friendBio: friendBio,
+                    friendTitle: friendTitle
                 });
             } else {
                 res.redirect('/login');
