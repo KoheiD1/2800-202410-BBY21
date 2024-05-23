@@ -1,7 +1,34 @@
 <%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
   <link href="/defaultBG.css" rel="stylesheet" type="text/css">
 
-  <body class="bg-gray-100">
+  <style>
+    @font-face {
+      font-family: 'basicPixel';
+      src: url('/Apple_.ttf') format('truetype');
+    }
+
+
+    #player-stats, h2 {
+      font-family: 'basicPixel';
+    }
+
+    #player-stats {
+      background-color: #f8f8f8;
+      border-radius: 10px;
+      border-width: 3px;
+      border-color: black;
+      margin: 0 auto;
+      width: 90%;
+    }
+
+    #user-info{
+      padding: 5px;
+    }
+
+
+  </style>
+
+  <body class="bg-gray-10s0">
     <div class="grid">
       <div class="flex justify-between p-2">
 
@@ -24,43 +51,45 @@
             <!-- Add outline to the profile picture -->
             <img id="profileImg" class="h-28 w-28 rounded-full bg-white mx-auto border-2 border-gray-500 cursor-pointer"
               src="<%= userProfilePic %>" alt="Profile Picture" onclick="openModal()">
+            
             <h1 class="text-2xl font-bold mt-4">
               <%= userName %>
             </h1>
-            <p id="userTitle" class="text-sm text-gray-600 mt-2">
+          <div id="user-info">
+            <p id="userTitle" class="text-sm text-black mt-2">
               <%= userTitle %>
             </p>
-            <p id="userBio" class="text-sm text-gray-600 mt-2">
+            <p id="userBio" class="text-sm text-black mt-2">
               <%= userBio %>
             </p>
+            <p id="userBio" class="text-sm text-black mt-2">
+              Email: <%= userEmail %>
+          </p>
+          </div>
           </div>
         </div>
       </div>
       <div class="grid grid-flow-col auto-cols-auto mt-4 mx-5">
         <div class="flex justify-center items-center"> <!-- Added 'items-center' -->
-            <p id="userBio" class="text-sm text-gray-600 mt-2">
-                Email: <%= userEmail %>
-            </p>
+            
         </div>
     </div>
 
-
     <div id="player-stats">
-      <p id="gold" class="text-sm text-gray-600 mt-2">
-        <%= goldCollected %>
-      </p>
-      <p id="runs" class="text-sm text-gray-600 mt-2">
-        <%= runsCompleted %>
-      </p>
-      <p id="damage" class="text-sm text-gray-600 mt-2">
-        <%= damageDealt %>
-      </p>
-    </div>
+      <div class="p-4 text-center relative z-10">
+        <h2 class="font-bold"><u>Stats</u></h2>
+          <p id="gold" class="text-sm text-black mt-2">Gold Collected: <%= goldCollected %></p>
+          <p id="runs" class="text-sm text-black mt-2">Runs Completed: <%= runsCompleted %></p>
+          <p id="damage" class="text-sm text-black mt-2">Damage Dealt: <%= damageDealt %></p>
+      </div>
+  </div>
+  
+  
 
       <div id="myModal" class="modal fixed inset-0 flex items-center justify-center z-10">
         <div class="overlay fixed inset-0"></div>
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg relative">
-          <h2 class="text-2xl font-bold mb-4">Choose Profile Picture</h2>
+          <h3 class="text-2xl font-bold mb-4">Choose Profile Picture</h2>
           <div class="grid grid-cols-3 gap-4 justify-center">
             <% ownedProfilePics.forEach(profilePicture=> { %>
               <img class="h-16 w-16 rounded-full cursor-pointer" src="/<%= profilePicture %>"
@@ -90,7 +119,7 @@
 
       </div>
 
-      <div class="mt-40 place-self-center">
+      <div class="mt-20 place-self-center">
         <% if (from == 'map') { %>
           <form action="/map">
             <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"

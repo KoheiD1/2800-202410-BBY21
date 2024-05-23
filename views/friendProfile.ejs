@@ -1,4 +1,32 @@
 <%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
+
+<style>
+  @font-face {
+    font-family: 'basicPixel';
+    src: url('/Apple_.ttf') format('truetype');
+  }
+
+
+  #player-stats, h2 {
+    font-family: 'basicPixel';
+  }
+
+  #player-stats {
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    border-width: 3px;
+    border-color: black;
+    margin: 0 auto;
+    width: 90%;
+  }
+
+  #user-info{
+    padding: 5px;
+  }
+
+
+</style>
+
 <link href="/defaultBG.css" rel="stylesheet" type="text/css">
 <body class="bg-gray-100">
   <div class="max-w-md mx-auto rounded-lg overflow-hidden">
@@ -16,7 +44,16 @@
     </div>
   </div>
 
-  <div class="flex justify-center mx-auto rounded-lg overflow-hidden">
+  <div id="player-stats">
+    <div class="p-4 text-center relative z-10">
+      <h2 class="font-bold"><u>Stats</u></h2>
+        <p id="gold" class="text-sm text-black mt-2">Gold Collected: <%= friendGold %></p>
+        <p id="runs" class="text-sm text-black mt-2">Runs Completed: <%= friendRuns %></p>
+        <p id="damage" class="text-sm text-black mt-2">Damage Dealt: <%= friendDamage %></p>
+    </div>
+</div>
+
+  <div class="mt-20 flex justify-center mx-auto rounded-lg overflow-hidden">
     <!-- Use a span with an ID to dynamically update the button text -->
     <button type="submit" onclick="toggleFriend('<%= friendName %>')" id="friendButton"
       class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
