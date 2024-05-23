@@ -89,13 +89,30 @@
         50% { opacity: 0; }
     }
 
-    @font-face {
-    font-family: 'titlefont';
-    src: url('startgame.ttf') format('truetype');
-    }
-  
     .title-font {
     font-family: 'titlefont', sans-serif;
+    }
+  
+    @keyframes bounce-slow {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+  
+    .animate-bounce-slow {
+      animation: bounce-slow 3s infinite;
+    }
+  
+    @font-face {
+    font-family: 'startfont';
+    src: url('titlefont.ttf') format('truetype');
+    }
+  
+    .start-font {
+    font-family: 'startfont', sans-serif;
     }
   
     
