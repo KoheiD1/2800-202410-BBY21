@@ -220,10 +220,6 @@
       var difficulty = "<%= difficulty %>";
       var maxPlayerHealth = <%= maxPlayerHealth %>;
 
-      // const formattedText = questionText.replace(/\n/g, '<br>');
-      // document.getElementById('questionContainer').innerHTML = formattedText;
-
-
       renderHealth();
 
 
@@ -236,6 +232,7 @@
             method: 'GET'
           });
           const question = await response.json();
+          const questionTextFormatted = question.questionText.replace(/\n/g, '<br>');
 
           var questionContainer = document.getElementById('questionContainer');
           const feedbackContainer = document.getElementById('feedbackContainer');
