@@ -1,10 +1,15 @@
+const { cloudcontrolspartner } = require("googleapis/build/src/apis/cloudcontrolspartner");
+const { func } = require("joi");
+
 //Calculates the damage taken by the player and enemy
 function damageCalculator(choice, req) {
     var enemyHealth = req.session.battleSession.enemyHealth;
     var enemyDamage = req.session.battleSession.enemyDMG;
+    var answerStreak = req.session.battleSession.answerStreak;
     var playerHealth = req.session.gameSession.playerHealth;
     var playerDamage = req.session.gameSession.playerDMG;
     var playerInventory = req.session.gameSession.playerInventory;
+    var speedStatus = 0;
 
     //Calculates the player's damage with the items in the inventory
     playerInventory.forEach(item => {
@@ -12,20 +17,69 @@ function damageCalculator(choice, req) {
             if(item.effects[i] == "damage") {
                 playerDamage +=  parseInt(item[item.effects[i]]);
             }
+
+            if(item.effects[i] == "speed") {
+                speedStatus += parseInt(item[item.effects[i]]);
+            }
+            
         }
     });
 
-    console.log("Player Damage: " + playerDamage);
-    console.log("Enemy Health: " + enemyDamage);
     
     if (choice) {
-        enemyHealth -= playerDamage;
+        enemyHealth -= playerDamage * (1 + Math.round((speedStatus/100 * answerStreak)));
         req.session.battleSession.enemyHealth = enemyHealth;
     } else {
         playerHealth -= enemyDamage;
         req.session.gameSession.playerHealth = playerHealth;
     }
 }
+
+function calculateHealth(req) {
+    var playerInventory = req.session.gameSession.playerInventory;
+    var healthStatus = 0;
+
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "health") {
+                healthStatus +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+   return healthStatus;
+}
+
+function regenCalculator(req) {
+    var playerInventory = req.session.gameSession.playerInventory;
+    var regenStatus = 0;
+
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "cooling") {
+                regenStatus +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+   return regenStatus;
+}
+
+function itemDamage(req) {
+    var playerInventory = req.session.gameSession.playerInventory;
+    var damageStatus = 0;
+
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "damage") {
+                damageStatus +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+   return damageStatus;
+}
+
 
     var coinsReceived = false
 function coinDistribution(req, difficulty) {
@@ -72,7 +126,6 @@ function chooseEnemy(req, difficulty, enemies) {
     });
 
     var rand = Math.floor(Math.random() * fightablteEnemies.length);
-    console.log("Enemy chosen: " + fightablteEnemies[rand].enemyName);
     return fightablteEnemies[rand];
 };
 
@@ -101,5 +154,8 @@ module.exports = {
     coinDistribution,
     purchaseItem,
     chooseEnemy,
-    resetCoinsReceived
+    resetCoinsReceived,
+    calculateHealth,
+    regenCalculator,
+    itemDamage
 };

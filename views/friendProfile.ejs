@@ -1,13 +1,6 @@
 <%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
+<link href="/defaultBG.css" rel="stylesheet" type="text/css">
 <body class="bg-gray-100">
-  <style>
-    body {
-      background-image: url('/indexBG.png');
-      background-size: cover;
-      background-position: center;
-      min-height: 100vh;
-    }
-  </style>
   <div class="max-w-md mx-auto rounded-lg overflow-hidden">
     <div class="px-4 py-8">
       <div class="text-center">
@@ -22,7 +15,7 @@
     </div>
   </div>
 
-  <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
+  <div class="flex justify-center mx-auto rounded-lg overflow-hidden">
     <!-- Use a span with an ID to dynamically update the button text -->
     <button type="submit" onclick="toggleFriend('<%= friendName %>')" id="friendButton"
       class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
@@ -32,6 +25,17 @@
           Add Friend
           <% } %>
     </button>
+    <% if (source == 'findFriends') { %>
+      <form action="/<%= source %>" class="pl-3">
+        <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+          value="Back to Add Friends">
+      </form>
+    <% } else { %>
+      <form action="/<%= source %>" class="pl-3">
+        <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+          value="Back to Friends List">
+      </form>
+    <% } %>
   </div>
 
   <!-- Add a hidden input field to store the currentUser value -->

@@ -1,14 +1,10 @@
 <%- include("templates/header", {overflowVariable: '' }) %>
-
+<link href="/defaultBG.css" rel="stylesheet" type="text/css">
   <body class="bg-gray-100">
     <style>
-      body {
-        background-image: url('/indexBG.png');
-        background-size: cover;
-        background-position: center;
-        min-height: 100vh;
+      span {
+        cursor: pointer;
       }
-
       /* Style for modal overlay */
       .modal-overlay {
         z-index: 50;
@@ -25,17 +21,19 @@
     </style>
     <div class="grid grid-flow-row">
       <div>
-        <h1 class="text-3xl px-4 font-bold mb-4  text-center">Users List</h1>
+        <h1 class="text-3xl px-4 font-bold mb-4  text-center">Add Friends</h1>
         <ul>
           <% if (allUsers && allUsers.length> 0) { %>
             <% allUsers.forEach(user=> { %>
-              <li class="py-2 px-4 text-md flex items-center justify-between max-w-md mx-auto"
-                style="background-image: url('/username-box.png'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 50px;">
-                <span class="text-gray-900" onclick="getProfileInfo('<%= user %>')">
-                  <%= user%>
+              <li class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
+                style="background-image: url('/username-box.png');">
+                <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer" src="/<%= user.profile_pic %>" alt="profile picture"
+                onclick="getProfileInfo('<%= user.username %>', 'findFriends')">
+                <span class="text-gray-900 text-3xl" onclick="getProfileInfo('<%= user.username %>', 'findFriends')">
+                  <%= user.username%>
                 </span>
-                <img class="w-8 h-8 cursor-pointer" src="user-add.png" alt="Add Friend"
-                  onclick="addFriend('<%= user %>'); this.parentNode.style.display = 'none';">
+                <img class="w-12 h-12 cursor-pointer" src="user-add.png" alt="Add Friend"
+                  onclick="addFriend('<%= user.username %>'); this.parentNode.style.display = 'none';">
               </li>
               <% }); %>
                 <% } else { %>
@@ -72,7 +70,7 @@
     <div id="modalOverlay" class="modal-overlay"></div>
 
     <script>
-      function getProfileInfo(friendName) {
+      function getProfileInfo(friendName, source) {
         fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
           method: 'GET'
         })
@@ -81,8 +79,7 @@
               throw new Error('Failed to get friend profile');
             }
             // Redirect to the friend profile page
-            //window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
-            window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
+            window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}&source=${source}`;
           })
           .catch(error => {
             console.error('Error updating friend profile:', error);

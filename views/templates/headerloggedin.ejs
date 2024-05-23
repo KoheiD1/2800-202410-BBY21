@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+    <link href="/spin.css" rel="stylesheet" type="text/css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeCrypt</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" type="text/css" href="/healthbar.css">
+    <link rel="stylesheet" type="text/css" href="/pixelBorder.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="<%= overflowVariable %>">
@@ -13,10 +15,24 @@
     <div class="flex justify-end items-center">
         <% if (gameStarted) { %>
         <div class="flex items-center mr-4">
-            <img src="goldCoin.png" class="w-6 h-6">
+            <img src="goldCoin.png" class="w-6 h-6 spin">
             <span class="ml-1 text-gray-900"><%= playerCoins %></span>
         </div>
         <% } %>
+        <div class="flex items-center mr-4">
+        <img src="slotsCurrencyIcon.svg" class="w-6 h-6" onclick="clicker()">
+        <span class="ml-1 text-gray-900"><%= slotsCurrency %></span>
+        </div>
         <img class="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer" src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile'">
     </div>
 </div>
+<script>
+   var clicked = 0;
+   
+   function clicker() {
+       clicked++;
+       if (clicked == 7) {
+           window.location.href = "/gatchaPage";
+       }
+   }
+</script>

@@ -5,7 +5,8 @@ module.exports = function(userCollection) {
     router.get('/friendProfile', async (req, res) => {
         try {
             const currentUser = req.session.username;
-            const { friendName } = req.query;
+            const friendName = req.query.friendName;
+            const source = req.query.source;
 
             const currentUserDoc = await userCollection.findOne({ username: currentUser });
             if (!currentUserDoc) {
@@ -22,7 +23,8 @@ module.exports = function(userCollection) {
                     friendName: friendName, 
                     userProfilePic: friendProfilePic, 
                     currentUser: currentUser,
-                    isFriend: isFriend
+                    isFriend: isFriend,
+                    source: source
                 });
             } else {
                 res.redirect('/login');

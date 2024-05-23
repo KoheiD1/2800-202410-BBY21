@@ -1,41 +1,51 @@
 <%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
-
+<link href="/defaultBG.css" rel="stylesheet" type="text/css">
   <body class="bg-gray-100">
     <style>
-      body {
-        background-image: url('/indexBG.png');
-        background-size: cover;
-        background-position: center;
-        min-height: 100vh;
+      span {
+        cursor: pointer;
       }
     </style>
-    <div class="grid grid-flow-row ">
+    <div class="grid">
       <div class="m-2">
         <h1 class="text-3xl px-4 font-bold mb-4 mx-auto text-center">Friends List</h1>
         <ul>
           <% if (friendsList && friendsList.length> 0) { %>
             <% friendsList.forEach(friend=> { %>
-              <li class="py-2 px-4 text-md flex items-center justify-between max-w-md mx-auto"
-                style="background-image: url('/username-box.png'); background-size: cover; background-position: center; background-repeat: no-repeat; width: 100%; height: 50px;">
-                <span class="text-gray-900" onclick="getProfileInfo('<%= friend %>')">
-                  <%= friend%>
+              <li class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
+                style="background-image: url('/username-box.png');">
+                <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer" src="/<%= friend.profile_pic %>" alt="profile picture"
+                onclick="getProfileInfo('<%= friend.username %>', 'friends')">
+                <span class="text-gray-900 mx-auto text-3xl" onclick="getProfileInfo('<%= friend.username %>', 'friends')">
+                  <%= friend.username%>
                 </span>
+                <img class="-z-10 w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer" src="/<%= friend.profile_pic %>" alt="profile picture"
+                onclick="getProfileInfo('<%= friend.username %>')">
               </li>
               <% }); %>
                 <% } else { %>
-                  <li class="text-gray-900 px-4">No friends to display</li>
+                  <li class="mt-5 text-gray-900 text-2xl text-center">You have not added any friends yet.<br>Click on the Add Friends Button to start.</li>
                   <% } %>
         </ul>
       </div>
-      <div class="mt-10 place-self-center">
-        <form action="/profile">
-          <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
-            value="Back to Profile">
-        </form>
+      <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
+        <div class="px-4 py-2 flex items-center">
+          <form action="/findFriends" method="get">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">
+              Add Friends
+            </button>
+          </form>
+          <form action="/profile" method="get">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">
+              Back to Profile
+            </button>
+          </form>
+        </div>
       </div>
+
     </div>
     <script>
-      function getProfileInfo(friendName) {
+      function getProfileInfo(friendName, source) {
         fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
           method: 'GET'
         })
@@ -44,7 +54,7 @@
               throw new Error('Failed to get friend profile');
             }
 
-            window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}`;
+            window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}&source=${source}`;
           })
 
           .catch(error => {
