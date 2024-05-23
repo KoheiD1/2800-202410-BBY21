@@ -42,6 +42,8 @@ const enemiesCollection = database.db(mongodb_database).collection('enemies');
 const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
 const userTitlesCollection = database.db(mongodb_database).collection('UserTitles');
+const testQuestionCollection = database.db(mongodb_database).collection('testQuestions');
+
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -307,14 +309,16 @@ app.get('/question', async (req, res) => {
 		const battleSession = req.session.battleSession;
 		const gameSession = req.session.gameSession;
 		battleSession.answeredQuestions = battleSession.answeredQuestions || [];
-		const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+		//const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+		const question = await testQuestionCollection.aggregate([{ $sample: { size: 1 } }]).next();
+
 
 
 		if (!question) {
 			res.redirect('/map');
 			return;
 		}
-		await levelOneCollection.deleteOne({ _id: question._id });
+		//await levelOneCollection.deleteOne({ _id: question._id });
 		res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: (gameSession.playerHealth + calculateHealth(req)), maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: (gameSession.maxPlayerHealth + calculateHealth(req)), totalDamage: gameSession.totalDamage, playerDMG: (gameSession.playerDMG + itemDamage(req)) });
 	} catch (error) {
 		res.redirect('/map');
@@ -323,7 +327,8 @@ app.get('/question', async (req, res) => {
 
 app.get('/getNewQuestion', async (req, res) => {
 
-	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+	//const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+	const question = await testQuestionCollection.aggregate([{ $sample: { size: 1 } }]).next();
 	await levelOneCollection.deleteOne({ _id: question._id });
 
 
