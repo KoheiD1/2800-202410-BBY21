@@ -89,7 +89,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth, regenCalculator, itemDamage} = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth, regenCalculator, itemDamage, enemeyScaling} = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -219,6 +219,7 @@ app.get('/startGame', async (req, res) => {
 		mapSet: false,
 		playerHealth: 100,
 		maxPlayerHealth: 100,
+		playerLevel: 0,
 		playerDMG: 25,
 		playerInventory: [],
 		playerCoins: 0,
@@ -289,9 +290,9 @@ app.post('/startencounter', async (req, res) => {
 
 	req.session.battleSession = {
 		enemyName: enemy.enemyName,
-		enemyHealth: enemy.enemyHealth,
-		enemyDMG: enemy.enemyDMG,
-		maxEnemyHealth: enemy.enemyHealth,
+		enemyHealth: Math.round((enemy.enemyHealth * enemeyScaling(req))),
+		enemyDMG: Math.round((enemy.enemyDMG * enemeyScaling(req))),
+		maxEnemyHealth: Math.round((enemy.enemyHealth * enemeyScaling(req))),
 		enemyImage: enemy.enemyImage,
 		answerdQuestions: [],
 		answerStreak: 0,
@@ -552,6 +553,8 @@ app.get('/victory', async (req, res) => {
 
 app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
+	req.session.gameSession.playerLevel++;
+
 	coinDistribution(req, difficulty);
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 	userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });

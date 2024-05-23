@@ -50,6 +50,15 @@ function calculateHealth(req) {
    return healthStatus;
 }
 
+function enemeyScaling(req) {
+    playerLevel = req.session.gameSession.playerLevel;
+    if(playerLevel == 0) {
+        return 1;
+    }
+    multFactor = playerLevel * 1.5;
+    return multFactor;
+}
+
 function regenCalculator(req) {
     var playerInventory = req.session.gameSession.playerInventory;
     var regenStatus = 0;
@@ -157,5 +166,6 @@ module.exports = {
     resetCoinsReceived,
     calculateHealth,
     regenCalculator,
-    itemDamage
+    itemDamage,
+    enemeyScaling
 };
