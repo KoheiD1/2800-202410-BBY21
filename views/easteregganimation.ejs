@@ -63,7 +63,6 @@
     </div>
   </div>
 
-
   <style>
     .grid-container {
       position: relative;
@@ -200,18 +199,6 @@
       text-shadow: 4px 4px #000000;
     }
 
-    @keyframes strobe {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0;
-      }
-    }
-
     @font-face {
       font-family: 'titlefont';
       src: url('startgame.ttf') format('truetype');
@@ -260,20 +247,7 @@
   </style>
 
   <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-      const gatchaBall = document.querySelector('.gatchaBall');
-      const strobingText = document.querySelector('.strobing-text');
-
-      // Set up a listener to make the text visible when the gacha ball animation ends
-      gatchaBall.addEventListener('animationend', (event) => {
-        if (event.animationName === 'rotateAndAppear') {
-          strobingText.style.visibility = 'visible';
-        }
-      });
-    });
-
     function openCapsule() {
-
     }
   </script>
 
