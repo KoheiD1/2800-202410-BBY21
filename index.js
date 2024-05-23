@@ -674,7 +674,7 @@ app.post('/buyPFP', async (req, res) => {
 		res.json({ error: "Not enough currency" });
 		return;
 	} else {
-		await userCollection.update({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: pfp } });
+		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: pfp } });
 		res.redirect('/profile');
 	}
 }
