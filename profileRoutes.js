@@ -16,10 +16,11 @@ module.exports = function(userCollection, userTitlesCollection) {
             const userProfilePic = user ? user.profile_pic : 'profile-logo.png';
             const friendsList = user.friendsList; 
             const userBio = user.bio;
-            
-            userTitle = user.UserTitle;
-
+            const userTitle = user.UserTitle;
             const ownedProfilePics = user ? user.ownedProfilePics : [];
+            const goldCollected = user ? user.goldCollected : 0;
+            const runsCompleted = user ? user.runsCompleted : 0;
+            const damageDealt = user ? user.totalDamageDealt : 0;
 
             console.log(ownedProfilePics);
 
@@ -27,7 +28,7 @@ module.exports = function(userCollection, userTitlesCollection) {
 
             console.log(ownedUserTitles);
             
-            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles, from: from });
+            res.render("profile", { goldCollected: goldCollected, runsCompleted: runsCompleted, damageDealt: damageDealt, userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles, from: from });
         } else {
             res.redirect('/login');
         }

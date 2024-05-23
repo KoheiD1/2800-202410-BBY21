@@ -25,6 +25,10 @@ function damageCalculator(choice, req) {
         }
     });
 
+    if(speedStatus < 0){
+        speedStatus = 0;
+    }
+
     
     if (choice) {
         enemyHealth -= playerDamage * (1 + Math.round((speedStatus/100 * answerStreak)));

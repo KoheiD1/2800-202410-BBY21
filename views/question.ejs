@@ -220,7 +220,6 @@
       var difficulty = "<%= difficulty %>";
       var maxPlayerHealth = '<%= maxPlayerHealth %>';
 
-
       renderHealth();
 
 
@@ -233,6 +232,8 @@
             method: 'GET'
           });
           const question = await response.json();
+          const questionTextFormatted = question.question.questionText.replace(/\n/g, '<br>');
+      
 
           var questionContainer = document.getElementById('questionContainer');
           const feedbackContainer = document.getElementById('feedbackContainer');
@@ -244,7 +245,7 @@
           questionContainer = document.getElementById('questionContainer');
           questionContainer.innerHTML = `
       <div class="max-w-lg mx-auto p-8 rounded bg-white">
-        <h1 class="text-lg font-bold mb-4">${question.question.questionText}</h1>
+        <h1 class="text-lg font-bold mb-4">${questionTextFormatted}</h1>
         <ul class="bg-white">
           ${question.question.options.map((option, index) => `
             <li class="mb-2">
@@ -258,6 +259,7 @@
         </ul>
       </div>
     `;
+    
           attachFeedbackListeners(question.question);
         } catch (error) {
           console.error('Error:', error);

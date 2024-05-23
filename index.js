@@ -42,6 +42,7 @@ const enemiesCollection = database.db(mongodb_database).collection('enemies');
 const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
 const userTitlesCollection = database.db(mongodb_database).collection('UserTitles');
+const pfpCollection = database.db(mongodb_database).collection('profile-pics');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -276,7 +277,7 @@ app.get('/map', async (req, res) => {
 app.post('/startencounter', async (req, res) => {
 	// When the player starts the game it creates a new game session
 	await levelOneCollection.deleteMany({});
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 15 } }]).toArray();
+	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 25 } }]).toArray();
 	await levelOneCollection.insertMany(encounterQuestions);
 	resetCoinsReceived()
 	let enemies = await enemiesCollection.find().toArray();
@@ -308,15 +309,8 @@ app.get('/question', async (req, res) => {
 		const battleSession = req.session.battleSession;
 		const gameSession = req.session.gameSession;
 		battleSession.answeredQuestions = battleSession.answeredQuestions || [];
-		const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
-
-
-		if (!question) {
-			res.redirect('/map');
-			return;
-		}
-		await levelOneCollection.deleteOne({ _id: question._id });
-		res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: (gameSession.playerHealth + calculateHealth(req)), maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: (gameSession.maxPlayerHealth + calculateHealth(req)), totalDamage: gameSession.totalDamage, playerDMG: (gameSession.playerDMG + itemDamage(req)) });
+		
+		res.render('question', { enemyHealth: battleSession.enemyHealth, playerHealth: (gameSession.playerHealth + calculateHealth(req)), maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: (gameSession.maxPlayerHealth + calculateHealth(req)), totalDamage: gameSession.totalDamage, playerDMG: (gameSession.playerDMG + itemDamage(req)) });
 	} catch (error) {
 		res.redirect('/map');
 	}
@@ -325,6 +319,7 @@ app.get('/question', async (req, res) => {
 app.get('/getNewQuestion', async (req, res) => {
 
 	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+	
 	await levelOneCollection.deleteOne({ _id: question._id });
 
 
@@ -358,7 +353,7 @@ app.post('/feedback', async (req, res) => {
 		const { optionIndex, questionID } = req.body;
 		const parsedQuestionID = new ObjectId(questionID);
 		const question = await questionCollection.findOne({ _id: parsedQuestionID });
-
+		
 		if (!question) {
 			return res.status(404).json({ error: 'No question found' });
 		}
@@ -631,16 +626,17 @@ app.get('/capsuleopening', async (req, res) => {
 
 	const unownedTitles = allTitles.filter(title => !ownedTitles.includes(title));
 
-	const result = await userCollection.findOne({ email: userEmail });
-	const ownedProfilePics = result ? result.ownedProfilePics : [];
-	const unOwnedProfilePics = [];
+    const result = await userCollection.findOne({ email: userEmail });
+    const ownedProfilePics = result ? result.ownedProfilePics : [];
+    const unOwnedProfilePics = [];
+	const allProfilePic = await pfpCollection.find().toArray();
 
-	for (let i = 1; i <= 10; i++) {
-		const fileName = `pfp-${i}.png`;
-		if (!ownedProfilePics.includes(fileName)) {
-			unOwnedProfilePics.push(fileName);
-		}
-	}
+    for (let i = 0; i < allProfilePic.length; i++) {
+        const fileName = allProfilePic[i].src;
+        if (!ownedProfilePics.includes(fileName)) {
+            unOwnedProfilePics.push(fileName);
+        }
+    }
 
 	const rewardType = Math.floor(Math.random() * 2);
 	let playerReward;

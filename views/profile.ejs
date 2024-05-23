@@ -37,16 +37,26 @@
         </div>
       </div>
       <div class="grid grid-flow-col auto-cols-auto mt-4 mx-5">
-        <div class="flex justify-center">
-          <div>
-            <span class="text-lg text-gray-600">Email:</span>
-            <span class="text-lg text-gray-900">
-              <%= userEmail %>
-            </span>
-          </div>
+        <div class="flex justify-center items-center"> <!-- Added 'items-center' -->
+            <p id="userBio" class="text-sm text-gray-600 mt-2">
+                Email: <%= userEmail %>
+            </p>
         </div>
-        <div></div>
-      </div>
+    </div>
+
+
+    <div id="player-stats">
+      <p id="gold" class="text-sm text-gray-600 mt-2">
+        <%= goldCollected %>
+      </p>
+      <p id="runs" class="text-sm text-gray-600 mt-2">
+        <%= runsCompleted %>
+      </p>
+      <p id="damage" class="text-sm text-gray-600 mt-2">
+        <%= damageDealt %>
+      </p>
+    </div>
+
       <div id="myModal" class="modal fixed inset-0 flex items-center justify-center z-10">
         <div class="overlay fixed inset-0"></div>
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg relative">
