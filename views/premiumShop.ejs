@@ -1,0 +1,27 @@
+<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+  <link href="/hoverglow.css" rel="stylesheet" type="text/css">
+  <style>
+    body {
+      background-image: url('/indexBG.png');
+      background-size: cover;
+      background-position: top;
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+  </style>
+
+  <div class="grid grid-rows-9 p-2 max-w-md mx-auto">
+    <ul>
+      <li class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
+        style="background-image: url('/username-box.png');">
+        <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer"
+          src="/<%= friend.profile_pic %>" alt="profile picture">
+        <span class="text-gray-900 mx-auto text-3xl">
+          Running some errands
+        </span>
+        <img class="-z-10 w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer"
+          src="/<%= friend.profile_pic %>" alt="profile picture" onclick="getProfileInfo('<%= friend.username %>')">
+      </li>
+    </ul>
+  </div>
+  <%- include("templates/footer") %>

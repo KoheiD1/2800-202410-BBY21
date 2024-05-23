@@ -621,8 +621,6 @@ app.get('/easteregganimation', async (req, res) => {
 	}
 });
 
-
-
 app.get('/capsuleopening', async (req, res) => {
     const userEmail = req.session.email;
 
@@ -658,14 +656,13 @@ app.get('/capsuleopening', async (req, res) => {
     } else {
         playerReward = "No rewards available";
     }
-
     console.log("Player reward", playerReward);
-
     res.render('capsuleopening', { playerReward, rewardType });
 });
 
-
-
+app.get('/premiumShop', (req, res) => {
+	res.render("premiumShop");
+});
 
 app.get("*", (req, res) => {
 	res.status(404);
