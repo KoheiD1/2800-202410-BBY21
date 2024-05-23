@@ -74,3 +74,30 @@
     </ul>
   </div>
   <%- include("templates/footer") %>
+  <script>
+    function buyPFP(item, price) {
+      fetch('/buyPFP', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          pfp: item,
+          price: price
+        })
+      }).then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert("You have successfully purchased this item!");
+          } else {
+            alert("You do not have enough coins to purchase this item.");
+          }
+        }).then(() => {
+          window.location.reload();
+        })
+    }
+
+    function buyTitle() {
+      alert("You have successfully purchased this item!");
+    }
+  </script>

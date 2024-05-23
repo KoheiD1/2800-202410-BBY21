@@ -89,7 +89,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth, regenCalculator, itemDamage, enemeyScaling} = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth, regenCalculator, itemDamage, enemeyScaling } = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -622,47 +622,63 @@ app.get('/easteregganimation', async (req, res) => {
 });
 
 app.get('/capsuleopening', async (req, res) => {
-    const userEmail = req.session.email;
+	const userEmail = req.session.email;
 
-    const user = await userCollection.findOne({ email: userEmail });
-    const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
-    const allTitles = userTitlesArray.map(item => item.title);
-    const ownedTitles = user ? user.titles : [];
+	const user = await userCollection.findOne({ email: userEmail });
+	const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
+	const allTitles = userTitlesArray.map(item => item.title);
+	const ownedTitles = user ? user.titles : [];
 
-    const unownedTitles = allTitles.filter(title => !ownedTitles.includes(title));
+	const unownedTitles = allTitles.filter(title => !ownedTitles.includes(title));
 
-    const result = await userCollection.findOne({ email: userEmail });
-    const ownedProfilePics = result ? result.ownedProfilePics : [];
-    const unOwnedProfilePics = [];
+	const result = await userCollection.findOne({ email: userEmail });
+	const ownedProfilePics = result ? result.ownedProfilePics : [];
+	const unOwnedProfilePics = [];
 
-    for (let i = 1; i <= 10; i++) {
-        const fileName = `pfp-${i}.png`;
-        if (!ownedProfilePics.includes(fileName)) {
-            unOwnedProfilePics.push(fileName);
-        }
-    }
+	for (let i = 1; i <= 10; i++) {
+		const fileName = `pfp-${i}.png`;
+		if (!ownedProfilePics.includes(fileName)) {
+			unOwnedProfilePics.push(fileName);
+		}
+	}
 
-    const rewardType = Math.floor(Math.random() * 2);
-    let playerReward;
+	const rewardType = Math.floor(Math.random() * 2);
+	let playerReward;
 
-    if (rewardType === 0 && unOwnedProfilePics.length > 0) {
-        const rand = Math.floor(Math.random() * unOwnedProfilePics.length);
-        playerReward = unOwnedProfilePics[rand];
-        await userCollection.updateOne({ email: userEmail }, { $push: { ownedProfilePics: playerReward } });
-    } else if (unownedTitles.length > 0) {
-        const rand = Math.floor(Math.random() * unownedTitles.length);
-        playerReward = unownedTitles[rand];
-        await userCollection.updateOne({ email: userEmail }, { $push: { titles: playerReward } });
-    } else {
-        playerReward = "No rewards available";
-    }
-    console.log("Player reward", playerReward);
-    res.render('capsuleopening', { playerReward, rewardType });
+	if (rewardType === 0 && unOwnedProfilePics.length > 0) {
+		const rand = Math.floor(Math.random() * unOwnedProfilePics.length);
+		playerReward = unOwnedProfilePics[rand];
+		await userCollection.updateOne({ email: userEmail }, { $push: { ownedProfilePics: playerReward } });
+	} else if (unownedTitles.length > 0) {
+		const rand = Math.floor(Math.random() * unownedTitles.length);
+		playerReward = unownedTitles[rand];
+		await userCollection.updateOne({ email: userEmail }, { $push: { titles: playerReward } });
+	} else {
+		playerReward = "No rewards available";
+	}
+	console.log("Player reward", playerReward);
+	res.render('capsuleopening', { playerReward, rewardType });
 });
 
 app.get('/premiumShop', (req, res) => {
 	res.render("premiumShop");
 });
+
+app.post('/buyPFP', async (req, res) => {
+	const pfp = req.body.pfp;
+	const price = parseInt(req.body.price);
+	const userEmail = req.session.email;
+	const user = await userCollection.findOne({ email: userEmail });
+
+	if (user.slotsCurrency < price) {
+		res.json({ error: "Not enough currency" });
+		return;
+	} else {
+		await userCollection.update({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: pfp } });
+		res.redirect('/profile');
+	}
+}
+);
 
 app.get("*", (req, res) => {
 	res.status(404);
