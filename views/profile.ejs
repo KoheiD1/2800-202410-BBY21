@@ -1,11 +1,13 @@
 <%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
-<link href="/defaultBG.css" rel="stylesheet" type="text/css">
+  <link href="/defaultBG.css" rel="stylesheet" type="text/css">
+
   <body class="bg-gray-100">
     <div class="grid">
       <div class="flex justify-between p-2">
 
         <button id="editButton" type="submit"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onclick="editProfile('<%= userBio %>', '<%= userTitle %>')">
+          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          onclick="editProfile('<%= userBio %>', '<%= userTitle %>', <%= JSON.stringify(ownedUserTitles) %>)">
           Edit Profile
         </button>
 
@@ -48,18 +50,19 @@
       <div id="myModal" class="modal fixed inset-0 flex items-center justify-center z-10">
         <div class="overlay fixed inset-0"></div>
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg relative">
-            <h2 class="text-2xl font-bold mb-4">Choose Profile Picture</h2>
-            <div class="grid grid-cols-3 gap-4 justify-center">
-                <% ownedProfilePics.forEach(profilePicture => { %>
-                    <img class="h-16 w-16 rounded-full cursor-pointer" src="/<%= profilePicture %>" alt="<%= profilePicture %>"
-                        onclick="selectProfilePicture('<%= profilePicture %>')">
-                <% }) %>  
-            </div>
-            <span class="close-modal absolute top-0 right-0 m-4 text-gray-600 cursor-pointer" onclick="closeModal()">&times;</span>
+          <h2 class="text-2xl font-bold mb-4">Choose Profile Picture</h2>
+          <div class="grid grid-cols-3 gap-4 justify-center">
+            <% ownedProfilePics.forEach(profilePicture=> { %>
+              <img class="h-16 w-16 rounded-full cursor-pointer" src="/<%= profilePicture %>"
+                alt="<%= profilePicture %>" onclick="selectProfilePicture('<%= profilePicture %>')">
+              <% }) %>
+          </div>
+          <span class="close-modal absolute top-0 right-0 m-4 text-gray-600 cursor-pointer"
+            onclick="closeModal()">&times;</span>
         </div>
-    </div>
-    
-      
+      </div>
+
+
 
       <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
         <div class="px-4 py-2 flex items-center">
@@ -95,6 +98,10 @@
       // Define the userId variable and assign it the value passed from the server
       const userId = '<%= userId %>';
 
+      const ownedUserTitles = '<%= ownedUserTitles %>';
+
+      console.log("Owned user titles: ", ownedUserTitles);
+
       function openModal() {
         document.getElementById('myModal').style.display = "flex";
       }
@@ -103,15 +110,17 @@
         document.getElementById('myModal').style.display = "none";
       }
 
-      function editProfile(currentBio, userTitle) {
+      function editProfile(currentBio, userTitle, ownedUserTitles) {
 
         console.log("Current bio: ", currentBio);
 
+
+
         document.getElementById('userTitle').innerHTML = `
         <select id="titleDropdown" class="border border-gray-300 rounded p-2">
-          <% userTitles.forEach(titleObj => { %>
-                <option value="<%= titleObj.title %>" <%= titleObj.title === userTitle ? 'selected' : '' %>><%= titleObj.title %></option>
-                <% }) %>
+        ${ownedUserTitles.map(title => `
+          <option value="${title}" ${title === userTitle ? 'selected' : ''}>${title}</option>
+        `).join('')}
         </select>
           
         `;
@@ -120,7 +129,7 @@
         <textarea id="bioInput" class="border border-gray-300 rounded p-2" placeholder="Enter your bio">${currentBio}</textarea>
         `;
 
-        
+
         document.getElementById('bioInput').value = "<%= userBio %>";
 
         document.getElementById('editButton').innerHTML = `
@@ -131,9 +140,9 @@
 
       function saveProfile() {
         const title = document.getElementById('titleDropdown').value;
-        console.log("Title: ", title);  
+        console.log("Title: ", title);
         const bio = document.getElementById('bioInput').value;
-        
+
 
         fetch('/updateProfile', {
           method: 'POST',
@@ -189,8 +198,8 @@
     </script>
   </body>
   <%- include("templates/footer") %>
-<style>
-.modal {
-    display: none;
-  }
-</style>
+    <style>
+      .modal {
+        display: none;
+      }
+    </style>

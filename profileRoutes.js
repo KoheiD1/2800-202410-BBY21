@@ -22,9 +22,11 @@ module.exports = function(userCollection, userTitlesCollection) {
 
             console.log(ownedProfilePics);
 
-            const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
+            const ownedUserTitles = user ? user.titles : [];
+
+            console.log(ownedUserTitles);
             
-            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, userTitles: userTitlesArray, ownedProfilePics: ownedProfilePics});
+            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles});
         } else {
             res.redirect('/login');
         }

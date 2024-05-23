@@ -65,69 +65,91 @@
       </div>
 </div>
 
-<div class="congratulations-container">
-    <p class="congratulations">Congratulations!</p> <!-- Congratulations text -->
-</div>
+    <div class="congratulations-container">
+        <p class="congratulations">Congratulations!</p> <!-- Congratulations text -->
+    </div>
 
-<style>
-    .grid-container {
-        position: relative;
-        display: grid;
-        place-items: center;
-        height: 100vh;
-    }
+    <style>
+        .grid-container {
+            position: relative;
+            display: grid;
+            place-items: center;
+            height: 100vh;
+        }
 
-    .gatchaBall {
-        width: 50%;
-        height: 50%;
-        z-index: 1;
-        visibility: visible;
-    }
+        .gatchaBall {
+            width: 50%;
+            height: 50%;
+            z-index: 1;
+            visibility: visible;
+        }
 
-    .player-reward {
-        position: absolute;
-        padding-bottom: 20vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        z-index: 3;
-        opacity: 0; /* Initially hidden */
-    }
+        #player-reward {
+            position: absolute;
+            padding-bottom: 20vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 3;
+            opacity: 0;
+            /* Initially hidden */
+        }
 
-    .player-reward img {
-        display: block;
-        width: 100%;
-        height: auto;
+        #back-to-mm {
+            z-index: 10;
+        }
 
-    }
+        /* Congratulations text container */
+        .congratulations-container {
+            position: absolute;
+            top: 5%;
+            /* Adjust position from the top */
+            width: 100%;
+            text-align: center;
+            z-index: 2;
+        }
 
-    /* Congratulations text container */
-    .congratulations-container {
-        position: absolute;
-        top: 5%; /* Adjust position from the top */
-        width: 100%;
-        text-align: center;
-        z-index: 2;
-    }
+        /* Congratulations text */
+        .congratulations {
+            padding-top: 5%;
+            font-size: 25px;
+            /* Increase font size */
+            font-family: 'startfont', sans-serif;
+            /* Custom font */
+            animation: rainbowStrobe 2s linear infinite;
+            /* Rainbow strobe animation */
+        }
 
-    /* Congratulations text */
-    .congratulations {
-        padding-top: 5%;
-        font-size: 25px; /* Increase font size */
-        font-family: 'startfont', sans-serif; /* Custom font */
-        animation: rainbowStrobe 2s linear infinite; /* Rainbow strobe animation */
-    }
+        /* Rainbow strobe animation */
+        @keyframes rainbowStrobe {
+            0% {
+                color: red;
+            }
 
-    /* Rainbow strobe animation */
-    @keyframes rainbowStrobe {
-        0% { color: red; }
-        16.666% { color: orange; }
-        33.333% { color: yellow; }
-        50% { color: green; }
-        66.666% { color: blue; }
-        83.333% { color: indigo; }
-        100% { color: violet; }
-    }
+            16.666% {
+                color: orange;
+            }
+
+            33.333% {
+                color: yellow;
+            }
+
+            50% {
+                color: green;
+            }
+
+            66.666% {
+                color: blue;
+            }
+
+            83.333% {
+                color: indigo;
+            }
+
+            100% {
+                color: violet;
+            }
+        }
 
     @font-face {
     font-family: 'startfont';
@@ -145,27 +167,46 @@
     }
 </style>
 
-<script>
-    // Simulate gacha ball animation
-    setTimeout(() => {
-        const gatchaBall = document.getElementById('gatchaBall');
-        gatchaBall.classList.remove('animate__shakeX');
-        gatchaBall.classList.add('animate__bounceOutDown');
-    }, 2000); // Adjust timing as needed
+    <script>
 
-    // Simulate explosion animation
-    setTimeout(() => {
-        const gatchaBall = document.getElementById('gatchaBall');
-        gatchaBall.classList.remove('animate__bounceOutDown');
-        gatchaBall.classList.add('animate__tada');
-    }, 1000); // Adjust timing as needed
+        console.log("<%= rewardType %>");
+        console.log("<%= playerReward %>");
 
-    // Simulate player reward
-    setTimeout(() => {
-        const playerReward = document.querySelector('.player-reward');
-        playerReward.style.opacity = '1';
-        playerReward.classList.add('animate__animated', 'animate__fadeInUp');
-    }, 3000); // Adjust timing as needed
-</script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const rewardType = '<%= rewardType %>';
+            const playerReward = '<%= playerReward %>';
 
-<%- include("templates/footer") %>
+            if (rewardType == 0) {
+                document.getElementById('player-reward').innerHTML = `
+          <img src="${playerReward}" alt="Player Reward"> 
+        `;
+            } else {
+                document.getElementById('player-reward').innerHTML = `
+          <p>${playerReward}</p>
+        `;
+            }
+        });
+
+        // Simulate gacha ball animation
+        setTimeout(() => {
+            const gatchaBall = document.getElementById('gatchaBall');
+            gatchaBall.classList.remove('animate__shakeX');
+            gatchaBall.classList.add('animate__bounceOutDown');
+        }, 2000); // Adjust timing as needed
+
+        // Simulate explosion animation
+        setTimeout(() => {
+            const gatchaBall = document.getElementById('gatchaBall');
+            gatchaBall.classList.remove('animate__bounceOutDown');
+            gatchaBall.classList.add('animate__tada');
+        }, 1000); // Adjust timing as needed
+
+        // Simulate player reward
+        setTimeout(() => {
+            const playerReward = document.getElementById('player-reward');
+            playerReward.style.opacity = '1';
+            playerReward.classList.add('animate__animated', 'animate__fadeInUp');
+        }, 3000); // Adjust timing as needed
+    </script>
+
+    <%- include("templates/footer") %>

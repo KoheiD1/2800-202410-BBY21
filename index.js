@@ -102,8 +102,8 @@ app.use(async (req, res, next) => {
 	res.locals.gameStarted = req.session.gameSession ? req.session.gameSession.gameStarted : false;
 	const result = await userCollection.find({ email: email, username: username }).project({ slotsCurrency: 1 }).toArray();
 	if (result.length > 0) {
-		res.locals.slotsCurrency = result[0].slotsCurrency; 
-	} 
+		res.locals.slotsCurrency = result[0].slotsCurrency;
+	}
 	next();
 });
 
@@ -156,7 +156,7 @@ app.post('/submitUser', async (req, res) => {
 
 	var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword , slotsCurrency: 0, ownedProfilePics: [], titles: []});
+	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword, slotsCurrency: 0, ownedProfilePics: [], titles: [] });
 
 	req.session.authenticated = true;
 	req.session.username = username;
@@ -227,7 +227,7 @@ app.get('/startGame', async (req, res) => {
 		mapID: null,
 		totalDamage: 0,
 	}
-	
+
 	try {
 		await new Promise((resolve, reject) => {
 			if (!req.session.gameSession.mapSet) {
@@ -238,18 +238,18 @@ app.get('/startGame', async (req, res) => {
 		});
 
 
-        // Check if the map is set
-        if (!req.session.gameSession.mapSet) {
-            // If not set, redirect to '/map'
-            res.redirect('/map');
-        } else {
-            // If set, redirect to '/'
-            res.redirect('/');
-        }
-    } catch (error) {
-        // Handle any errors
-        res.redirect('/');
-    }
+		// Check if the map is set
+		if (!req.session.gameSession.mapSet) {
+			// If not set, redirect to '/map'
+			res.redirect('/map');
+		} else {
+			// If set, redirect to '/'
+			res.redirect('/');
+		}
+	} catch (error) {
+		// Handle any errors
+		res.redirect('/');
+	}
 });
 
 
@@ -284,7 +284,7 @@ app.post('/startencounter', async (req, res) => {
 	res.locals.gameStarted = true;
 
 	req.session.gameSession.playerHealth = req.session.gameSession.playerHealth + regenCalculator(req);
-	if(req.session.gameSession.playerHealth > (req.session.gameSession.maxPlayerHealth + calculateHealth(req))){
+	if (req.session.gameSession.playerHealth > (req.session.gameSession.maxPlayerHealth + calculateHealth(req))) {
 		req.session.gameSession.playerHealth = (req.session.gameSession.maxPlayerHealth + calculateHealth(req));
 	}
 
@@ -305,52 +305,52 @@ app.post('/startencounter', async (req, res) => {
 
 app.get('/question', async (req, res) => {
 	try {
-			const battleSession = req.session.battleSession;
-			const gameSession = req.session.gameSession;
-			battleSession.answeredQuestions = battleSession.answeredQuestions || [];
-			const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+		const battleSession = req.session.battleSession;
+		const gameSession = req.session.gameSession;
+		battleSession.answeredQuestions = battleSession.answeredQuestions || [];
+		const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
 
 
-			if (!question) {
-					res.redirect('/map');
-					return;
-			}
-			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: (gameSession.playerHealth + calculateHealth(req)) , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: (gameSession.maxPlayerHealth + calculateHealth(req)), totalDamage: gameSession.totalDamage, playerDMG: (gameSession.playerDMG + itemDamage(req)) });
-	} catch (error) {
+		if (!question) {
 			res.redirect('/map');
+			return;
+		}
+		await levelOneCollection.deleteOne({ _id: question._id });
+		res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: (gameSession.playerHealth + calculateHealth(req)), maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: (gameSession.maxPlayerHealth + calculateHealth(req)), totalDamage: gameSession.totalDamage, playerDMG: (gameSession.playerDMG + itemDamage(req)) });
+	} catch (error) {
+		res.redirect('/map');
 	}
 });
 
 app.get('/getNewQuestion', async (req, res) => {
-	
+
 	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
 	await levelOneCollection.deleteOne({ _id: question._id });
 
 
 	res.json({ question: question });
-	
+
 });
 
 app.post('/updateTotalDamage', async (req, res) => {
-	
+
 	const { playerDMG } = req.body;
 
 	console.log("Player Damage Server side: ", playerDMG)
 
 	if (!req.session.gameSession) {
 		req.session.gameSession = { totalDamage: 0 };
-	  }
-	  if (typeof req.session.gameSession.totalDamage !== 'number') {
+	}
+	if (typeof req.session.gameSession.totalDamage !== 'number') {
 		req.session.gameSession.totalDamage = 0;
-	  }
+	}
 
-	
+
 	req.session.gameSession.totalDamage += playerDMG;
 	console.log("Total Damage Server side: ", req.session.gameSession.totalDamage);
 
 	res.json({ totalDamage: req.session.gameSession.totalDamage });
-	
+
 });
 
 app.post('/feedback', async (req, res) => {
@@ -379,18 +379,18 @@ app.post('/feedback', async (req, res) => {
 			result = true;
 
 		}
-		if(!result){
+		if (!result) {
 			req.session.battleSession.answerStreak = 0;
-		}	
+		}
 
 		damageCalculator(result, req);
 
-		if(result){
+		if (result) {
 			req.session.battleSession.answerStreak++;
 		}
 
-		
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: (req.session.gameSession.playerHealth + calculateHealth(req)), maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty, maxPlayerHealth: (req.session.gameSession.maxPlayerHealth + calculateHealth(req))});
+
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: (req.session.gameSession.playerHealth + calculateHealth(req)), maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty, maxPlayerHealth: (req.session.gameSession.maxPlayerHealth + calculateHealth(req)) });
 
 	} catch (error) {
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -402,7 +402,7 @@ app.post('/preshop', async (req, res) => {
 		index: req.body.index,
 		row: req.body.row,
 	};
-	
+
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
 
@@ -420,56 +420,56 @@ app.post('/preshop', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.row' + row + '.' + index + '.status']: "chosen" } });
-	
+
 	var oldConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
 
 	oldConnections = oldConnections.path['r' + row + 'connect'][index]
 
-	for (var i = 0; i < oldConnections.length; i++){
+	for (var i = 0; i < oldConnections.length; i++) {
 		oldConnections[i]++;
 	}
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
-		{ $set: { ['path.r' + row + 'connect.'+ index]: oldConnections } });
+		{ $set: { ['path.r' + row + 'connect.' + index]: oldConnections } });
 
-		var prevConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+	var prevConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
 
-		var lastVisitedIndex = prevConnections.path['row' + (row-1)];
-	
-		for (var i = 0; i < lastVisitedIndex.length; i++){
-			if (lastVisitedIndex[i].status == "chosen"){
-				lastVisitedIndex = i;
-			}
+	var lastVisitedIndex = prevConnections.path['row' + (row - 1)];
+
+	for (var i = 0; i < lastVisitedIndex.length; i++) {
+		if (lastVisitedIndex[i].status == "chosen") {
+			lastVisitedIndex = i;
 		}
-		prevConnections = prevConnections.path['r' + (row-1) + 'connect']
-		
-		if (row ==1){
-			for (var i = 0; i < prevConnections.length; i++){
-				for (var n = 0; n < prevConnections[i].length; n++){
-					if (prevConnections[i][n] == (parseInt(index)+1)) {
-		
-					} else {
-						console.log(prevConnections[i][n]);
-						console.log(parseInt(index)+1);
-						prevConnections[i][n]--;
-					}
-				}
-			}
-		}
-		else{
-			for (var n = 0; n < prevConnections[lastVisitedIndex].length; n++){
-				if (prevConnections[lastVisitedIndex][n] == (parseInt(index)+1)) {
-	
+	}
+	prevConnections = prevConnections.path['r' + (row - 1) + 'connect']
+
+	if (row == 1) {
+		for (var i = 0; i < prevConnections.length; i++) {
+			for (var n = 0; n < prevConnections[i].length; n++) {
+				if (prevConnections[i][n] == (parseInt(index) + 1)) {
+
 				} else {
-					console.log(prevConnections[lastVisitedIndex][n]);
-					console.log(parseInt(index)+1);
-					prevConnections[lastVisitedIndex][n]--;
+					console.log(prevConnections[i][n]);
+					console.log(parseInt(index) + 1);
+					prevConnections[i][n]--;
 				}
 			}
 		}
-		await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
-			{ $set: { ['path.r' + (row-1) + 'connect']: prevConnections } });
-	
+	}
+	else {
+		for (var n = 0; n < prevConnections[lastVisitedIndex].length; n++) {
+			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
+
+			} else {
+				console.log(prevConnections[lastVisitedIndex][n]);
+				console.log(parseInt(index) + 1);
+				prevConnections[lastVisitedIndex][n]--;
+			}
+		}
+	}
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
+
 	res.redirect('/shop');
 });
 
@@ -501,53 +501,53 @@ app.get('/victory', async (req, res) => {
 
 	oldConnections = oldConnections.path['r' + row + 'connect'][index]
 
-	for (var i = 0; i < oldConnections.length; i++){
+	for (var i = 0; i < oldConnections.length; i++) {
 		oldConnections[i]++;
 	}
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
-		{ $set: { ['path.r' + row + 'connect.'+ index]: oldConnections } });
+		{ $set: { ['path.r' + row + 'connect.' + index]: oldConnections } });
 
 	var prevConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
 
-	var lastVisitedIndex = prevConnections.path['row' + (row-1)];
+	var lastVisitedIndex = prevConnections.path['row' + (row - 1)];
 
-	for (var i = 0; i < lastVisitedIndex.length; i++){
-		if (lastVisitedIndex[i].status == "chosen"){
+	for (var i = 0; i < lastVisitedIndex.length; i++) {
+		if (lastVisitedIndex[i].status == "chosen") {
 			lastVisitedIndex = i;
 		}
 	}
 
-	prevConnections = prevConnections.path['r' + (row-1) + 'connect']
-	
-	if (row ==1){
-		for (var i = 0; i < prevConnections.length; i++){
-			for (var n = 0; n < prevConnections[i].length; n++){
-				if (prevConnections[i][n] == (parseInt(index)+1)) {
-	
+	prevConnections = prevConnections.path['r' + (row - 1) + 'connect']
+
+	if (row == 1) {
+		for (var i = 0; i < prevConnections.length; i++) {
+			for (var n = 0; n < prevConnections[i].length; n++) {
+				if (prevConnections[i][n] == (parseInt(index) + 1)) {
+
 				} else {
 					console.log(prevConnections[i][n]);
-					console.log(parseInt(index)+1);
+					console.log(parseInt(index) + 1);
 					prevConnections[i][n]--;
 				}
 			}
 		}
 	}
-	else{
-		for (var n = 0; n < prevConnections[lastVisitedIndex].length; n++){
-			if (prevConnections[lastVisitedIndex][n] == (parseInt(index)+1)) {
+	else {
+		for (var n = 0; n < prevConnections[lastVisitedIndex].length; n++) {
+			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
 
 			} else {
 				console.log(prevConnections[lastVisitedIndex][n]);
-				console.log(parseInt(index)+1);
+				console.log(parseInt(index) + 1);
 				prevConnections[lastVisitedIndex][n]--;
 			}
 		}
 	}
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
-		{ $set: { ['path.r' + (row-1) + 'connect']: prevConnections } });
-	
+		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
+
 	res.render("victory");
 });
 
@@ -567,15 +567,15 @@ app.get('/levelup', async (req, res) => {
 		const goldCollected = req.session.gameSession.playerCoins;
 
 		const totalDamage = req.session.gameSession.totalDamage;
-		
+
 		await userCollection.updateOne(
 			{ username: user },
-			{ $inc: { runsCompleted: 1, goldCollected: goldCollected, totalDamageDealt: totalDamage} }
+			{ $inc: { runsCompleted: 1, goldCollected: goldCollected, totalDamageDealt: totalDamage } }
 		);
 	} catch (error) {
 		console.error('Error updating user level:', error);
 	}
-	
+
 	res.render("victory");
 });
 
@@ -613,35 +613,58 @@ app.get('/gatchapage', async (req, res) => {
 app.get('/easteregganimation', async (req, res) => {
 	const result = await userCollection.find({ email: req.session.email, username: req.session.username }).project({ slotsCurrency: 1 }).toArray();
 	var currency = result[0].slotsCurrency;
-	if(currency < 1){
+	if (currency < 1) {
 		res.render('shame');
-	}else{
-	userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: -1 } });
-	res.render('easteregganimation');
+	} else {
+		userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: -1 } });
+		res.render('easteregganimation');
 	}
 });
+
+
 
 app.get('/capsuleopening', async (req, res) => {
-	const result = await userCollection.find({ email: req.session.email, username: req.session.username }).project({ ownedProfilePics: 1 }).toArray();
-	var unOwnedProfilePics = [];
-	var owned = false;
+    const userEmail = req.session.email;
 
-	for (let i = 1; i <= 10; i++){
-		owned = false;
-		for(let j = 0; j < result[0].ownedProfilePics.length; j++){
-			if(result[0].ownedProfilePics[j] == 'pfp-' + i + '.png'){
-				owned = true;
-			}
-		}
-		if(!owned){
-			unOwnedProfilePics.push('pfp-' + i + '.png');
-		}
-	}
+    const user = await userCollection.findOne({ email: userEmail });
+    const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
+    const allTitles = userTitlesArray.map(item => item.title);
+    const ownedTitles = user ? user.titles : [];
 
-	var rand = Math.floor(Math.random() * unOwnedProfilePics.length);
-	userCollection.updateOne({ email: req.session.email }, { $push: { ownedProfilePics: unOwnedProfilePics[rand] } });
-	res.render('capsuleopening', {playerReward: unOwnedProfilePics[rand]});
+    const unownedTitles = allTitles.filter(title => !ownedTitles.includes(title));
+
+    const result = await userCollection.findOne({ email: userEmail });
+    const ownedProfilePics = result ? result.ownedProfilePics : [];
+    const unOwnedProfilePics = [];
+
+    for (let i = 1; i <= 10; i++) {
+        const fileName = `pfp-${i}.png`;
+        if (!ownedProfilePics.includes(fileName)) {
+            unOwnedProfilePics.push(fileName);
+        }
+    }
+
+    const rewardType = Math.floor(Math.random() * 2);
+    let playerReward;
+
+    if (rewardType === 0 && unOwnedProfilePics.length > 0) {
+        const rand = Math.floor(Math.random() * unOwnedProfilePics.length);
+        playerReward = unOwnedProfilePics[rand];
+        await userCollection.updateOne({ email: userEmail }, { $push: { ownedProfilePics: playerReward } });
+    } else if (unownedTitles.length > 0) {
+        const rand = Math.floor(Math.random() * unownedTitles.length);
+        playerReward = unownedTitles[rand];
+        await userCollection.updateOne({ email: userEmail }, { $push: { titles: playerReward } });
+    } else {
+        playerReward = "No rewards available";
+    }
+
+    console.log("Player reward", playerReward);
+
+    res.render('capsuleopening', { playerReward, rewardType });
 });
+
+
 
 
 app.get("*", (req, res) => {
