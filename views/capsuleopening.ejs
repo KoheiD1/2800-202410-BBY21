@@ -52,16 +52,13 @@
   </css-doodle>
 <div class="grid-container">
     <!-- Player Reward Icon -->
-    <div class="player-reward">
-        <img src="<%= playerReward %>" alt="Player Reward"> 
+    <div id="player-reward">
+        
     </div>
     <!-- Gacha Ball -->
     <img src="./easterEgg/gatchaBall.svg" alt="Gacha Ball" class="gatchaBall animate__animated animate__shakeX" id="gatchaBall">
     <div class="flex justify-start">
-        <form action="/">
-          <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
-            value="Back to Main Menu">
-        </form>
+          <button id="mm-btn" type="submit" onclick="window.location.href='/'" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">Back to Main Menu</button>
       </div>
 </div>
 
@@ -95,7 +92,7 @@
             /* Initially hidden */
         }
 
-        #back-to-mm {
+        #mm-btn {
             z-index: 10;
         }
 
