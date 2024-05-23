@@ -109,7 +109,7 @@
 
         document.getElementById('userTitle').innerHTML = `
         <select id="titleDropdown" class="border border-gray-300 rounded p-2">
-          <% userTitles.forEach(titleObj => { %>
+          <% ownedUserTitles.forEach(titleObj => { %>
                 <option value="<%= titleObj.title %>" <%= titleObj.title === userTitle ? 'selected' : '' %>><%= titleObj.title %></option>
                 <% }) %>
         </select>

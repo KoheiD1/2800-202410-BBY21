@@ -4,7 +4,6 @@
 <div class="grid-container">
     <!-- Player Reward Icon -->
     <div class="player-reward">
-        <img src="<%= playerReward %>" alt="Player Reward"> 
     </div>
     <!-- Gacha Ball -->
     <img src="./easterEgg/gatchaBall.svg" alt="Gacha Ball" class="gatchaBall animate__animated animate__shakeX" id="gatchaBall">
@@ -92,6 +91,17 @@
 </style>
 
 <script>
+
+    if ("<%= random %>" == 0) {
+        document.getElementById('playerReward').innerHTML = `
+        <img src="<%= playerReward %>" alt="Player Reward"> 
+        `;
+    } else {
+        document.getElementById('playerReward').innerHTML = `
+        <p><%= playerReward %></p>
+        `;
+    }
+
     // Simulate gacha ball animation
     setTimeout(() => {
         const gatchaBall = document.getElementById('gatchaBall');
