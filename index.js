@@ -619,7 +619,25 @@ app.get('/easteregganimation', async (req, res) => {
 });
 
 app.get('/capsuleopening', async (req, res) => {
-	res.render('capsuleopening', {playerReward: 'mainCharSprite.png'});
+	const result = await userCollection.find({ email: req.session.email, username: req.session.username }).project({ ownedProfilePics: 1 }).toArray();
+	var unOwnedProfilePics = [];
+	var owned = false;
+
+	for (let i = 1; i <= 4; i++){
+		owned = false;
+		for(let j = 0; j < result[0].ownedProfilePics.length; j++){
+			if(result[0].ownedProfilePics[j] == 'pfp-' + i + '.png'){
+				owned = true;
+			}
+		}
+		if(!owned){
+			unOwnedProfilePics.push('pfp-' + i + '.png');
+		}
+	}
+
+	var rand = Math.floor(Math.random() * unOwnedProfilePics.length);
+	userCollection.updateOne({ email: req.session.email }, { $push: { ownedProfilePics: unOwnedProfilePics[rand] } });
+	res.render('capsuleopening', {playerReward: unOwnedProfilePics[rand]});
 });
 
 
