@@ -44,7 +44,7 @@ module.exports = function (itemCollection, userCollection) {
                 for (let i = 0; i < 3 && i < items.length; i++) {
                     let rand;
                     do {
-                        rand = parseInt(Math.random() * items.length);
+                        rand = parseInt(Math.random() * 4);
                     } while (items[rand] == null);
                     req.session.shop.itemsPicked.push({
                         type: items[rand].type,
@@ -109,7 +109,25 @@ module.exports = function (itemCollection, userCollection) {
         console.log(item);
         purchaseItem(req, item);
 
-        res.render("shop");
+        for(let i = 0; i < req.session.shop.itemsPicked.length; i++) {
+            if(req.session.shop.itemsPicked[i] != null) {
+                if(req.session.shop.itemsPicked[i].type == item.type) {
+                    req.session.shop.itemsPicked[i] = null;
+                }
+            }
+        }
+
+        res.redirect("/shop");
+    });
+
+    router.get("/refresh", (req, res) => {
+        if(req.session.gameSession.playerCoins > 5) {
+            req.session.shop = null;
+            req.session.gameSession.playerCoins -= 5;
+            res.redirect("/shop");
+        } else {
+            res.redirect("/shop");
+        }
     });
 
     router.get("/itemAdder", (req, res) => {

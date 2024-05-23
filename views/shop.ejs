@@ -1,36 +1,43 @@
 <%- include("templates/headerloggedin", {overflowVariable: "overflow-hidden bg-[url('/wood.png')]" }) %>
-    <dialog class="w-80 text-center text-xl">
+    <dialog class="w-80 text-center text-xl bg-[url('/chalkboard.png')] bg-center bg-[width: auto, height: auto]">
         <div class="w-64 m-auto">
             <h1 id="itemName" class="font-bold text-2xl"></h1>
             <div id="desc"></div>
             <div id="effects" class="p-1 border-black border-2 w-fit m-auto"></div>
             <div id="price"></div>
-            <div id="button" class="flex justify-center align-bottom">
+            <div id="button" class="flex justify-center align-bottom space-x-32">
                 <button id="close" onclick="close()">Close</button>
+                <button id="purchase">Purchase</button>
             </div>
         </div>
     </dialog>
     <div class="">
-        <h1 class="flex justify-center text-3xl">Item Shop</h1>
-        <div class="bg-[url('/shelf.png')] bg-no-repeat bg-center bg-contain mt-14">
-            <div class="grid grid-cols-1 grid-rows-3 space-y-3 m-6 p-5 py-10 shopItem">
+        <div class="bg-[url('/shelf.png')] bg-no-repeat bg-center bg-contain">
+            <div id="items" class="grid grid-cols-1 grid-rows-3 space-y-3 m-6 p-5 py-10 shopItem overflow-hidden grid-rows">
                 <% for(let i=0; i < items.length; i++) { %>
+                    <% if(items[i] == null) {continue;} %>
                     <%- include('templates/shopItem', {item: items[i]}) %>
-                        <% } %>
+                <% } %>
             </div>
         </div>
     </div>
     <div class="flex justify-center items-center z-20">
-        <a href="/map"
-            class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Back
-            to map</a>
+        <a href="/refresh"
+            class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Refresh</a>
     </div>
     <br>
     <div class="flex justify-center items-center z-20">
         <a href="/inventory"
             class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Inventory</a>
     </div>
+    <br>
+    <div class="flex justify-center items-center z-20">
+        <a href="/map"
+            class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Back
+            to map</a>
+    </div>
     <script>
+
         function showDialog(string) {
             let dialog = document.querySelector('dialog');
             let item = string;
@@ -57,8 +64,8 @@
             }
             purchaseInfo += ',' + item.price;
             console.log(purchaseInfo);
-            purchase.setAttribute('onclick', 'window.location.href="/purchase?info=' + purchaseInfo + '"');
-            dialog.querySelector('#button').appendChild(purchase);
+            dialog.querySelector('#purchase').setAttribute('onclick', "window.location.href='/purchase?info=" + purchaseInfo + "'");
+            
             dialog.showModal();
         }
 
