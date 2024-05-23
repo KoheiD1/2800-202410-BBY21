@@ -1,62 +1,69 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/css-doodle/0.39.1/css-doodle.min.js"></script>
+<css-doodle class="doodle">
+  :doodle {
+  --color: rgba(101,0,94,1), rgba(60,132,206,1), rgba(48,238,226,1), rgba(255,25,25,1);
+
+  @grid: 30x1 / 100vw 100vh / #270f34;
+  }
+  :container {
+  perspective: 30vmin;
+  --deg: @p(-180deg, 180deg);
+  }
+
+  :after, :before {
+  content: '';
+  background: @p(--color);
+  @place: @r(100%) @r(100%);
+  @size: @r(6px);
+  @shape: heart;
+  }
+
+  @place: center;
+  @size: 18vmin;
+
+  box-shadow: @m2(0 0 50px @p(--color));
+  background: @m100(
+  radial-gradient(@p(--color) 75%, transparent 0)
+  @r(-20%, 120%) @r(-20%, 100%) / 1px 1px
+  no-repeat
+  );
+
+  will-change: transform, opacity;
+  animation: scale-up 12s linear infinite;
+  animation-delay: calc(-12s / @I * @i);
+
+  @keyframes scale-up {
+  0%, 95.01%, 100% {
+  transform: translateZ(0) rotate(0);
+  opacity: 0;
+  }
+  10% {
+  opacity: 1;
+  }
+  95% {
+  transform:
+  translateZ(35vmin) rotateZ(var(--deg));
+  }
+  }
+
+</css-doodle>
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/css-doodle/0.39.1/css-doodle.min.js"></script>
-  <css-doodle class="doodle">
-    :doodle {
-    --color: rgba(101,0,94,1), rgba(60,132,206,1), rgba(48,238,226,1), rgba(255,25,25,1);
-
-    @grid: 30x1 / 100vw 100vh / #270f34;
-    }
-    :container {
-    perspective: 30vmin;
-    --deg: @p(-180deg, 180deg);
-    }
-
-    :after, :before {
-    content: '';
-    background: @p(--color);
-    @place: @r(100%) @r(100%);
-    @size: @r(6px);
-    @shape: heart;
-    }
-
-    @place: center;
-    @size: 18vmin;
-
-    box-shadow: @m2(0 0 50px @p(--color));
-    background: @m100(
-    radial-gradient(@p(--color) 75%, transparent 0)
-    @r(-20%, 120%) @r(-20%, 100%) / 1px 1px
-    no-repeat
-    );
-
-    will-change: transform, opacity;
-    animation: scale-up 12s linear infinite;
-    animation-delay: calc(-12s / @I * @i);
-
-    @keyframes scale-up {
-    0%, 95.01%, 100% {
-    transform: translateZ(0) rotate(0);
-    opacity: 0;
-    }
-    10% {
-    opacity: 1;
-    }
-    95% {
-    transform:
-    translateZ(35vmin) rotateZ(var(--deg));
-    }
-    }
-
-  </css-doodle>
-<div class="grid-container">
+<button onclick="window.location.href='/easteregganimation'"
+        class="mt-16 px-6 py-2 bg-transparent text-white block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600 shadow">Spin the Gatcha Machine
+    </button>
+<div class="grid-container mt-10">
     <!-- SVG image for the background -->
     <img src="./easterEgg/gatchaMachine.svg" alt="Gatcha Machine" class="background-image">
 </div>
+<<<<<<< HEAD
 <button onclick="window.location.href='/easteregganimation'"
         class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Spin Gatcha <br> Use 1 Diamond!
     </button>
    
+=======
+
+>>>>>>> gacha
 
 <style>
     .grid-container {
@@ -112,6 +119,11 @@
       top: 0;
       z-index: -1;
     }
+
+    .shadow {
+      text-shadow: 4px 4px #000000;
+    }
+
 </style>
 
 <%- include("templates/footer") %>
