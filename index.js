@@ -156,7 +156,7 @@ app.post('/submitUser', async (req, res) => {
 
 	var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword });
+	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword , slotsCurrency: 0, ownedProfilePics: [], titles: []});
 
 	req.session.authenticated = true;
 	req.session.username = username;
@@ -623,7 +623,7 @@ app.get('/capsuleopening', async (req, res) => {
 	var unOwnedProfilePics = [];
 	var owned = false;
 
-	for (let i = 1; i <= 4; i++){
+	for (let i = 1; i <= 10; i++){
 		owned = false;
 		for(let j = 0; j < result[0].ownedProfilePics.length; j++){
 			if(result[0].ownedProfilePics[j] == 'pfp-' + i + '.png'){
