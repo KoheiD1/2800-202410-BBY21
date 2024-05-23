@@ -47,6 +47,18 @@
             dialog.querySelector('#button').querySelector('#close').addEventListener('click', function () {
                 close();
             });
+
+            let purchase = document.createElement('button');
+            purchase.innerHTML = 'Purchase';
+            let purchaseInfo = "";
+            purchaseInfo += item.type;
+            for(let i = 0 ; i < item.effects.length; i++) {
+                purchaseInfo += ',' + item.effects[i] + ',' + item[item.effects[i]];
+            }
+            purchaseInfo += ',' + item.price;
+            console.log(purchaseInfo);
+            purchase.setAttribute('onclick', 'window.location.href="/purchase?info=' + purchaseInfo + '"');
+            dialog.querySelector('#button').appendChild(purchase);
             dialog.showModal();
         }
 
