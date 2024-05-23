@@ -18,9 +18,13 @@ module.exports = function(userCollection, userTitlesCollection) {
             
             userTitle = user.UserTitle;
 
+            const ownedProfilePics = user ? user.ownedProfilePics : [];
+
+            console.log(ownedProfilePics);
+
             const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
             
-            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, userTitles: userTitlesArray});
+            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, userTitles: userTitlesArray, ownedProfilePics: ownedProfilePics});
         } else {
             res.redirect('/login');
         }
