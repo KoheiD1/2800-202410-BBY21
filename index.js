@@ -90,7 +90,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, calculateHealth, regenCalculator, itemDamage, enemeyScaling} = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, regenCalculator, enemeyScaling, additionalHealth, additionalDMG} = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -280,13 +280,15 @@ app.post('/startencounter', async (req, res) => {
 	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 25 } }]).toArray();
 	await levelOneCollection.insertMany(encounterQuestions);
 	resetCoinsReceived()
+	additionalHealth(req);
+	additionalDMG(req);
 	let enemies = await enemiesCollection.find().toArray();
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
 	res.locals.gameStarted = true;
 
 	req.session.gameSession.playerHealth = req.session.gameSession.playerHealth + regenCalculator(req);
-	if (req.session.gameSession.playerHealth > (req.session.gameSession.maxPlayerHealth + calculateHealth(req))) {
-		req.session.gameSession.playerHealth = (req.session.gameSession.maxPlayerHealth + calculateHealth(req));
+	if (req.session.gameSession.playerHealth > (req.session.gameSession.maxPlayerHealth)) {
+		req.session.gameSession.playerHealth = (req.session.gameSession.maxPlayerHealth);
 	}
 
 	req.session.battleSession = {
@@ -310,7 +312,7 @@ app.get('/question', async (req, res) => {
 		const gameSession = req.session.gameSession;
 		battleSession.answeredQuestions = battleSession.answeredQuestions || [];
 		
-		res.render('question', { enemyHealth: battleSession.enemyHealth, playerHealth: (gameSession.playerHealth + calculateHealth(req)), maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: (gameSession.maxPlayerHealth + calculateHealth(req)), totalDamage: gameSession.totalDamage, playerDMG: (gameSession.playerDMG + itemDamage(req)) });
+		res.render('question', { enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth, maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: gameSession.maxPlayerHealth, totalDamage: gameSession.totalDamage, playerDMG: gameSession.playerDMG });
 	} catch (error) {
 		res.redirect('/map');
 	}
@@ -385,7 +387,7 @@ app.post('/feedback', async (req, res) => {
 		}
 
 
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: (req.session.gameSession.playerHealth + calculateHealth(req)), maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty, maxPlayerHealth: (req.session.gameSession.maxPlayerHealth + calculateHealth(req)) });
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty, maxPlayerHealth: req.session.gameSession.maxPlayerHealth});
 
 	} catch (error) {
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -480,7 +482,7 @@ app.get('/victory', async (req, res) => {
 	});
 
 	//distribute coins depending on difficulty
-	coinDistribution(req, difficulty);
+	req.session.gameSession.playerCoins += coinDistribution(difficulty);
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
@@ -543,14 +545,14 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
 
-	res.render("victory");
+	res.render("victory",{coinsWon:coinDistribution(difficulty) });
 });
 
 app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
 	req.session.gameSession.playerLevel++;
 
-	coinDistribution(req, difficulty);
+	req.session.gameSession.playerCoins += coinDistribution(difficulty);
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 	userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
 
@@ -571,7 +573,7 @@ app.get('/levelup', async (req, res) => {
 		console.error('Error updating user level:', error);
 	}
 
-	res.render("victory");
+	res.render("victory", {coinsWon: coinDistribution(difficulty)});
 });
 
 app.get('/defeat', (req, res) => {
