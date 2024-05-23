@@ -621,42 +621,46 @@ app.get('/easteregganimation', async (req, res) => {
 
 
 app.get('/capsuleopening', async (req, res) => {
-	const userEmail = req.session.email;
+    const userEmail = req.session.email;
 
-	const user = await userCollection.findOne({ email: userEmail });
-	const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
-	const allTitles = userTitlesArray.map(item => item.title);
-	const ownedTitles = user ? user.titles : [];
+    const user = await userCollection.findOne({ email: userEmail });
+    const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
+    const allTitles = userTitlesArray.map(item => item.title);
+    const ownedTitles = user ? user.titles : [];
 
-	const unownedTitles = allTitles.filter(title => !ownedTitles.includes(title));
+    const unownedTitles = allTitles.filter(title => !ownedTitles.includes(title));
 
-	const result = await userCollection.findOne({ email: userEmail });
-	const ownedProfilePics = result ? result.ownedProfilePics : [];
-	const unOwnedProfilePics = [];
+    const result = await userCollection.findOne({ email: userEmail });
+    const ownedProfilePics = result ? result.ownedProfilePics : [];
+    const unOwnedProfilePics = [];
 
-	for (let i = 1; i <= 10; i++) {
-		const fileName = `pfp-${i}.png`;
-		if (!ownedProfilePics.includes(fileName)) {
-			unOwnedProfilePics.push(fileName);
-		}
-	}
+    for (let i = 1; i <= 10; i++) {
+        const fileName = `pfp-${i}.png`;
+        if (!ownedProfilePics.includes(fileName)) {
+            unOwnedProfilePics.push(fileName);
+        }
+    }
 
+    const rewardType = Math.floor(Math.random() * 2);
+    let playerReward;
 
-	const rewardType = Math.floor(Math.random() * 2);
-	let playerReward;
+    if (rewardType === 0 && unOwnedProfilePics.length > 0) {
+        const rand = Math.floor(Math.random() * unOwnedProfilePics.length);
+        playerReward = unOwnedProfilePics[rand];
+        await userCollection.updateOne({ email: userEmail }, { $push: { ownedProfilePics: playerReward } });
+    } else if (unownedTitles.length > 0) {
+        const rand = Math.floor(Math.random() * unownedTitles.length);
+        playerReward = unownedTitles[rand];
+        await userCollection.updateOne({ email: userEmail }, { $push: { titles: playerReward } });
+    } else {
+        playerReward = "No rewards available";
+    }
 
-	if (rewardType === 0 && unOwnedProfilePics.length > 0) {
-		const rand = Math.floor(Math.random() * unOwnedProfilePics.length);
-		playerReward = unOwnedProfilePics[rand];
-		await userCollection.updateOne({ email: userEmail }, { $push: { ownedProfilePics: playerReward } });
-	} else if (unownedTitles.length > 0) {
-		const rand = Math.floor(Math.random() * unownedTitles.length);
-		playerReward = unownedTitles[rand];
-		await userCollection.updateOne({ email: userEmail }, { $push: { titles: playerReward } });
-	}
+    console.log("Player reward", playerReward);
 
-	res.render('capsuleopening', { playerReward, rewardType });
+    res.render('capsuleopening', { playerReward, rewardType });
 });
+
 
 
 

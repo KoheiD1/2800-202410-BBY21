@@ -1,127 +1,161 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
-<div class="grid-container">
-    <!-- Player Reward Icon -->
-    <div class="player-reward">
+    <div class="grid-container">
+        <!-- Player Reward Icon -->
+        <div id="player-reward">
+            
+        </div>
+        <!-- Gacha Ball -->
+        <img src="./easterEgg/gatchaBall.svg" alt="Gacha Ball" class="gatchaBall animate__animated animate__shakeX"
+            id="gatchaBall">
+        <div class="flex justify-start">
+            <form action="/">
+                <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+                    value="Back to Main Menu">
+            </form>
+        </div>
     </div>
-    <!-- Gacha Ball -->
-    <img src="./easterEgg/gatchaBall.svg" alt="Gacha Ball" class="gatchaBall animate__animated animate__shakeX" id="gatchaBall">
-    <div class="flex justify-start">
-        <form action="/">
-          <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
-            value="Back to Main Menu">
-        </form>
-      </div>
-</div>
 
-<div class="congratulations-container">
-    <p class="congratulations">Congratulations!</p> <!-- Congratulations text -->
-</div>
+    <div class="congratulations-container">
+        <p class="congratulations">Congratulations!</p> <!-- Congratulations text -->
+    </div>
 
-<style>
-    .grid-container {
-        position: relative;
-        display: grid;
-        place-items: center;
-        height: 100vh;
-    }
+    <style>
+        .grid-container {
+            position: relative;
+            display: grid;
+            place-items: center;
+            height: 100vh;
+        }
 
-    .gatchaBall {
-        width: 50%;
-        height: 50%;
-        z-index: 1;
-        visibility: visible;
-    }
+        .gatchaBall {
+            width: 50%;
+            height: 50%;
+            z-index: 1;
+            visibility: visible;
+        }
 
-    .player-reward {
-        position: absolute;
-        padding-bottom: 20vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        z-index: 3;
-        opacity: 0; /* Initially hidden */
-    }
+        #player-reward {
+            position: absolute;
+            padding-bottom: 20vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 3;
+            opacity: 0;
+            /* Initially hidden */
+        }
 
-    .player-reward img {
-        display: block;
-        width: 100%;
-        height: auto;
+        /* #player-reward img {
+            display: block;
+            width: 100%;
+            height: auto;
 
-    }
+        } */
 
-    /* Congratulations text container */
-    .congratulations-container {
-        position: absolute;
-        top: 5%; /* Adjust position from the top */
-        width: 100%;
-        text-align: center;
-        z-index: 2;
-    }
+        /* Congratulations text container */
+        .congratulations-container {
+            position: absolute;
+            top: 5%;
+            /* Adjust position from the top */
+            width: 100%;
+            text-align: center;
+            z-index: 2;
+        }
 
-    /* Congratulations text */
-    .congratulations {
-        padding-top: 5%;
-        font-size: 25px; /* Increase font size */
-        font-family: 'startfont', sans-serif; /* Custom font */
-        animation: rainbowStrobe 2s linear infinite; /* Rainbow strobe animation */
-    }
+        /* Congratulations text */
+        .congratulations {
+            padding-top: 5%;
+            font-size: 25px;
+            /* Increase font size */
+            font-family: 'startfont', sans-serif;
+            /* Custom font */
+            animation: rainbowStrobe 2s linear infinite;
+            /* Rainbow strobe animation */
+        }
 
-    /* Rainbow strobe animation */
-    @keyframes rainbowStrobe {
-        0% { color: red; }
-        16.666% { color: orange; }
-        33.333% { color: yellow; }
-        50% { color: green; }
-        66.666% { color: blue; }
-        83.333% { color: indigo; }
-        100% { color: violet; }
-    }
+        /* Rainbow strobe animation */
+        @keyframes rainbowStrobe {
+            0% {
+                color: red;
+            }
 
-    @font-face {
-    font-family: 'startfont';
-    src: url('titlefont.ttf') format('truetype');
-    }
-  
-    .start-font {
-    font-family: 'startfont', sans-serif;
-    }
+            16.666% {
+                color: orange;
+            }
 
-</style>
+            33.333% {
+                color: yellow;
+            }
 
-<script>
+            50% {
+                color: green;
+            }
 
-    if ("<%= random %>" == 0) {
-        document.getElementById('playerReward').innerHTML = `
-        <img src="<%= playerReward %>" alt="Player Reward"> 
+            66.666% {
+                color: blue;
+            }
+
+            83.333% {
+                color: indigo;
+            }
+
+            100% {
+                color: violet;
+            }
+        }
+
+        @font-face {
+            font-family: 'startfont';
+            src: url('titlefont.ttf') format('truetype');
+        }
+
+        .start-font {
+            font-family: 'startfont', sans-serif;
+        }
+    </style>
+
+    <script>
+
+        console.log("<%= rewardType %>");
+        console.log("<%= playerReward %>");
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const rewardType = '<%= rewardType %>';
+            const playerReward = '<%= playerReward %>';
+
+            if (rewardType == 0) {
+                document.getElementById('player-reward').innerHTML = `
+          <img src="${playerReward}" alt="Player Reward"> 
         `;
-    } else {
-        document.getElementById('playerReward').innerHTML = `
-        <p><%= playerReward %></p>
+            } else {
+                document.getElementById('player-reward').innerHTML = `
+          <p>${playerReward}</p>
         `;
-    }
+            }
+        });
 
-    // Simulate gacha ball animation
-    setTimeout(() => {
-        const gatchaBall = document.getElementById('gatchaBall');
-        gatchaBall.classList.remove('animate__shakeX');
-        gatchaBall.classList.add('animate__bounceOutDown');
-    }, 2000); // Adjust timing as needed
+        // Simulate gacha ball animation
+        setTimeout(() => {
+            const gatchaBall = document.getElementById('gatchaBall');
+            gatchaBall.classList.remove('animate__shakeX');
+            gatchaBall.classList.add('animate__bounceOutDown');
+        }, 2000); // Adjust timing as needed
 
-    // Simulate explosion animation
-    setTimeout(() => {
-        const gatchaBall = document.getElementById('gatchaBall');
-        gatchaBall.classList.remove('animate__bounceOutDown');
-        gatchaBall.classList.add('animate__tada');
-    }, 1000); // Adjust timing as needed
+        // Simulate explosion animation
+        setTimeout(() => {
+            const gatchaBall = document.getElementById('gatchaBall');
+            gatchaBall.classList.remove('animate__bounceOutDown');
+            gatchaBall.classList.add('animate__tada');
+        }, 1000); // Adjust timing as needed
 
-    // Simulate player reward
-    setTimeout(() => {
-        const playerReward = document.querySelector('.player-reward');
-        playerReward.style.opacity = '1';
-        playerReward.classList.add('animate__animated', 'animate__fadeInUp');
-    }, 3000); // Adjust timing as needed
-</script>
+        // Simulate player reward
+        setTimeout(() => {
+            const playerReward = document.getElementById('player-reward');
+            playerReward.style.opacity = '1';
+            playerReward.classList.add('animate__animated', 'animate__fadeInUp');
+        }, 3000); // Adjust timing as needed
+    </script>
 
-<%- include("templates/footer") %>
+    <%- include("templates/footer") %>
