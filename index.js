@@ -608,7 +608,14 @@ app.get('/gatchapage', async (req, res) => {
 });
 
 app.get('/easteregganimation', async (req, res) => {
+	const result = await userCollection.find({ email: req.session.email, username: req.session.username }).project({ slotsCurrency: 1 }).toArray();
+	var currency = result[0].slotsCurrency;
+	if(currency < 1){
+		res.render('shame');
+	}else{
+	userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: -1 } });
 	res.render('easteregganimation');
+	}
 });
 
 app.get('/capsuleopening', async (req, res) => {
