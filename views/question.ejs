@@ -15,6 +15,7 @@
     }
 
     @keyframes flash {
+
       0%,
       50%,
       100% {
@@ -129,6 +130,10 @@
       grid-row: 1;
     }
 
+    #modalButtons {
+      margin: 20px;
+    }
+
     #enemy-container {
       grid-column: 3;
       /* Middle column */
@@ -180,24 +185,6 @@
       </div>
 
       <div id="questionContainer">
-        <div class="max-w-lg mx-auto p-8 rounded bg-white">
-          <h1 class=" text-lg font-bold mb-4">
-            <%= question.questionText %>
-          </h1>
-          <ul class="bg-white">
-            <% question.options.forEach((option, index)=> { %>
-              <li class="mb-2">
-                <form id="<%= index %>" class="feedback-form" data-question-id="<%= question._id %>">
-                  <input type="hidden" name="option" value="<%= index %>">
-                  <button id="opt-btn" type="submit" class="w-full pixel-border text-black font-bold rounded">
-                    <%= option.text %>
-                  </button>
-                </form>
-                <div id="feedbackResult<%= index %>"></div>
-              </li>
-              <% }); %>
-          </ul>
-        </div>
       </div>
 
       <div id="feedbackContainer" class="hidden mx-auto p-8 rounded">
@@ -227,29 +214,124 @@
       </div>
     </div>
     <script>
-      var enemyHealth = <%= enemyHealth %>;
-      var playerHealth = <%= playerHealth %>;
-      var maxEnemyHealth = <%= maxEnemyHealth %>;
+      var enemyHealth = '<%= enemyHealth %>';
+      var playerHealth = '<%= playerHealth %>';
+      var maxEnemyHealth = '<%= maxEnemyHealth %>';
       var difficulty = "<%= difficulty %>";
-      var maxPlayerHealth = <%= maxPlayerHealth %>;
+      var maxPlayerHealth = '<%= maxPlayerHealth %>';
+
+      renderHealth();
+
 
       document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "             " + enemyHealth + "/" + maxEnemyHealth;
       document.getElementById('heroInfo').textContent = "<%=userName%> " + "             " + playerHealth + "/" + maxPlayerHealth;
 
-      renderHealth(); // Render health bars
-      var feedback = "";
-      document.addEventListener("DOMContentLoaded", function () {
-        // Attach click event listener to each button inside the form
+      async function populateQuestionContainer() {
+        try {
+          const response = await fetch('/getNewQuestion', {
+            method: 'GET'
+          });
+          const question = await response.json();
+          const questionTextFormatted = question.question.questionText.replace(/\n/g, '<br>');
+      
+
+          var questionContainer = document.getElementById('questionContainer');
+          const feedbackContainer = document.getElementById('feedbackContainer');
+          questionContainer.classList.remove("hidden");
+          feedbackContainer.classList.add("hidden");
+          document.getElementById('enemy-image').classList.remove('flash-animation');
+          document.getElementById('hero-image').classList.remove('flash-animation');
+
+          questionContainer = document.getElementById('questionContainer');
+          questionContainer.innerHTML = `
+      <div class="max-w-lg mx-auto p-8 rounded bg-white">
+        <h1 class="text-lg font-bold mb-4">${questionTextFormatted}</h1>
+        <ul class="bg-white">
+          ${question.question.options.map((option, index) => `
+            <li class="mb-2">
+              <form id="${index}" class="feedback-form" data-question-id="${question._id}">
+                <input type="hidden" name="option" value="${index}">
+                <button id="opt-btn" class="w-full pixel-border text-black font-bold rounded">${option.text}</button>
+              </form>
+              <div id="feedbackResult${index}"></div>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    `;
+    
+          attachFeedbackListeners(question.question);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+
+      function displayFeedback(correct, feedbackText) {
+        const questionContainer = document.getElementById('questionContainer');
+        const feedbackContainer = document.getElementById('feedbackContainer');
+
+        // Hide the question container and show the feedback container
+        questionContainer.classList.add("hidden");
+        feedbackContainer.classList.remove("hidden");
+
+        const modalFeedback = document.getElementById("modalFeedback");
+        modalFeedback.innerHTML = '';
+
+        const h2Element = document.createElement('h2');
+        h2Element.textContent = correct ? "Correct" : "Wrong";
+        h2Element.style.fontSize = "2rem";
+        h2Element.style.textAlign = "center";
+        h2Element.style.marginTop = "1rem";
+
+        modalFeedback.appendChild(h2Element);
+
+        const feedbackParagraph = document.createElement('p');
+        feedbackParagraph.textContent = feedbackText;
+
+        if (correct) {
+
+          console.log("Correct");
+          updateTotalDamage();
+
+          if (enemyHealth < 0) {
+            enemyHealth = 0;
+          }
+          document.getElementById('enemy-image').classList.add('flash-animation');
+          document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "      " + enemyHealth + "/" + maxEnemyHealth;
+        } else {
+
+          console.log("Wrong");
+
+          if (playerHealth < 0) {
+            playerHealth = 0;
+          }
+          document.getElementById('hero-image').classList.add('flash-animation');
+          document.getElementById('heroInfo').textContent = "<%=userName%> " + "      " + playerHealth + "/" + maxPlayerHealth;
+        }
+      }
+
+      function closeFeedbackFunction() {
+
+        if (enemyHealth <= 0 && difficulty != "hexagon") {
+          window.location.href = '/victory';
+        } else if (playerHealth <= 0) {
+          window.location.href = '/defeat';
+        } else if (enemyHealth <= 0 && difficulty == "hexagon") {
+          window.location.href = '/levelup';
+        }
+        else {
+          populateQuestionContainer(); 
+        }
+      }
+
+      function attachFeedbackListeners(question) {
         document.querySelectorAll('.feedback-form button').forEach(button => {
           button.addEventListener('click', function (event) {
             // Prevent default button behavior (form submission)
             event.preventDefault();
 
             const optionIndex = button.parentElement.querySelector('input[name="option"]').value;
-            const questionID = button.parentElement.getAttribute('data-question-id');
-
-            console.log("Option index submitted:", optionIndex);
-            console.log("Question ID:", questionID);
+            const questionID = question._id;
 
             fetch('/feedback', {
               method: 'POST',
@@ -266,26 +348,21 @@
                 maxEnemyHealth = data.maxEnemyHealth;
                 difficulty = data.difficulty;
                 maxPlayerHealth = data.maxPlayerHealth;
-                console.log("Max Enemy Health: ", maxEnemyHealth);
-                console.log("Feedback Result: ", data.result);
 
                 displayFeedback(data.result, data.feedback);
 
                 feedback = data.feedback;
-                console.log("Feedback: ", feedback);
 
                 renderHealth();
-
-                console.log("Opened Feedback");
-
               })
               .catch(error => {
                 console.error('Error:', error);
               });
           });
         });
-      });
-      // Update health
+      }
+
+      populateQuestionContainer();
 
       function renderHealth() {
         var healthbarLeft = document.getElementById("healthbar-left");
@@ -341,60 +418,24 @@
         console.log("Player: " + percentLeft + ", Enemy: " + percentRight);
       }
 
-      function displayFeedback(correct, feedbackText) {
-        const questionContainer = document.getElementById('questionContainer');
-        const feedbackContainer = document.getElementById('feedbackContainer');
+      function updateTotalDamage() {
+        var playerDMG = <%= playerDMG %>;
+        console.log("Player Damagegg: ", playerDMG);
 
-        // Hide the question container and show the feedback container
-        questionContainer.classList.add("hidden");
-        feedbackContainer.classList.remove("hidden");
-
-        const modalFeedback = document.getElementById("modalFeedback");
-        modalFeedback.innerHTML = '';
-
-        const h2Element = document.createElement('h2');
-        h2Element.textContent = correct ? "Correct" : "Wrong";
-        h2Element.style.fontSize = "2rem";
-        h2Element.style.textAlign = "center";
-        h2Element.style.marginTop = "1rem";
-
-        modalFeedback.appendChild(h2Element);
-
-        const feedbackParagraph = document.createElement('p');
-        feedbackParagraph.textContent = feedbackText;
-
-        if (correct) {
-          if (enemyHealth < 0) {
-            enemyHealth = 0;
-          }
-          document.getElementById('enemy-image').classList.add('flash-animation');
-          document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "      " + enemyHealth + "/" + maxEnemyHealth;
-        } else {
-          if (playerHealth < 0) {
-            playerHealth = 0;
-          }
-          document.getElementById('hero-image').classList.add('flash-animation');
-          document.getElementById('heroInfo').textContent = "<%=userName%> " + "      " + playerHealth + "/" + maxPlayerHealth;
-        }
-      }
-
-      function closeFeedbackFunction() {
-        const questionContainer = document.getElementById('questionContainer');
-        const feedbackContainer = document.getElementById('feedbackContainer');
-
-        questionContainer.classList.remove("hidden");
-        feedbackContainer.classList.add("hidden");
-
-        if (enemyHealth <= 0 && difficulty != "hexagon") {
-          window.location.href = '/victory';
-        } else if (playerHealth <= 0) {
-          window.location.href = '/defeat';
-        } else if (enemyHealth <= 0 && difficulty == "hexagon") {
-          window.location.href = '/levelup';
-        }
-        else {
-          window.location.href = '/question';
-        }
+        fetch('/updateTotalDamage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ playerDMG: playerDMG })
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("Total Damage: ", data.totalDamage);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
       }
 
       // Open the modal
@@ -410,6 +451,7 @@
         var modal = document.getElementById("learnMoreModal");
         modal.classList.add("hidden");
       }
+
     </script>
   </body>
   <%- include("templates/footer") %>
