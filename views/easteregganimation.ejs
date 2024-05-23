@@ -50,18 +50,16 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <div>
+    <div
+      class="mt-16 px-6 py-2 bg-transparent text-white block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow text-center shadow">
+      Click on the ball to see whats inside!
+    </div>
     <div class="grid-container mt-10">
       <!-- SVG image for the background -->
       <img src="./easterEgg/gatchaMachine.svg" alt="Gatcha Machine" class="background-image">
       <!-- Gatcha Ball -->
       <img src="./easterEgg/gatchaBall.svg" alt="Gatcha Ball" class="gatchaBall animate__animated animate__delay-2s"
         onclick="window.location.href = '/capsuleOpening'">
-    </div>
-
-    <!-- Text below the gacha machine, outside the grid container -->
-    <div
-      class="strobing-text mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
-      Click the ball!!
     </div>
   </div>
 
@@ -198,13 +196,8 @@
       }
     }
 
-    .strobing-text {
-      position: relative;
-      top: 20px;
-      font-size: 1.5em;
-      text-align: center;
-      visibility: hidden;
-      animation: strobe 1s infinite;
+    .shadow {
+      text-shadow: 4px 4px #000000;
     }
 
     @keyframes strobe {
@@ -232,6 +225,15 @@
       position: fixed;
       top: 0;
       z-index: -1;
+    }
+
+    @font-face {
+    font-family: 'startfont';
+    src: url('titlefont.ttf') format('truetype');
+    }
+  
+    .start-font {
+    font-family: 'startfont', sans-serif;
     }
   </style>
 

@@ -1,136 +1,161 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/css-doodle/0.39.1/css-doodle.min.js"></script>
 
 <css-doodle class="doodle">
-    :doodle {
-    --color: rgba(101,0,94,1), rgba(60,132,206,1), rgba(48,238,226,1), rgba(255,25,25,1);
+  :doodle {
+  --color: rgba(101,0,94,1), rgba(60,132,206,1), rgba(48,238,226,1), rgba(255,25,25,1);
 
-    @grid: 30x1 / 100vw 100vh / #270f34;
-    }
-    :container {
-    perspective: 30vmin;
-    --deg: @p(-180deg, 180deg);
-    }
+  @grid: 30x1 / 100vw 100vh / #270f34;
+  }
+  :container {
+  perspective: 30vmin;
+  --deg: @p(-180deg, 180deg);
+  }
 
-    :after, :before {
-    content: '';
-    background: @p(--color);
-    @place: @r(100%) @r(100%);
-    @size: @r(6px);
-    @shape: heart;
-    }
+  :after, :before {
+  content: '';
+  background: @p(--color);
+  @place: @r(100%) @r(100%);
+  @size: @r(6px);
+  @shape: heart;
+  }
 
-    @place: center;
-    @size: 18vmin;
+  @place: center;
+  @size: 18vmin;
 
-    box-shadow: @m2(0 0 50px @p(--color));
-    background: @m100(
-    radial-gradient(@p(--color) 75%, transparent 0)
-    @r(-20%, 120%) @r(-20%, 100%) / 1px 1px
-    no-repeat
-    );
+  box-shadow: @m2(0 0 50px @p(--color));
+  background: @m100(
+  radial-gradient(@p(--color) 75%, transparent 0)
+  @r(-20%, 120%) @r(-20%, 100%) / 1px 1px
+  no-repeat
+  );
 
-    will-change: transform, opacity;
-    animation: scale-up 12s linear infinite;
-    animation-delay: calc(-12s / @I * @i);
+  will-change: transform, opacity;
+  animation: scale-up 12s linear infinite;
+  animation-delay: calc(-12s / @I * @i);
 
-    @keyframes scale-up {
-    0%, 95.01%, 100% {
-    transform: translateZ(0) rotate(0);
-    opacity: 0;
-    }
-    10% {
-    opacity: 1;
-    }
-    95% {
-    transform:
-    translateZ(35vmin) rotateZ(var(--deg));
-    }
-    }
+  @keyframes scale-up {
+  0%, 95.01%, 100% {
+  transform: translateZ(0) rotate(0);
+  opacity: 0;
+  }
+  10% {
+  opacity: 1;
+  }
+  95% {
+  transform:
+  translateZ(35vmin) rotateZ(var(--deg));
+  }
+  }
 
-  </css-doodle>
-<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</css-doodle>
+<%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
-<div class="grid-container">
+  <div class="grid-container">
     <!-- Player Reward Icon -->
     <div class="player-reward">
-        <img src="<%= playerReward %>" alt="Player Reward"> 
+      <img src="<%= playerReward %>" alt="Player Reward">
     </div>
     <!-- Gacha Ball -->
-    <img src="./easterEgg/gatchaBall.svg" alt="Gacha Ball" class="gatchaBall animate__animated animate__shakeX" id="gatchaBall">
-</div>
+    <img src="./easterEgg/gatchaBall.svg" alt="Gacha Ball" class="gatchaBall animate__animated animate__shakeX"
+      id="gatchaBall">
+  </div>
 
-<div class="congratulations-container">
-    <p class="congratulations">Congratulations!</p> <!-- Congratulations text -->
-</div>
+  <div class="congratulations-container mt-14">
+    <p class="congratulations shadow text-3xl">Congratulations!</p> <!-- Congratulations text -->
+  </div>
 
-<style>
+  <style>
     .grid-container {
-        position: relative;
-        display: grid;
-        place-items: center;
-        height: 100vh;
+      position: relative;
+      display: grid;
+      place-items: center;
+      height: 100vh;
     }
 
     .gatchaBall {
-        width: 50%;
-        height: 50%;
-        z-index: 1;
-        visibility: visible;
+      width: 50%;
+      height: 50%;
+      z-index: 1;
+      visibility: visible;
     }
 
     .player-reward {
-        position: absolute;
-        padding-bottom: 75%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        z-index: 3;
-        opacity: 0; /* Initially hidden */
+      position: absolute;
+      padding-bottom: 75%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 3;
+      opacity: 0;
+      /* Initially hidden */
     }
 
     .player-reward img {
-        display: block;
-        width: 100%;
-        height: auto;
+      display: block;
+      width: 100%;
+      height: auto;
 
     }
 
     /* Congratulations text container */
     .congratulations-container {
-        position: absolute;
-        top: 5%; /* Adjust position from the top */
-        width: 100%;
-        text-align: center;
-        z-index: 2;
+      position: absolute;
+      top: 5%;
+      /* Adjust position from the top */
+      width: 100%;
+      text-align: center;
+      z-index: 2;
     }
 
     /* Congratulations text */
     .congratulations {
-        padding-top: 5%;
-        font-size: 25px; /* Increase font size */
-        font-family: 'startfont', sans-serif; /* Custom font */
-        animation: rainbowStrobe 2s linear infinite; /* Rainbow strobe animation */
+      padding-top: 5%;
+      /* Increase font size */
+      font-family: 'startfont', sans-serif;
+      /* Custom font */
+      animation: rainbowStrobe 2s linear infinite;
+      /* Rainbow strobe animation */
     }
 
     /* Rainbow strobe animation */
     @keyframes rainbowStrobe {
-        0% { color: red; }
-        16.666% { color: orange; }
-        33.333% { color: yellow; }
-        50% { color: green; }
-        66.666% { color: blue; }
-        83.333% { color: indigo; }
-        100% { color: violet; }
+      0% {
+        color: red;
+      }
+
+      16.666% {
+        color: orange;
+      }
+
+      33.333% {
+        color: yellow;
+      }
+
+      50% {
+        color: green;
+      }
+
+      66.666% {
+        color: blue;
+      }
+
+      83.333% {
+        color: indigo;
+      }
+
+      100% {
+        color: violet;
+      }
     }
 
     @font-face {
-    font-family: 'startfont';
-    src: url('titlefont.ttf') format('truetype');
+      font-family: 'startfont';
+      src: url('titlefont.ttf') format('truetype');
     }
-  
+
     .start-font {
-    font-family: 'startfont', sans-serif;
+      font-family: 'startfont', sans-serif;
     }
 
     .doodle {
@@ -138,29 +163,33 @@
       top: 0;
       z-index: -1;
     }
-</style>
 
-<script>
+    .shadow {
+      text-shadow: 2px 2px #ffffff, 4px 4px #000000;
+    }
+  </style>
+
+  <script>
     // Simulate gacha ball animation
     setTimeout(() => {
-        const gatchaBall = document.getElementById('gatchaBall');
-        gatchaBall.classList.remove('animate__shakeX');
-        gatchaBall.classList.add('animate__bounceOutDown');
+      const gatchaBall = document.getElementById('gatchaBall');
+      gatchaBall.classList.remove('animate__shakeX');
+      gatchaBall.classList.add('animate__bounceOutDown');
     }, 2000); // Adjust timing as needed
 
     // Simulate explosion animation
     setTimeout(() => {
-        const gatchaBall = document.getElementById('gatchaBall');
-        gatchaBall.classList.remove('animate__bounceOutDown');
-        gatchaBall.classList.add('animate__tada');
+      const gatchaBall = document.getElementById('gatchaBall');
+      gatchaBall.classList.remove('animate__bounceOutDown');
+      gatchaBall.classList.add('animate__tada');
     }, 1000); // Adjust timing as needed
 
     // Simulate player reward
     setTimeout(() => {
-        const playerReward = document.querySelector('.player-reward');
-        playerReward.style.opacity = '1';
-        playerReward.classList.add('animate__animated', 'animate__fadeInUp');
+      const playerReward = document.querySelector('.player-reward');
+      playerReward.style.opacity = '1';
+      playerReward.classList.add('animate__animated', 'animate__fadeInUp');
     }, 3000); // Adjust timing as needed
-</script>
+  </script>
 
-<%- include("templates/footer") %>
+  <%- include("templates/footer") %>
