@@ -53,15 +53,16 @@
 
   <div class="grid-container">
     <!-- Player Reward Icon -->
-    <div class="player-reward">
-      <img src="<%= playerReward %>" alt="Player Reward">
+    <div id="player-reward">
+
     </div>
     <!-- Gacha Ball -->
     <img src="./easterEgg/gatchaBall.svg" alt="Gacha Ball" class="gatchaBall animate__animated animate__shakeX"
       id="gatchaBall">
     <div class="flex justify-start">
-          <button id="mm-btn" type="submit" onclick="window.location.href='/'" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">Back to Main Menu</button>
-      </div>
+      <button id="mm-btn" type="submit" onclick="window.location.href='/'"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">Back to Main Menu</button>
+    </div>
   </div>
 
   <div class="congratulations-container mt-14">
@@ -83,16 +84,20 @@
       visibility: visible;
     }
 
-        #player-reward {
-            position: absolute;
-            padding-bottom: 20vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 3;
-            opacity: 0;
-            /* Initially hidden */
-        }
+    #player-reward {
+      position: absolute;
+      padding-bottom: 20vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 3;
+      opacity: 0;
+      /* Initially hidden */
+    }
+
+    #mm-btn {
+      z-index: 10;
+    }
 
     .player-reward img {
       display: block;
@@ -172,46 +177,46 @@
     }
   </style>
 
-    <script>
+  <script>
 
-        console.log("<%= rewardType %>");
-        console.log("<%= playerReward %>");
+    console.log("<%= rewardType %>");
+    console.log("<%= playerReward %>");
 
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const rewardType = '<%= rewardType %>';
-            const playerReward = '<%= playerReward %>';
+    document.addEventListener('DOMContentLoaded', (event) => {
+      const rewardType = '<%= rewardType %>';
+      const playerReward = '<%= playerReward %>';
 
-            if (rewardType == 0) {
-                document.getElementById('player-reward').innerHTML = `
+      if (rewardType == 0) {
+        document.getElementById('player-reward').innerHTML = `
           <img src="${playerReward}" alt="Player Reward"> 
         `;
-            } else {
-                document.getElementById('player-reward').innerHTML = `
+      } else {
+        document.getElementById('player-reward').innerHTML = `
           <p>${playerReward}</p>
         `;
-            }
-        });
+      }
+    });
 
-        // Simulate gacha ball animation
-        setTimeout(() => {
-            const gatchaBall = document.getElementById('gatchaBall');
-            gatchaBall.classList.remove('animate__shakeX');
-            gatchaBall.classList.add('animate__bounceOutDown');
-        }, 2000); // Adjust timing as needed
+    // Simulate gacha ball animation
+    setTimeout(() => {
+      const gatchaBall = document.getElementById('gatchaBall');
+      gatchaBall.classList.remove('animate__shakeX');
+      gatchaBall.classList.add('animate__bounceOutDown');
+    }, 2000); // Adjust timing as needed
 
-        // Simulate explosion animation
-        setTimeout(() => {
-            const gatchaBall = document.getElementById('gatchaBall');
-            gatchaBall.classList.remove('animate__bounceOutDown');
-            gatchaBall.classList.add('animate__tada');
-        }, 1000); // Adjust timing as needed
+    // Simulate explosion animation
+    setTimeout(() => {
+      const gatchaBall = document.getElementById('gatchaBall');
+      gatchaBall.classList.remove('animate__bounceOutDown');
+      gatchaBall.classList.add('animate__tada');
+    }, 1000); // Adjust timing as needed
 
-        // Simulate player reward
-        setTimeout(() => {
-            const playerReward = document.getElementById('player-reward');
-            playerReward.style.opacity = '1';
-            playerReward.classList.add('animate__animated', 'animate__fadeInUp');
-        }, 3000); // Adjust timing as needed
-    </script>
+    // Simulate player reward
+    setTimeout(() => {
+      const playerReward = document.getElementById('player-reward');
+      playerReward.style.opacity = '1';
+      playerReward.classList.add('animate__animated', 'animate__fadeInUp');
+    }, 3000); // Adjust timing as needed
+  </script>
 
-    <%- include("templates/footer") %>
+  <%- include("templates/footer") %>
