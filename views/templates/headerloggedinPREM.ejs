@@ -18,21 +18,21 @@
     <div class="flex justify-between items-center h-full">
       <div>
         <form action="/">
-          <input type="submit" class="text-black basicPixel pixel-button" value="Back to Main Menu">
+          <input type="submit" class="text-black basicPixel pixel-button" value="Main Menu">
         </form>
       </div>
       <div class="flex items-center">
         <% if (gameStarted) { %>
         <div class="flex items-center mr-6">
           <img src="coin.png" class="w-10 h-10">
-          <span class=" text-3xl basicPixel tight">
+          <span class=" text-2xl basicPixel tight">
             <%= playerCoins %>
           </span>
         </div>
         <% } %>
         <div class="flex items-center mr-6">
           <img src="diamond.png" class="w-10 h-10" onclick="clicker()">
-          <span class="text-3xl basicPixel tight">
+          <span class="text-2xl basicPixel tight">
             <%= slotsCurrency %>
           </span>
         </div>
