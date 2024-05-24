@@ -4,7 +4,7 @@
   <%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
     <div class="relative flex justify-center h-screen">
       <div class="z-10">
-        <h1 class="text-center text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16">CODECRYPT</h1>
+        <h1 class="text-center text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16 cursor-default">CODECRYPT</h1>
 
         <% if (gameStarted) { %>
           <button onclick="window.location.href='/map'"
@@ -71,14 +71,17 @@
 
   .title-font {
     font-family: 'titlefont', sans-serif;
+    text-shadow: -6px -6px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4)
   }
 
   @keyframes bounce-slow {
     0%, 100% {
       transform: translateY(0);
+      text-shadow: -4px -4px white, 2px 2px hsla(0, 0%, 0%, 0.4);
     }
     50% {
       transform: translateY(-10px);
+      text-shadow: -4px -4px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4);
     }
   }
 
@@ -93,6 +96,7 @@
 
   .start-font {
     font-family: 'startfont', sans-serif;
+    text-shadow: -4px -4px white;
   }
 </style>
 
