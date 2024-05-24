@@ -46,7 +46,10 @@
   white-space: normal; /* Allow text to wrap */
   display: inline-block; /* Allow the button to expand with content */
   word-wrap: break-word; /* Break long words */
+}
 
+.pixel-button:focus {
+  outline: none; /* Remove the default focus outline */
 }
 
 .pixel-button:hover {
