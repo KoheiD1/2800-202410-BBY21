@@ -1,9 +1,9 @@
 <%- include("templates/headerloggedin", {overflowVariable: "overflow-hidden bg-[url('/wood.png')]" }) %>
     <dialog class="w-80 text-center text-xl pixel-border">
         <div class="w-64 m-auto">
-            <h1 id="itemName" class="font-bold text-2xl"></h1>
+            <h1 id="itemName" class="font-bold text-2xl title-font"></h1>
             <div id="desc"></div>
-            <div id="effects" class=" w-fit m-auto pixelFont scale-75"></div>
+            <div id="effects" class=" w-fit m-auto pixelFont scale-90"></div>
             <div id="price"></div>
             <div id="button" class="">
                 <button id="close" class="pixel-button scale-75" onclick="close()">Close</button>
@@ -14,38 +14,50 @@
     </dialog>
     <div class="">
         <div class="bg-[url('/shelf.png')] bg-no-repeat bg-center bg-contain h-96">
-            <div id="items" class="grid grid-cols-1 grid-rows-3 space-y-4 mx-6 pt-6 p-5 py-4 shopItem overflow-hidden grid-rows">
+            <div id="items"
+                class="grid grid-cols-1 grid-rows-3 space-y-4 mx-6 pt-6 p-5 py-4 shopItem overflow-hidden grid-rows">
                 <% for(let i=0; i < items.length; i++) { %>
-                    <% if(items[i] == null) {continue;} %>
-                    <%- include('templates/shopItem', {item: items[i]}) %>
-                <% } %>
+                    <% if(items[i]==null) {continue;} %>
+                        <%- include('templates/shopItem', {item: items[i]}) %>
+                            <% } %>
             </div>
         </div>
     </div>
     <div class="flex justify-center items-center z-20">
-        <a href="/refresh"
-            class="pixel-button">Refresh -$5</a>
+        <a href="/refresh" class="pixel-button">Refresh -<div class="flex items-center mr-4">
+                <img src="coin.png" class="w-10 h-10">
+                <span class="basicPixel ml-1 text-gray-900 text-2xl tight">
+                    <%= playerCoins %>
+                </span>
+            </div>5</a>
     </div>
     <br>
     <div class="flex justify-center items-center z-20">
-        <a href="/inventory"
-            class="pixel-button">Inventory</a>
+        <a href="/inventory" class="pixel-button">Inventory</a>
     </div>
     <br>
     <div class="flex justify-center items-center z-20">
-        <a href="/map"
-            class="pixel-button">Back
+        <a href="/map" class="pixel-button-red">Back
             to map</a>
     </div>
     <style>
         @font-face {
-    font-family: 'basicPixel';
-    src: url('Apple_.ttf') format('truetype');
-  }
+            font-family: 'basicPixel';
+            src: url('Apple_.ttf') format('truetype');
+        }
 
-  .pixelFont {
-    font-family: 'basicPixel', sans-serif;
-  }
+        .pixelFont {
+            font-family: 'basicPixel', sans-serif;
+        }
+
+        @font-face {
+            font-family: 'titlefont';
+            src: url('startgame.ttf') format('truetype');
+        }
+
+        .title-font {
+            font-family: 'titlefont', sans-serif;
+        }
     </style>
     <script>
 
@@ -56,7 +68,7 @@
             dialog.querySelector('#desc').innerHTML = item.description;
             let effects = dialog.querySelector('#effects');
             effects.innerHTML = '';
-            for(let i = 0; i < item.effects.length; i++) {
+            for (let i = 0; i < item.effects.length; i++) {
                 let effect = document.createElement('p');
                 effect.innerHTML = item.effects[i] + ': ' + item[item.effects[i]];
                 effects.appendChild(effect);
@@ -70,13 +82,13 @@
             purchase.innerHTML = 'Purchase';
             let purchaseInfo = "";
             purchaseInfo += item.type;
-            for(let i = 0 ; i < item.effects.length; i++) {
+            for (let i = 0; i < item.effects.length; i++) {
                 purchaseInfo += ',' + item.effects[i] + ',' + item[item.effects[i]];
             }
             purchaseInfo += ',' + item.price;
             console.log(purchaseInfo);
             dialog.querySelector('#purchase').setAttribute('onclick', "window.location.href='/purchase?info=" + purchaseInfo + "'");
-            
+
             dialog.showModal();
         }
 
