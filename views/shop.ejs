@@ -13,7 +13,7 @@
     </dialog>
     <div class="">
         <div class="bg-[url('/shelf.png')] bg-no-repeat bg-center bg-contain">
-            <div id="items" class="grid grid-cols-1 grid-rows-3 space-y-3 m-6 p-5 py-10 shopItem overflow-hidden grid-rows">
+            <div id="items" class="grid grid-cols-1 grid-rows-3 space-y-4 m-6 p-5 py-10 shopItem overflow-hidden grid-rows">
                 <% for(let i=0; i < items.length; i++) { %>
                     <% if(items[i] == null) {continue;} %>
                     <%- include('templates/shopItem', {item: items[i]}) %>
