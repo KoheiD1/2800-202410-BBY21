@@ -49,22 +49,13 @@
         <div class="flex justify-end items-center h-full">
           <% if (gameStarted) { %>
             <div class="flex items-center mr-4">
-              <div class="coin-animation-container">
-                <img src="/coin1.png" class="active" id="coin-frame-1">
-                <img src="/coin2.png" id="coin-frame-2">
-                <img src="/coin3.png" id="coin-frame-3">
-                <img src="/coin4.png" id="coin-frame-4">
-                <img src="/coin5.png" id="coin-frame-5">
-                <img src="/coin6.png" id="coin-frame-6">
-                <img src="/coin7.png" id="coin-frame-7">
-                <img src="/coin8.png" id="coin-frame-8">
-              </div>
+                <img src="coin.png" class="w-8 h-8">
               <span class="ml-1 text-gray-900 text-2xl"><%= playerCoins %></span>
             </div>
           <% } %>
             <div class="flex items-center mr-4">
-                <img src="slotsCurrencyIcon.svg" class="w-6 h-6" onclick="clicker()">
-                <span class="ml-1 text-gray-900"><%= slotsCurrency %></span>
+                <img src="diamond.png" class="w-8 h-8" onclick="clicker()">
+                <span class="ml-1 text-gray-900 text-2xl"><%= slotsCurrency %></span>
             </div>
         <img class="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer" src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=home'">
         </div>
@@ -78,14 +69,5 @@
                 window.location.href = "/gatchaPage";
             }
         }
-        document.addEventListener("DOMContentLoaded", function() {
-            const frames = document.querySelectorAll(".coin-animation-container img");
-            let currentFrame = 0;
-
-            setInterval(() => {
-                frames[currentFrame].classList.remove("active");
-                currentFrame = (currentFrame + 1) % frames.length;
-                frames[currentFrame].classList.add("active");
-            }, 125); // Adjust the speed as necessary (125ms per frame = 1s for full rotation)
-        });
+        
     </script>
