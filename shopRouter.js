@@ -8,6 +8,20 @@ const { purchaseItem, coinDistribution, resetCoinsReceived } = require('./game')
 
 
 module.exports = function (itemCollection, userCollection) {
+    router.use(async (req, res, next) => {
+        var username = req.session.username;
+        var email = req.session.email;
+        res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
+        res.locals.authenticated = req.session.authenticated || false;
+        res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+        res.locals.gameStarted = req.session.gameSession ? req.session.gameSession.gameStarted : false;
+        const result = await userCollection.find({ email: email, username: username }).project({ slotsCurrency: 1 }).toArray();
+        if (result.length > 0) {
+            res.locals.slotsCurrency = result[0].slotsCurrency; 
+        } 
+        next();
+    });
+    
     router.get('/shop', async (req, res) => {
         if (req.session.authenticated) {
             var email = req.session.email;
@@ -16,6 +30,7 @@ module.exports = function (itemCollection, userCollection) {
             coinDistribution(req, "hexagon");
             console.log(req.session.gameSession.playerCoins);
             res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+            res.locals.gameStarted = req.session.gameSession ? req.session.gameSession.gameStarted : false;
             const result = await userCollection.find({ email: email, username: username }).project({ slotsCurrency: 1 }).toArray();
             if (result.length > 0) {
                 res.locals.slotsCurrency = result[0].slotsCurrency;
@@ -29,10 +44,11 @@ module.exports = function (itemCollection, userCollection) {
                 for (let i = 0; i < 3 && i < items.length; i++) {
                     let rand;
                     do {
-                        rand = parseInt(Math.random() * items.length);
+                        rand = parseInt(Math.random() * 7);
                     } while (items[rand] == null);
                     req.session.shop.itemsPicked.push({
                         type: items[rand].type,
+                        description: items[rand].description,
                         effects: items[rand].effects,
                         price: items[rand].price
                     });
@@ -47,7 +63,6 @@ module.exports = function (itemCollection, userCollection) {
                     items[rand] = null;
                 }
             }
-            coinDistribution(req);
 
             res.locals.userProfilePic = req.session.profile_pic;
             res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
@@ -94,7 +109,25 @@ module.exports = function (itemCollection, userCollection) {
         console.log(item);
         purchaseItem(req, item);
 
-        res.redirect('/shop');
+        for(let i = 0; i < req.session.shop.itemsPicked.length; i++) {
+            if(req.session.shop.itemsPicked[i] != null) {
+                if(req.session.shop.itemsPicked[i].type == item.type) {
+                    req.session.shop.itemsPicked[i] = null;
+                }
+            }
+        }
+
+        res.redirect("/shop");
+    });
+
+    router.get("/refresh", (req, res) => {
+        if(req.session.gameSession.playerCoins > 5) {
+            req.session.shop = null;
+            req.session.gameSession.playerCoins -= 5;
+            res.redirect("/shop");
+        } else {
+            res.redirect("/shop");
+        }
     });
 
     router.get("/itemAdder", (req, res) => {

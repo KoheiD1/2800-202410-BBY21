@@ -1,14 +1,4 @@
-<div class="bg-blue-100 justify-center mt-5 inline-grid">
-    <div class='flex justify-center font-bold text-xl'><%= item.type %></div>
-    <div class="text-center">
-        <% let string = item.type %>
-        <% for(let i = 0; i < item.effects.length; i++) { %>
-            <% string += ',' + item.effects[i] %>
-            <%- include('shopItemBonus', {itemEffect: item.effects[i], effectBonus: item[item.effects[i]]}) %>
-            <% string += ',' + item[item.effects[i]] %>
-        <% } %>
-        <%- include('shopItemBonus', {itemEffect: 'Price', effectBonus: item.price}) %>
-        <% string += ',price,' + item.price %>
-    </div>
-    <button onclick="window.location.href='/purchase?info=<%= string %>'" class="flex justify-center items-center align-bottom m-2 bg-green-700">Purchase</button>
+<% let string = item.type %>
+<div class=" justify-center inline-grid items-center m-auto" onclick='showDialog(<%- JSON.stringify(item) %>)'>
+        <img src="<%= item.type %>.png" alt="<%= item.type %>" class="">
 </div>
