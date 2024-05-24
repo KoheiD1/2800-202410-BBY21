@@ -7,9 +7,22 @@
       background-attachment: fixed;
       min-height: 100vh;
     }
+
+    @font-face {
+      font-family: 'startfont';
+      src: url('titlefont.ttf') format('truetype');
+    }
+
+    .start-font {
+      font-family: 'startfont', sans-serif;
+    }
+
+    .whiteshadow {
+      text-shadow: 3px 3px  white;
+    }
   </style>
-  <h1 class="text-3xl px-4 font-bold mb-3 mx-auto text-center">Premium Shop</h1>
-  <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center">Profile Pictures</h2>
+  <h1 class="text-3xl px-4 font-bold mb-7 mx-auto text-center start-font whiteshadow">Premium Shop</h1>
+  <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font">Profile Pictures</h2>
   <div class="grid p-2 max-w-md mx-auto">
     <ul>
       <% for (let i=0; i < pfpList.length; i++) { %>
@@ -23,7 +36,7 @@
             <%- pfpList[i].name %>
           </span>
           <div class="flex items-center">
-            <img src="slotsCurrencyIcon.svg" class="w-6 h-6">
+            <img src="diamond.png" class="w-6 h-6">
             <span class="ml-1 text-gray-900 text-2xl">
               <%= pfpList[i].price %>
             </span>
@@ -31,7 +44,7 @@
         </li>
         <% } %>
     </ul>
-    <h2 class="text-2xl px-4 font-semibold mt-4 mb-2 mx-auto text-center">Profile Titles</h2>
+    <h2 class="text-2xl px-4 font-semibold mt-4 mb-2 mx-auto text-center start-font">Profile Titles</h2>
     <ul>
       <% for (let i=0; i < titleList.length; i++) { %>
         <li
@@ -42,7 +55,7 @@
             <%- titleList[i].title %>
           </span>
           <div class="flex items-center">
-            <img src="slotsCurrencyIcon.svg" class="w-6 h-6">
+            <img src="diamond.png" class="w-6 h-6">
             <span class="ml-1 text-gray-900 text-2xl">
               <%= titleList[i].price %>
             </span>
