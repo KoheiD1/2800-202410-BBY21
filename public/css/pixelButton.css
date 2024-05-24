@@ -1,0 +1,127 @@
+.pixel-button-long {
+  background-image: url('button_box_long.svg');
+  background-size: 100% 100%; /* Stretch the background image to cover the entire button */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  text-align: center; /* Center the text */
+  color: black; /* Text color */
+  font-family: 'basicPixel', sans-serif; /* Use the pixel font */
+  padding: 10px 20px; /* Padding for the button */
+  border: none; /* Remove default border */
+  cursor: pointer; /* Change cursor to pointer */
+  white-space: normal; /* Allow text to wrap */
+  display: inline-block; /* Allow the button to expand with content */
+  word-wrap: break-word; /* Break long words */
+}
+
+.pixel-button-long:hover {
+  opacity: 0.8; /* Slightly dim the button on hover */
+}
+
+.pixel-button {
+  background-image: url('button_box.svg');
+  background-size: 100% 100%; /* Stretch the background image to cover the entire button */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  text-align: center; /* Center the text */
+  color: black; /* Text color */
+  font-family: 'basicPixel', sans-serif; /* Use the pixel font */
+  padding: 10px 10px; /* Padding for the button */
+  border: none; /* Remove default border */
+  cursor: pointer; /* Change cursor to pointer */
+  white-space: normal; /* Allow text to wrap */
+  display: inline-block; /* Allow the button to expand with content */
+  word-wrap: break-word; /* Break long words */
+}
+
+.pixel-button-red{
+  background-image: url('red_button_box.svg');
+  background-size: 100% 100%; /* Stretch the background image to cover the entire button */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  text-align: center; /* Center the text */
+  text: bold;
+  color: white; /* Text color */
+  font-family: 'basicPixel', sans-serif; /* Use the pixel font */
+  padding: 10px 10px; /* Padding for the button */
+  border: none; /* Remove default border */
+  cursor: pointer; /* Change cursor to pointer */
+  white-space: normal; /* Allow text to wrap */
+  display: inline-block; /* Allow the button to expand with content */
+  word-wrap: break-word; /* Break long words */
+}
+
+.pixel-button:focus {
+  outline: none; /* Remove the default focus outline */
+}
+
+.pixel-button:hover {
+  opacity: 0.8; /* Slightly dim the button on hover */
+}
+
+:root {
+	--pixel-bg: #ebdfba; /* Inner background color */
+	--pixel-border: black; /* Inner border color: */
+	--pixel-border-2: white; /* Middle border color: */
+	--pixel-border-3: var(--pixel-border); /* Outer border color */
+	--pixel: .125rem; /* Pixel size */
+}
+
+.pixel-border {
+	background: var(--pixel-bg);
+	box-shadow:
+		
+	/* Inner Background Color */
+		0 calc(var(--pixel) * -3) 0 calc(var(--pixel) * -1) var(--pixel-bg),
+		0 calc(var(--pixel) * 3) 0 calc(var(--pixel) * -1) var(--pixel-bg),
+		0 calc(var(--pixel) * -6) 0 calc(var(--pixel) * -2) var(--pixel-bg),
+		0 calc(var(--pixel) * 6) 0 calc(var(--pixel) * -2) var(--pixel-bg),
+		0 calc(var(--pixel) * -9) 0 calc(var(--pixel) * -4) var(--pixel-bg),
+		0 calc(var(--pixel) * 9) 0 calc(var(--pixel) * -4) var(--pixel-bg),
+		0 calc(var(--pixel) * -12) 0 calc(var(--pixel) * -6) var(--pixel-bg),
+		0 calc(var(--pixel) * 12) 0 calc(var(--pixel) * -6) var(--pixel-bg),
+		
+	/* Pixel Border Layer 1 */
+		calc(var(--pixel) * -1) 0 0 0 var(--pixel-border),
+		var(--pixel) 0 0 0 var(--pixel-border),
+		0 calc(var(--pixel) * -2) 0 0 var(--pixel-border),
+		0 calc(var(--pixel) * 2) 0 0 var(--pixel-border),
+		0 calc(var(--pixel) * -5) 0 calc(var(--pixel) * -1) var(--pixel-border),
+		0 calc(var(--pixel) * 5) 0 calc(var(--pixel) * -1) var(--pixel-border),
+		0 calc(var(--pixel) * -7) 0 calc(var(--pixel) * -2) var(--pixel-border),
+		0 calc(var(--pixel) * 7) 0 calc(var(--pixel) * -2) var(--pixel-border),
+		0 calc(var(--pixel) * -10) 0 calc(var(--pixel) * -4) var(--pixel-border),
+		0 calc(var(--pixel) * 10) 0 calc(var(--pixel) * -4) var(--pixel-border),
+		0 calc(var(--pixel) * -13) 0 calc(var(--pixel) * -6) var(--pixel-border),
+		0 calc(var(--pixel) * 13) 0 calc(var(--pixel) * -6) var(--pixel-border),
+		
+	/* Pixel Border Layer 2 */
+		calc(var(--pixel) * -2) 0 0 0 var(--pixel-border-2),
+		calc(var(--pixel) * 2) 0 0 0 var(--pixel-border-2),
+		0 calc(var(--pixel) * -1) 0 var(--pixel) var(--pixel-border-2), 
+		0 var(--pixel) 0 var(--pixel) var(--pixel-border-2),
+		0 calc(var(--pixel) * -4) 0 0 var(--pixel-border-2),
+		0 calc(var(--pixel) * 4) 0 0 var(--pixel-border-2),
+		0 calc(var(--pixel) * -6) 0 calc(var(--pixel) * -1) var(--pixel-border-2),
+		0 calc(var(--pixel) * 6) 0 calc(var(--pixel) * -1) var(--pixel-border-2),
+		0 calc(var(--pixel) * -8) 0 calc(var(--pixel) * -2) var(--pixel-border-2),
+		0 calc(var(--pixel) * 8) 0 calc(var(--pixel) * -2) var(--pixel-border-2),
+		0 calc(var(--pixel) * -11) 0 calc(var(--pixel) * -4) var(--pixel-border-2),
+		0 calc(var(--pixel) * 11) 0 calc(var(--pixel) * -4) var(--pixel-border-2),
+		0 calc(var(--pixel) * -14) 0 calc(var(--pixel) * -6) var(--pixel-border-2),
+		0 calc(var(--pixel) * 14) 0 calc(var(--pixel) * -6) var(--pixel-border-2),
+		
+	/* Border Layer 3: --pixel-border-3 */
+		calc(var(--pixel) * -3) 0 0 0 var(--pixel-border-3),
+		calc(var(--pixel) * 3) 0 0 0 var(--pixel-border-3),
+		0 0 0 calc(var(--pixel) * 2) var(--pixel-border-3),
+		0 calc(var(--pixel) * -3) 0 var(--pixel) var(--pixel-border-3),
+		0 calc(var(--pixel) * 3) 0 var(--pixel) var(--pixel-border-3),
+		0 calc(var(--pixel) * -5) 0 0 var(--pixel-border-3),
+		0 calc(var(--pixel) * 5) 0 0 var(--pixel-border-3),
+		0 calc(var(--pixel) * -7) 0 calc(var(--pixel) * -1) var(--pixel-border-3),
+		0 calc(var(--pixel) * 7) 0 calc(var(--pixel) * -1) var(--pixel-border-3),
+		0 calc(var(--pixel) * -9) 0 calc(var(--pixel) * -2) var(--pixel-border-3), 
+		0 calc(var(--pixel) * 9) 0 calc(var(--pixel) * -2) var(--pixel-border-3),
+		0 calc(var(--pixel) * -12) 0 calc(var(--pixel) * -4) var(--pixel-border-3), 
+		0 calc(var(--pixel) * 12) 0 calc(var(--pixel) * -4) var(--pixel-border-3),
+		0 calc(var(--pixel) * -15) 0 calc(var(--pixel) * -6) var(--pixel-border-3), 
+		0 calc(var(--pixel) * 15) 0 calc(var(--pixel) * -6) var(--pixel-border-3);
+}

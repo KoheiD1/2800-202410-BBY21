@@ -1,0 +1,254 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/css-doodle/0.39.1/css-doodle.min.js"></script>
+<css-doodle class="doodle">
+  :doodle {
+  --color: rgba(101,0,94,1), rgba(60,132,206,1), rgba(48,238,226,1), rgba(255,25,25,1);
+
+  @grid: 30x1 / 100vw 100vh / #270f34;
+  }
+  :container {
+  perspective: 30vmin;
+  --deg: @p(-180deg, 180deg);
+  }
+
+  :after, :before {
+  content: '';
+  background: @p(--color);
+  @place: @r(100%) @r(100%);
+  @size: @r(6px);
+  @shape: heart;
+  }
+
+  @place: center;
+  @size: 18vmin;
+
+  box-shadow: @m2(0 0 50px @p(--color));
+  background: @m100(
+  radial-gradient(@p(--color) 75%, transparent 0)
+  @r(-20%, 120%) @r(-20%, 100%) / 1px 1px
+  no-repeat
+  );
+
+  will-change: transform, opacity;
+  animation: scale-up 12s linear infinite;
+  animation-delay: calc(-12s / @I * @i);
+
+  @keyframes scale-up {
+  0%, 95.01%, 100% {
+  transform: translateZ(0) rotate(0);
+  opacity: 0;
+  }
+  10% {
+  opacity: 1;
+  }
+  95% {
+  transform:
+  translateZ(35vmin) rotateZ(var(--deg));
+  }
+  }
+
+</css-doodle>
+<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <div>
+    <div
+      class="mt-16 px-6 py-2 bg-transparent text-white block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow text-center shadow">
+      Click on the ball to see whats inside!
+    </div>
+    <div class="grid-container mt-10">
+      <!-- SVG image for the background -->
+      <img src="./easterEgg/gatchaMachine.svg" alt="Gatcha Machine" class="background-image">
+      <!-- Gatcha Ball -->
+      <img src="./easterEgg/gatchaBall.svg" alt="Gatcha Ball" class="gatchaBall animate__animated animate__delay-2s"
+        onclick="window.location.href = '/capsuleOpening'">
+    </div>
+  </div>
+
+  <style>
+    .grid-container {
+      position: relative;
+      display: grid;
+      place-items: center;
+      height: 50vh;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(12, 1fr);
+    }
+
+    .gatchaBall {
+      width: 90%;
+      height: 90%;
+      z-index: 1;
+      grid-column: 7 / span 1;
+      grid-row: 9 / span 3;
+      visibility: hidden;
+      animation: rotateAndAppear 1.5s ease-out forwards, glow 1.5s linear infinite alternate;
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow:
+        inset 0px -2px 0px 30px rgb(255, 255, 255, 0.55),
+        /* inner white */
+        inset 1px -3px 0px 60px rgb(255, 0, 255, 0.55),
+        /* middle magenta */
+        inset 2px -4px 0px 90px rgb(0, 255, 255, 0.55),
+        /* outer cyan */
+        0px -2px 60px 15px #fff,
+        /* inner white */
+        1px -3px 100px 30px #f0f,
+        /* middle magenta */
+        2px -4px 140px 45px #0ff;
+      /* outer cyan */
+    }
+
+    @keyframes glow {
+      to {
+        box-shadow:
+          inset 0px -2px 0px 30px rgb(255, 255, 255, 0.8),
+          /* inner white */
+          inset 1px -3px 0px 60px rgb(255, 0, 255, 0.8),
+          /* middle magenta */
+          inset 2px -4px 0px 90px rgb(0, 255, 255, 0.8),
+          /* outer cyan */
+          0px -2px 60px 30px #fff,
+          /* inner white */
+          1px -3px 100px 60px #f0f,
+          /* middle magenta */
+          2px -4px 140px 90px #0ff;
+        /* outer cyan */
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .gatchaBall {
+        grid-column: 8 / span 1;
+        grid-row: 9 / span 3;
+      }
+    }
+
+    @media screen and (max-width: 576px) {
+      .gatchaBall {
+        grid-column: 8 / span 2;
+        grid-row: 9 / span 2;
+      }
+    }
+
+    .background-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      z-index: 0;
+      animation: shake 1.5s;
+    }
+
+    @keyframes shake {
+
+      10%,
+      90% {
+        transform: translate3d(-1px, 0, 0);
+      }
+
+      20%,
+      80% {
+        transform: translate3d(2px, 0, 0);
+      }
+
+      30%,
+      50%,
+      70% {
+        transform: translate3d(-4px, 0, 0);
+      }
+
+      40%,
+      60% {
+        transform: translate3d(4px, 0, 0);
+      }
+    }
+
+    @keyframes rotateAndAppear {
+      0% {
+        transform: rotate(0deg) scale(0);
+        visibility: hidden;
+      }
+
+      50% {
+        transform: rotate(180deg) scale(0);
+      }
+
+      100% {
+        transform: rotate(360deg) scale(1);
+        visibility: visible;
+      }
+    }
+
+    @keyframes openCapsule {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(0.5);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .shadow {
+      text-shadow: 4px 4px #000000;
+    }
+
+    @font-face {
+      font-family: 'titlefont';
+      src: url('startgame.ttf') format('truetype');
+    }
+
+    .title-font {
+      font-family: 'titlefont', sans-serif;
+    }
+  
+    @keyframes bounce-slow {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+  
+    .animate-bounce-slow {
+      animation: bounce-slow 3s infinite;
+    }
+  
+    @font-face {
+    font-family: 'startfont';
+    src: url('titlefont.ttf') format('truetype');
+    }
+  
+    .start-font {
+    font-family: 'startfont', sans-serif;
+    }
+
+    .doodle {
+      position: fixed;
+      top: 0;
+      z-index: -1;
+    }
+
+    @font-face {
+    font-family: 'startfont';
+    src: url('titlefont.ttf') format('truetype');
+    }
+  
+    .start-font {
+    font-family: 'startfont', sans-serif;
+    }
+  </style>
+
+  <script>
+    function openCapsule() {
+    }
+  </script>
+
+  <%- include("templates/footer") %>

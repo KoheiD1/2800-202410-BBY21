@@ -1,38 +1,62 @@
+<style>
+  .centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .responsive-svg {
+    width: 100%; 
+    max-width: 300px;
+    height: auto;
+  }
+
+  .svg-wrapper {
+    width: 100%; 
+    max-width: 300px;
+    height: auto;
+  }
+
+  @media (max-width: 600px) {
+    .svg-wrapper {
+      width: 125%; 
+    }
+  }
+</style>
+
 <% switch(status) {
   case 'unvisited' : %>
-  <div>
-    <form action="/preshop" method="post">
-      <input type="hidden" name="row" value="<%- row %>">
-      <input type="hidden" name="index" value="<%- index %>">
-      <input type="image" src="/shop.svg" class="w-full" alt="home">
-    </form>
+  <div class="centered-container">
+    <div class="svg-wrapper">
+      <form action="/preshop" method="post" class="hoverglow">
+        <input type="hidden" name="row" value="<%- row %>">
+        <input type="hidden" name="index" value="<%- index %>">
+        <input type="image" src="/shop.svg" alt="home" class="responsive-svg">
+      </form>
+    </div>
   </div>
   <% break;
   case 'chosen' : %>
-  <div>
-    <!-- <form action="/encounter" method="POST">
-      <input type="hidden" name="difficulty" value="triangle">
-      <input type="image" src="/triangle_green.svg" class="w-full" alt="home">
-    </form> -->
-    <img src="/shop_green.svg" class="w-full" alt="home">
+  <div class="centered-container">
+    <div class="svg-wrapper">
+      <img src="/shop_green.svg" alt="home" class="responsive-svg">
+    </div>
   </div>
   <% break;
   case 'notChosen' : %>
-  <div>
-    <!-- <form action="/encounter" method="POST">
-      <input type="hidden" name="difficulty" value="triangle">
-      <input type="image" src="/triangle_red.svg" class="w-full" alt="home">
-    </form> -->
-    <img src="/shop_red.svg" class="w-full" alt="home">
+  <div class="centered-container">
+    <div class="svg-wrapper">
+      <img src="/shop_red.svg" alt="home" class="responsive-svg">
+    </div>
   </div>
   <% break;
   case 'inactive' : %>
-  <div>
-    <!-- <form action="/encounter" method="POST">
-      <input type="hidden" name="difficulty" value="triangle">
-      <input type="image" src="/triangle_black.svg" class="w-full" alt="home">
-    </form> -->
-    <img src="/shop.svg" class="w-full" alt="home">
+  <div class="centered-container">
+    <div class="svg-wrapper">
+      <img src="/shop.svg" alt="home" class="responsive-svg">
+    </div>
   </div>
   <% break;
 } %>

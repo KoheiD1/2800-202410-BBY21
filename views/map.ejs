@@ -1,4 +1,5 @@
 <%- include("templates/headerloggedinMAP", { overflowVariable: '' }) %>
+<link href="/hoverglow.css" rel="stylesheet" type="text/css">
 <style>
   body {
     background-image: url('/indexBG.png');
@@ -6,6 +7,9 @@
     background-position: top;
     background-attachment: fixed;
     min-height: 100vh;
+  }
+  .redShadow {
+    text-shadow: -2px 0px  #000000, 0px -2px  #000000;
   }
 </style>
 
@@ -20,10 +24,10 @@
   <%- include("templates/mapTemplates/connections", {rowConnect: path.r0connect}) %>
   <%- include("templates/mapTemplates/row", {arr: path.row0, active: path.r0active, row: 0}) %>
 </div>
-<div class="grid max-w-md mx-auto">
+<div class="grid max-w-md mx-auto py-4">
   <form action="/mapreset" method="post" class="mx-auto"> 
     <input type="hidden" name="id" value="<%- id %>">
-    <input type="image" src="/reset.png" class="w-50 mt-10" alt="home">
+    <button type="submit"  class="pixel-button-red py-2 px-4 mx-5 redShadow" alt="home" value="Reset and Start from the Beginning">Reset and <br> Start Over</button>
   </form>
 </div>
 <%- include("templates/footer") %>

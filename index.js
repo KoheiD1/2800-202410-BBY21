@@ -41,10 +41,18 @@ const questionCollection = database.db(mongodb_database).collection('questions')
 const enemiesCollection = database.db(mongodb_database).collection('enemies');
 const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
+const userTitlesCollection = database.db(mongodb_database).collection('UserTitles');
+const pfpCollection = database.db(mongodb_database).collection('profile-pics');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 
+app.use(express.static(__dirname + "/public/css"));
+app.use(express.static(__dirname + "/public/monsters"));
+app.use(express.static(__dirname + "/public/profile/pfp"));
+app.use(express.static(__dirname + "/public/profile"));
+app.use(express.static(__dirname + "/public/mapAssets"));
+app.use(express.static(__dirname + "/public/ttf"));
 app.use(express.static(__dirname + "/public"));
 
 const currMap = new ObjectId("66467f92599dd72ac79fcec9");
@@ -65,7 +73,7 @@ app.use(session({
 ));
 
 const profileRoutes = require('./profileRoutes');
-app.use('/', profileRoutes(userCollection));
+app.use('/', profileRoutes(userCollection, userTitlesCollection));
 
 const friendProfileRoutes = require('./friendProfileRoutes');
 app.use('/', friendProfileRoutes(userCollection));
@@ -82,31 +90,26 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived} = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, regenCalculator, enemeyScaling, additionalHealth, additionalDMG } = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+	var username = req.session.username;
+	var email = req.session.email;
 	res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-	res.locals.gameStarted = req.session.gameSession ? true : false;
+	res.locals.gameStarted = req.session.gameSession ? req.session.gameSession.gameStarted : false;
+	const result = await userCollection.find({ email: email, username: username }).project({ slotsCurrency: 1 }).toArray();
+	if (result.length > 0) {
+		res.locals.slotsCurrency = result[0].slotsCurrency;
+	}
 	next();
 });
 
-//Middleware to check if the game session is active
-function inGame(req, res, next) {
-	if (!req.session.gameSession != null) {
-		req.session.gameSession = null;
-		res.locals.gameStarted = req.session.gameSession ? true : false;
-		next();
-	}
-	else {
-		next();
-	}
-}
 
-app.get('/', inGame, (req, res) => {
+app.get('/', (req, res) => {
 	res.render("index");
 });
 
@@ -142,7 +145,7 @@ app.post('/submitUser', async (req, res) => {
 	const schema = Joi.object(
 		{
 			username: Joi.string().alphanum().max(20).required(),
-			email: Joi.string().email().max(20).required(),
+			email: Joi.string().email().max(320).required(),
 			password: Joi.string().max(20).required()
 		});
 
@@ -154,7 +157,7 @@ app.post('/submitUser', async (req, res) => {
 
 	var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword });
+	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword, slotsCurrency: 0, ownedProfilePics: [], titles: [] });
 
 	req.session.authenticated = true;
 	req.session.username = username;
@@ -168,7 +171,7 @@ app.post('/loggingin', async (req, res) => {
 	var email = req.body.email;
 	var password = req.body.password;
 
-	const schema = Joi.string().max(20).required();
+	const schema = Joi.string().max(320).required();
 	const validationResult = schema.validate(email);
 	if (validationResult.error != null) {
 		res.redirect("/login");
@@ -216,12 +219,16 @@ app.get('/startGame', async (req, res) => {
 	req.session.gameSession = await {
 		mapSet: false,
 		playerHealth: 100,
+		maxPlayerHealth: 100,
+		playerLevel: 0,
 		playerDMG: 25,
 		playerInventory: [],
 		playerCoins: 0,
-		mapID: null
+		gameStarted: true,
+		mapID: null,
+		totalDamage: 0,
 	}
-	
+
 	try {
 		await new Promise((resolve, reject) => {
 			if (!req.session.gameSession.mapSet) {
@@ -232,18 +239,20 @@ app.get('/startGame', async (req, res) => {
 		});
 
 
-        // Check if the map is set
-        if (!req.session.gameSession.mapSet) {
-            // If not set, redirect to '/map'
-            res.redirect('/map');
-        } else {
-            // If set, redirect to '/'
-            res.redirect('/');
-        }
-    } catch (error) {
-        // Handle any errors
-        res.redirect('/');
-    }
+		// Check if the map is set
+		if (!req.session.gameSession.mapSet) {
+			// If not set, redirect to '/map'
+			setTimeout(() => {
+				res.redirect('/map');
+			}, 300);
+		} else {
+			// If set, redirect to '/'
+			res.redirect('/');
+		}
+	} catch (error) {
+		// Handle any errors
+		res.redirect('/');
+	}
 });
 
 
@@ -270,19 +279,28 @@ app.get('/map', async (req, res) => {
 app.post('/startencounter', async (req, res) => {
 	// When the player starts the game it creates a new game session
 	await levelOneCollection.deleteMany({});
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 15 } }]).toArray();
+	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 25 } }]).toArray();
 	await levelOneCollection.insertMany(encounterQuestions);
 	resetCoinsReceived()
+	additionalHealth(req);
+	additionalDMG(req);
 	let enemies = await enemiesCollection.find().toArray();
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
+	res.locals.gameStarted = true;
+
+	req.session.gameSession.playerHealth = req.session.gameSession.playerHealth + regenCalculator(req);
+	if (req.session.gameSession.playerHealth > (req.session.gameSession.maxPlayerHealth)) {
+		req.session.gameSession.playerHealth = (req.session.gameSession.maxPlayerHealth);
+	}
 
 	req.session.battleSession = {
 		enemyName: enemy.enemyName,
-		enemyHealth: enemy.enemyHealth,
-		enemyDMG: enemy.enemyDMG,
-		maxEnemyHealth: enemy.enemyHealth,
+		enemyHealth: Math.round((enemy.enemyHealth * enemeyScaling(req))),
+		enemyDMG: Math.round((enemy.enemyDMG * enemeyScaling(req))),
+		maxEnemyHealth: Math.round((enemy.enemyHealth * enemeyScaling(req))),
 		enemyImage: enemy.enemyImage,
 		answerdQuestions: [],
+		answerStreak: 0,
 		index: req.body.index,
 		row: req.body.row,
 		difficulty: req.body.difficulty
@@ -292,20 +310,46 @@ app.post('/startencounter', async (req, res) => {
 
 app.get('/question', async (req, res) => {
 	try {
-			const battleSession = req.session.battleSession;
-			const gameSession = req.session.gameSession;
-			battleSession.answeredQuestions = battleSession.answeredQuestions || [];
-			const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+		const battleSession = req.session.battleSession;
+		const gameSession = req.session.gameSession;
+		battleSession.answeredQuestions = battleSession.answeredQuestions || [];
 
-			if (!question) {
-					res.redirect('/map');
-					return;
-			}
-			await levelOneCollection.deleteOne({ _id: question._id });
-			res.render('question', { question: question, enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth , maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage});
+		res.render('question', { enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth, maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: gameSession.maxPlayerHealth, totalDamage: gameSession.totalDamage, playerDMG: gameSession.playerDMG });
 	} catch (error) {
-			res.redirect('/map');
+		res.redirect('/map');
 	}
+});
+
+app.get('/getNewQuestion', async (req, res) => {
+
+	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+
+	await levelOneCollection.deleteOne({ _id: question._id });
+
+
+	res.json({ question: question });
+
+});
+
+app.post('/updateTotalDamage', async (req, res) => {
+
+	const { playerDMG } = req.body;
+
+	console.log("Player Damage Server side: ", playerDMG)
+
+	if (!req.session.gameSession) {
+		req.session.gameSession = { totalDamage: 0 };
+	}
+	if (typeof req.session.gameSession.totalDamage !== 'number') {
+		req.session.gameSession.totalDamage = 0;
+	}
+
+
+	req.session.gameSession.totalDamage += playerDMG;
+	console.log("Total Damage Server side: ", req.session.gameSession.totalDamage);
+
+	res.json({ totalDamage: req.session.gameSession.totalDamage });
+
 });
 
 app.post('/feedback', async (req, res) => {
@@ -332,10 +376,20 @@ app.post('/feedback', async (req, res) => {
 
 		if (selectedOption.isCorrect === true) {
 			result = true;
+
 		}
+		if (!result) {
+			req.session.battleSession.answerStreak = 0;
+		}
+
 		damageCalculator(result, req);
-		
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth });
+
+		if (result) {
+			req.session.battleSession.answerStreak++;
+		}
+
+
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty, maxPlayerHealth: req.session.gameSession.maxPlayerHealth });
 
 	} catch (error) {
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -347,7 +401,7 @@ app.post('/preshop', async (req, res) => {
 		index: req.body.index,
 		row: req.body.row,
 	};
-	
+
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
 
@@ -365,7 +419,56 @@ app.post('/preshop', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.row' + row + '.' + index + '.status']: "chosen" } });
-	
+
+	var oldConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+
+	oldConnections = oldConnections.path['r' + row + 'connect'][index]
+
+	for (var i = 0; i < oldConnections.length; i++) {
+		oldConnections[i]++;
+	}
+
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.r' + row + 'connect.' + index]: oldConnections } });
+
+	var prevConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+
+	var lastVisitedIndex = prevConnections.path['row' + (row - 1)];
+
+	for (var i = 0; i < lastVisitedIndex.length; i++) {
+		if (lastVisitedIndex[i].status == "chosen") {
+			lastVisitedIndex = i;
+		}
+	}
+	prevConnections = prevConnections.path['r' + (row - 1) + 'connect']
+
+	if (row == 1) {
+		for (var i = 0; i < prevConnections.length; i++) {
+			for (var n = 0; n < prevConnections[i].length; n++) {
+				if (prevConnections[i][n] == (parseInt(index) + 1)) {
+
+				} else {
+					console.log(prevConnections[i][n]);
+					console.log(parseInt(index) + 1);
+					prevConnections[i][n]--;
+				}
+			}
+		}
+	}
+	else {
+		for (var n = 0; n < prevConnections[lastVisitedIndex].length; n++) {
+			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
+
+			} else {
+				console.log(prevConnections[lastVisitedIndex][n]);
+				console.log(parseInt(index) + 1);
+				prevConnections[lastVisitedIndex][n]--;
+			}
+		}
+	}
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
+
 	res.redirect('/shop');
 });
 
@@ -381,7 +484,7 @@ app.get('/victory', async (req, res) => {
 	});
 
 	//distribute coins depending on difficulty
-	coinDistribution(req, difficulty);
+	req.session.gameSession.playerCoins += coinDistribution(difficulty);
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
@@ -392,25 +495,99 @@ app.get('/victory', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.row' + row + '.' + index + '.status']: "chosen" } });
-	res.render("victory");
+
+	var oldConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+
+	oldConnections = oldConnections.path['r' + row + 'connect'][index]
+
+	for (var i = 0; i < oldConnections.length; i++) {
+		oldConnections[i]++;
+	}
+
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.r' + row + 'connect.' + index]: oldConnections } });
+
+	var prevConnections = await userRunsCollection.findOne({ _id: new ObjectId(req.session.gameSession.mapID) });
+
+	var lastVisitedIndex = prevConnections.path['row' + (row - 1)];
+
+	for (var i = 0; i < lastVisitedIndex.length; i++) {
+		if (lastVisitedIndex[i].status == "chosen") {
+			lastVisitedIndex = i;
+		}
+	}
+
+	prevConnections = prevConnections.path['r' + (row - 1) + 'connect']
+
+	if (row == 1) {
+		for (var i = 0; i < prevConnections.length; i++) {
+			for (var n = 0; n < prevConnections[i].length; n++) {
+				if (prevConnections[i][n] == (parseInt(index) + 1)) {
+
+				} else {
+					console.log(prevConnections[i][n]);
+					console.log(parseInt(index) + 1);
+					prevConnections[i][n]--;
+				}
+			}
+		}
+	}
+	else {
+		for (var n = 0; n < prevConnections[lastVisitedIndex].length; n++) {
+			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
+
+			} else {
+				console.log(prevConnections[lastVisitedIndex][n]);
+				console.log(parseInt(index) + 1);
+				prevConnections[lastVisitedIndex][n]--;
+			}
+		}
+	}
+
+	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
+		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
+
+	res.render("victory",{coinsWon:coinDistribution(difficulty), redirect: "/map", page: "map"});
+});
+
+app.get('/levelup', async (req, res) => {
+	const difficulty = req.session.battleSession.difficulty;
+	req.session.gameSession.playerLevel++;
+
+	req.session.gameSession.playerCoins += coinDistribution(difficulty);
+	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+	userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
+
+	req.session.gameSession.mapSet = false;
+
+	try {
+		const user = req.session.username;
+
+		const goldCollected = req.session.gameSession.playerCoins;
+
+		const totalDamage = req.session.gameSession.totalDamage;
+
+		await userCollection.updateOne(
+			{ username: user },
+			{ $inc: { runsCompleted: 1, goldCollected: goldCollected, totalDamageDealt: totalDamage } }
+		);
+	} catch (error) {
+		console.error('Error updating user level:', error);
+	}
+
+	res.render("victory", {coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu"});
 });
 
 app.get('/defeat', (req, res) => {
+	res.locals.gameStarted = false;
+	req.session.gameSession.gameStarted = false;
 	res.render("defeat");
 });
 
 app.post('/mapreset', async (req, res) => {
-	var id = req.body.id;
-	const result = await pathsCollection.find({ _id: currMap }).project({
-		row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
-		r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
-		r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
-	}).toArray();
-	await userRunsCollection.updateOne({ _id: new ObjectId(id) },
-		{
-			$set: { path: result[0] }
-		});
-	res.redirect('/map');
+	res.locals.gameStarted = false;
+	req.session.gameSession.gameStarted = false;
+	res.redirect('/');
 });
 
 app.get('/shop', async (req, res) => {
@@ -428,6 +605,122 @@ app.get('/shop', async (req, res) => {
 	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2] });
 });
 
+app.get('/gatchapage', async (req, res) => {
+	res.render('gatchaPage');
+});
+
+app.get('/easteregganimation', async (req, res) => {
+	const result = await userCollection.find({ email: req.session.email, username: req.session.username }).project({ slotsCurrency: 1 }).toArray();
+	var currency = result[0].slotsCurrency;
+	if (currency < 1) {
+		res.render('shame');
+	} else {
+		userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: -1 } });
+		res.render('easteregganimation');
+	}
+});
+
+app.get('/capsuleopening', async (req, res) => {
+	const userEmail = req.session.email;
+
+	const user = await userCollection.findOne({ email: userEmail });
+	const ownedTitles = user ? user.titles : [];
+	const unownedTitles = [];
+	const allTitles = await userTitlesCollection.find().toArray();
+
+	for (let i = 0; i < allTitles.length; i++) {
+		const fileName = allTitles[i].title;
+		const fileRarity = allTitles[i].rarity;
+		if (!ownedTitles.includes(fileName) && fileRarity == "triangle") {
+			unownedTitles.push(fileName);
+		}
+	}
+
+	const result = await userCollection.findOne({ email: userEmail });
+	const ownedProfilePics = result ? result.ownedProfilePics : [];
+	const unOwnedProfilePics = [];
+	const allProfilePic = await pfpCollection.find().toArray();
+
+	for (let i = 0; i < allProfilePic.length; i++) {
+		const fileName = allProfilePic[i].src;
+		const fileRarity = allProfilePic[i].rarity;
+		if (!ownedProfilePics.includes(fileName) && fileRarity == "triangle") {
+			unOwnedProfilePics.push(fileName);
+		}
+	}
+
+	const rewardType = Math.floor(Math.random() * 2);
+	let playerReward;
+
+	if (rewardType === 0 && unOwnedProfilePics.length > 0) {
+		const rand = Math.floor(Math.random() * unOwnedProfilePics.length);
+		playerReward = unOwnedProfilePics[rand];
+		await userCollection.updateOne({ email: userEmail }, { $push: { ownedProfilePics: playerReward } });
+	} else if (unownedTitles.length > 0) {
+		const rand = Math.floor(Math.random() * unownedTitles.length);
+		playerReward = unownedTitles[rand];
+		await userCollection.updateOne({ email: userEmail }, { $push: { titles: playerReward } });
+	} else {
+		playerReward = "No rewards available";
+	}
+	console.log("Player reward", playerReward);
+	res.render('capsuleopening', { playerReward, rewardType });
+});
+
+app.get('/premiumShop', async (req, res) => {
+	var pfpArray = await pfpCollection.find({ rarity: { $ne: "triangle" } }).toArray();
+	var user = await userCollection.findOne({ email: req.session.email });
+	var newArray = [];
+
+	for (let i = 0; i < pfpArray.length; i++) {
+		if (!user.ownedProfilePics.includes(pfpArray[i].src)) {
+			newArray.push(pfpArray[i]);
+		}
+	}
+
+	var titlesArray = await userTitlesCollection.find({ rarity: { $ne: "triangle" } }).toArray();
+	var newTitles = [];
+	
+	for (let i = 0; i < titlesArray.length; i++) {
+		if (!user.titles.includes(titlesArray[i].title)) {
+			newTitles.push(titlesArray[i]);
+		}
+	}
+	res.render("premiumShop", { pfpList: newArray, titleList: newTitles });
+});
+
+app.post('/buyPFP', async (req, res) => {
+	const pfp = req.body.pfp;
+	const price = parseInt(req.body.price);
+	const userEmail = req.session.email;
+	const user = await userCollection.findOne({ email: userEmail });
+
+	if (user.slotsCurrency < price) {
+		res.status(400).json({ error: "Not enough currency" });
+		return;
+	} else {
+		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: pfp } });
+		res.redirect('/profile');
+	}
+}
+);
+
+app.post('/buyTitle', async (req, res) => {
+	const title = req.body.title;
+	
+	const price = parseInt(req.body.price);
+	const userEmail = req.session.email;
+	const user = await userCollection.findOne({ email: userEmail });
+
+	if (user.slotsCurrency < price) {
+		res.status(400).json({ error: "Not enough currency" });
+		return;
+	} else {
+		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: title} });
+		res.redirect('/profile');
+	}
+}
+);
 
 app.get("*", (req, res) => {
 	res.status(404);

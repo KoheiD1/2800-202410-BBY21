@@ -1,25 +1,31 @@
+const { cloudcontrolspartner } = require("googleapis/build/src/apis/cloudcontrolspartner");
+const { func } = require("joi");
+
 //Calculates the damage taken by the player and enemy
 function damageCalculator(choice, req) {
     var enemyHealth = req.session.battleSession.enemyHealth;
     var enemyDamage = req.session.battleSession.enemyDMG;
+    var answerStreak = req.session.battleSession.answerStreak;
     var playerHealth = req.session.gameSession.playerHealth;
     var playerDamage = req.session.gameSession.playerDMG;
     var playerInventory = req.session.gameSession.playerInventory;
+    var speedStatus = 0;
 
-    //Calculates the player's damage with the items in the inventory
     playerInventory.forEach(item => {
         for(let i = 0; i < item.effects.length; i++) {
-            if(item.effects[i] == "damage") {
-                playerDamage +=  parseInt(item[item.effects[i]]);
+            if(item.effects[i] == "speed") {
+                speedStatus += parseInt(item[item.effects[i]]);
             }
+            
         }
     });
 
-    console.log("Player Damage: " + playerDamage);
-    console.log("Enemy Health: " + enemyDamage);
-    
+    if(speedStatus < 0){
+        speedStatus = 0;
+    }
+
     if (choice) {
-        enemyHealth -= playerDamage;
+        enemyHealth -= Math.round(playerDamage * (1 + (speedStatus/100 * answerStreak)));
         req.session.battleSession.enemyHealth = enemyHealth;
     } else {
         playerHealth -= enemyDamage;
@@ -27,22 +33,73 @@ function damageCalculator(choice, req) {
     }
 }
 
-    var coinsReceived = false
-function coinDistribution(req, difficulty) {
+function calculateHealth(req) {
+    var playerInventory = req.session.gameSession.playerInventory;
+    var healthStatus = 0;
+
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "health") {
+                healthStatus +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+   return healthStatus;
+}
+
+function enemeyScaling(req) {
+    playerLevel = req.session.gameSession.playerLevel;
+    if(playerLevel == 0) {
+        return 1;
+    }
+    multFactor = playerLevel * 1.5;
+    return multFactor;
+}
+
+function regenCalculator(req) {
+    var playerInventory = req.session.gameSession.playerInventory;
+    var regenStatus = 0;
+
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "cooling") {
+                regenStatus +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+   return regenStatus;
+}
+
+function itemDamage(req) {
+    var playerInventory = req.session.gameSession.playerInventory;
+    var damageStatus = 0;
+
+    playerInventory.forEach(item => {
+        for(let i = 0; i < item.effects.length; i++) {
+            if(item.effects[i] == "damage") {
+                damageStatus +=  parseInt(item[item.effects[i]]);
+            }
+        }
+    });
+
+   return damageStatus;
+}
+
+
+    var coinsReceived = false;
+function coinDistribution(difficulty) {
     if(!coinsReceived){
         switch(difficulty) {
             case "triangle":
-                req.session.gameSession.playerCoins += 5;
-                break;
+                return 500;
             case "square":
-                req.session.gameSession.playerCoins += 10;
-                break;
+                return 10;
             case "pentagon":
-                req.session.gameSession.playerCoins += 20;
-                break;
+                return 25;
             case "hexagon":
-                req.session.gameSession.playerCoins += 50;
-                break;
+               return 50;
         }
     }   
    coinsReceived = true;
@@ -72,7 +129,6 @@ function chooseEnemy(req, difficulty, enemies) {
     });
 
     var rand = Math.floor(Math.random() * fightablteEnemies.length);
-    console.log("Enemy chosen: " + fightablteEnemies[rand].enemyName);
     return fightablteEnemies[rand];
 };
 
@@ -95,11 +151,41 @@ function purchasable(coins, price){
     }
 }
 
+function additionalHealth(req){
+    var playerHealth = 100;
+    var additionalHealth = calculateHealth(req);
+
+    if(playerHealth + additionalHealth == req.session.gameSession.maxPlayerHealth){
+        return;
+    }else{
+        req.session.gameSession.maxPlayerHealth = playerHealth + additionalHealth;
+        req.session.gameSession.playerHealth += additionalHealth;
+    }
+}
+
+function additionalDMG(req){
+    var playerDMG = 25;
+    var additionalDMG = itemDamage(req);
+
+    if(playerDMG + additionalDMG == req.session.gameSession.playerDMG){
+        return;
+    }else{
+        req.session.gameSession.playerDMG = playerDMG + additionalDMG;
+    }
+}
+
+
+
+
 
 module.exports = {
     damageCalculator,
     coinDistribution,
     purchaseItem,
     chooseEnemy,
-    resetCoinsReceived
+    resetCoinsReceived,
+    regenCalculator,
+    enemeyScaling,
+    additionalHealth,
+    additionalDMG
 };

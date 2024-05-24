@@ -1,0 +1,89 @@
+<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+<style>
+    /* Apply styles to center everything and fit on the page */
+    body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Your Custom Font', Arial, sans-serif; /* Custom font with fallbacks */
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+
+    h1 {
+        font-size: 18px; /* Adjust font size for smaller screens */
+        text-align: center;
+        margin-bottom: 20px; /* Add spacing */
+        max-width: 80%; /* Limit width for better responsiveness */
+    }
+
+    .form-container {
+        margin-top: 20px; /* Add spacing */
+    }
+
+    form {
+        display: flex;
+        justify-content: center;
+    }
+
+    input[type="submit"] {
+        background-color: #3498db;
+        color: #fff;
+        font-size: 14px; /* Adjust font size for smaller screens */
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #2980b9;
+    }
+    
+    /* Rainbow throbbing animation */
+     @keyframes rainbowThrob {
+        0% { color: red; transform: scale(1); }
+        50% { color: orange; transform: scale(1.2); }
+        100% { color: yellow; transform: scale(1); }
+    }
+
+    /* Apply rainbow throbbing animation to h1 */
+    .rainbow-throb {
+        animation: rainbowThrob 1.5s infinite alternate; /* Rainbow throbbing animation */
+    }
+
+
+    @font-face {
+    font-family: 'startfont';
+    src: url('titlefont.ttf') format('truetype');
+    }
+  
+    .start-font {
+    font-family: 'startfont', sans-serif;
+    }
+</style>
+
+<div class="container">
+    <h1 class="rainbow-throb start-font">
+        GO BACK TO THE MAIN MENU AND GET YOUR BREAD UP!
+    </h1>
+
+    <div class="form-container">
+        <form action="/">
+            <input type="submit" value="Back to Main Menu">
+        </form>
+    </div>
+</div>
+   
+
+
+<%- include("templates/footer") %>

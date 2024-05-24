@@ -1,0 +1,11 @@
+body {
+  background-image: url('/indexBG.png');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+.form-bg {
+  background-image: url('/dirt.svg');
+  background-size: cover;
+}

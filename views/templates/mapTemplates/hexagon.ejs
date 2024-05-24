@@ -1,7 +1,35 @@
+<style>
+  .centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .responsive-svg {
+    width: 100%; 
+    max-width: 300px;
+    height: auto;
+  }
+
+  .svg-wrapper {
+    width: 100%; 
+    max-width: 300px;
+    height: auto;
+  }
+
+  @media (max-width: 600px) {
+    .svg-wrapper {
+      width: 125%; 
+    }
+  }
+</style>
+
 <% switch(status) {
   case 'unvisited' : %>
   <div>
-    <form action="/startencounter" method="POST">
+    <form action="/startencounter" method="POST" class="hoverglow">
       <input type="hidden" name="row" value="<%- row %>">
       <input type="hidden" name="difficulty" value="hexagon">
       <input type="hidden" name="index" value="<%- index %>">
@@ -33,7 +61,11 @@
       <input type="hidden" name="difficulty" value="hexagon">
       <input type="image" src="/hexagon_black.svg" class="w-full" alt="home">
     </form> -->
-    <img src="/hexagon_black.svg" class="w-full" alt="home">
+    <div class="centered-container">
+      <div class="svg-wrapper">
+        <img src="/hexagon_black.svg" alt="home" class="responsive-svg">
+      </div>
+    </div>
   </div>
   <% break;
 } %>

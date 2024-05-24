@@ -5,7 +5,8 @@ module.exports = function(userCollection) {
     router.get('/friendProfile', async (req, res) => {
         try {
             const currentUser = req.session.username;
-            const { friendName } = req.query;
+            const friendName = req.query.friendName;
+            const source = req.query.source;
 
             const currentUserDoc = await userCollection.findOne({ username: currentUser });
             if (!currentUserDoc) {
@@ -16,13 +17,25 @@ module.exports = function(userCollection) {
 
             const friend = await userCollection.findOne({ username: friendName });
             const friendProfilePic = friend ? friend.profile_pic : 'profile-logo.png';
+            const friendBio = friend ? friend.bio : '';
+            const friendTitle = friend ? friend.UserTitle : '';
+            const friendGold = friend ? friend.goldCollected : 0;
+            const friendRuns = friend ? friend.runsCompleted : 0;
+            const friendDamage = friend ? friend.totalDamageDealt : 0;
 
             if (req.session.authenticated) {
                 res.render("friendProfile", { 
                     friendName: friendName, 
                     userProfilePic: friendProfilePic, 
                     currentUser: currentUser,
-                    isFriend: isFriend
+                    isFriend: isFriend,
+                    source: source,
+                    friendBio: friendBio,
+                    friendTitle: friendTitle,
+                    friendGold: friendGold,
+                    friendRuns: friendRuns,
+                    friendDamage: friendDamage
+
                 });
             } else {
                 res.redirect('/login');
