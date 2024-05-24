@@ -242,7 +242,9 @@ app.get('/startGame', async (req, res) => {
 		// Check if the map is set
 		if (!req.session.gameSession.mapSet) {
 			// If not set, redirect to '/map'
-			res.redirect('/map');
+			setTimeout(() => {
+				res.redirect('/map');
+			}, 300);
 		} else {
 			// If set, redirect to '/'
 			res.redirect('/');
