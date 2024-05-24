@@ -9,26 +9,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" type="text/css" href="/healthbar.css">
     <link rel="stylesheet" type="text/css" href="/pixelButton.css">
+    <link rel="stylesheet" href="/fonts.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="<%= overflowVariable %>">
-  <div class="header sticky pt-4 pb-4 pr-2.5 relative z-10 bg-transparent" style="height: 7vh;">
+  <div class="header sticky pt-4 pb-4 pr-5 relative z-10 bg-transparent" style="height: 7vh;">
     <div class="flex justify-between items-center h-full">
       <div class="pl-2.5">
           <form action="/">
-              <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4" value="Back to Main Menu">
+              <input type="submit" class="text-black basicPixel py-1 px-4 mr-4 pixel-button" value="Back to Main Menu">
           </form>
       </div>
       <div class="flex items-center">
           <% if (gameStarted) { %>
-          <div class="flex items-center mr-4">
+          <div class="flex items-center mr-10">
             <img src="coin.png" class="w-10 h-10">
-            <span class="ml-1 text-gray-900 text-4xl"><%= playerCoins %></span>
+            <span class="ml-1 text-gray-900 text-3xl basicPixel"><%= playerCoins %></span>
           </div>
           <% } %>
-          <div class="flex items-center mr-4">
+          <div class="flex items-center mr-10">
             <img src="diamond.png" class="w-10 h-10" onclick="clicker()">
-            <span class="ml-1 text-gray-900 text-4xl"><%= slotsCurrency %></span>
+            <span class="ml-1 text-gray-900 text-3xl basicPixel"><%= slotsCurrency %></span>
         </div>
         <img class="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer" src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=map'">
       </div>
