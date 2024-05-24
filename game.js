@@ -93,7 +93,7 @@ function coinDistribution(difficulty) {
     if(!coinsReceived){
         switch(difficulty) {
             case "triangle":
-                return 5;
+                return 500;
             case "square":
                 return 10;
             case "pentagon":
