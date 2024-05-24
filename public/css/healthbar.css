@@ -8,6 +8,10 @@
   --pixel-size: 7;
 }
 
+body {
+  background: #de88ff;
+}
+
 .container {
   width: calc(38px * var(--pixel-size));
   margin: 4em auto;

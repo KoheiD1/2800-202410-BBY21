@@ -1,242 +1,192 @@
-<style>
-  .hidden {
-    display: none;
-  }
-
-  @font-face {
-    font-family: 'basicPixel';
-    src: url('Apple_.ttf') format('truetype');
-  }
-
-  .pixelFont {
-    font-family: 'basicPixel', sans-serif;
-  }
-
-  @keyframes flash {
-    0%,
-    50%,
-    100% {
-      opacity: 1;
+<%- include("templates/headerloggedin", { overflowVariable: 'overflow-x-hidden' }) %>
+  <link href="/defaultBG.css" rel="stylesheet" type="text/css">
+  <style>
+    .hidden {
+      display: none;
     }
 
-    25%,
-    75% {
-      opacity: 0;
+    @font-face {
+      font-family: 'basicPixel';
+      src: url('Apple_.ttf') format('truetype');
     }
-  }
 
-  .flash-animation {
-    animation-name: flash;
-    animation-duration: 1s;
-    animation-fill-mode: both;
-  }
+    .pixelFont {
+      font-family: 'basicPixel', sans-serif;
+    }
 
-  #learn-more,
-  #closeFeedback {
-    margin: 10px;
-  }
+    @keyframes flash {
 
-  #opt-btn {
-    margin-top: 30px;
-  }
+      0%,
+      50%,
+      100% {
+        opacity: 1;
+      }
 
-  #mainContainer {
-    display: grid;
-    grid-template-rows: 57vh 43vh;
-    grid-template-columns: 1fr;
-    gap: 0px 0px;
-    height: 100vh;
-    width: 100%;
-  }
+      25%,
+      75% {
+        opacity: 0;
+      }
+    }
 
-  #questionContainer {
-    grid-row: 2;
-    height: 100%;
-    background-color: white;
-    grid-row: 2;
-    overflow: auto;
-  }
+    .flash-animation {
+      animation-name: flash;
+      animation-duration: 1s;
+      /* Adjust the duration as needed */
+      animation-fill-mode: both;
+    }
 
-  #feedbackContainer {
-    grid-row: 2;
-    height: 100%;
-    background-color: white;
-    width: 100%;
-  }
+    #learn-more,
+    #closeFeedback {
+      margin: 10px;
+    }
 
-  #battleContainer {
-    position: relative;
-    background-image: url('/battle_bg.svg');
-    background-size: 175%;
-    background-position: bottom right;
-    background-repeat: no-repeat;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-rows: 7vh 8vh 8vh 10vh 10vh 6vh 8vh;
-    grid-template-columns: 45% 10% 45%;
-    overflow: hidden;
-    height: 57vh;
-    width: 100%;
-  }
+    #opt-btn {
+      margin-top: 30px;
+    }
 
-  .header {
-    grid-column: 1 / span 3;
-    display: flex;
-    justify-content: flex-end;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    width: 100%;
-    background: linear-gradient(to bottom, rgba(116, 166, 214, 0.4), rgba(116, 166, 214, 0.3), rgba(116, 166, 214, 0.2), rgba(116, 166, 214, 0)); /* White background with gradient fade out */
-    backdrop-filter: blur(5px); /* Optional: Adds a blur effect to the background */
-  }
+    #mainContainer {
+      display: grid;
+      grid-template-rows: 50vh 40vh;
+      grid-template-columns: 1fr;
+      gap: 0px 0px;
+    }
 
+    #questionContainer {
+      grid-row: 2;
+      height: 100%;
+      background-color: white;
+      grid-row: 2;
+      overflow: auto;
+    }
 
-  .healthbar-wrapper-left {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    width: 100%;
-  }
+    #feedbackContainer {
+      grid-row: 2;
+      height: 100%;
+      background-color: white;
+      width: 100%;
+    }
 
-  .healthbar-wrapper-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Aligns the contents to the right */
-    
-    justify-content: center;
-    width: 100%;
-  }
-  
-  #healthbar-left {
-    grid-row: 7;
-    grid-column: 1;
-    /* position: absolute; */
-    left: 0;
-  }
+    .bg-gradient-to-b {
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-rows: 5vh 10vh 16vh 10vh 5vh;
+      /* Adjust grid rows as needed */
+      grid-template-columns: 45% 5% 50%;
+      /* Three columns */
+      overflow: hidden;
+      height: 50vh;
+      /* Ensure the height is set correctly */
+    }
 
-  .healthContainer {
-    display: flex;
-  }
-  #healthbar-right {
-    grid-row: 2;
-    grid-column: 3;
-    right: 0;
-    align-items: right;
-  }
-  
-  #hero-container, #enemy-container {
-    display: flex;
-    align-items: center;
-  }
-  .heroSVG{
-    display: flex;
-    align-items: flex-start;
-    height: 100%;
-  }
+    #healthbar-left {
+      grid-row: 5;
+      /* Bottom row */
+      grid-column: 1;
+      /* First column */
+      position: absolute;
+      top: -20px;
 
-  .enemySVG{
-    display: flex;
-    align-items: flex-start;
-    height: 100%;
-  }
+    }
 
-  #hero-container {
-    grid-row: 5 / 7;
-    justify-content: left;
-    padding-left: 10%;
-  }
+    #healthbar-right {
+      grid-row: 1;
+      /* Top row */
+      grid-column: 3;
+      /* Last column */
+      position: absolute;
+      right: -90px;
+      top: 20px;
+      justify-self: end;
 
-  #enemy-container {
-    display: flex;
-    grid-row: 3 / 6; /* Span rows 3 to 6 inclusive */
-    grid-column: 2 / 4; /* Span columns 2 and 3 */
-    justify-content: right;
-  }
-  
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-  #heroInfo, #enemyInfo {
-    white-space: nowrap; /* Prevent text wrapping */
-  }
+    }
 
-</style>
-  
-<body class="flex flex-col justify-center items-center mx-auto">
-  <div id="mainContainer">
-    <div id="battleContainer">
-      <div class="header">
-        <%- include("templates/headerloggedin", { overflowVariable: 'overflow-x-hidden' }) %>
-      </div>
+    #healthbar-right .healthbar-wrapper p {
+      padding-left: 8px;
+    }
 
-      <div id="healthbar-left" class="health-bar-left">
-        <div class="healthbar-wrapper">
-          <p id="heroInfo" class="pixelFont text-sm pl-3">
-            <%=userName%>
-          </p>
-          <%- include('healthbar.html') %>
+    #healthbar-left .healthbar-wrapper p {
+      padding-left: 8px;
+    }
+
+    #hero-container {
+      grid-column: 1;
+      /* Middle column */
+      grid-row: 3;
+      /* Bottom row */
+      position: absolute;
+      width: 180px;
+      /* Fixed width */
+      height: 180px;
+      /* Fixed height */
+      top: -20px;
+    }
+
+    #enemyInfo {
+      position: absolute;
+      right: 32px;
+      grid-column: 1/4;
+      /* Middle column */
+      grid-row: 1;
+    }
+
+    #modalButtons {
+      margin: 20px;
+    }
+
+    #enemy-container {
+      grid-column: 3;
+      /* Middle column */
+      grid-row: 1;
+      /* Top row */
+      position: absolute;
+      width: 200px;
+      /* Fixed width */
+      height: 200px;
+      /* Fixed height */
+      justify-self: end;
+      right: -10px;
+    }
+  </style>
+
+  <body class="flex flex-col justify-center items-center mx-auto">
+    <div id="mainContainer">
+      <div class="bg-gradient-to-b from-yellow-200 to-yellow-400 shadow-md h-[50vh] relative grid gap-2">
+        <div id="healthbar-left" class="health-bar-left flex flex-col items-center">
+          <div class="healthbar-wrapper max-w-full">
+            <p id="heroInfo" class="pixelFont text-sm">
+              <%=userName%>
+            </p>
+            <%- include('healthbar.html') %>
+          </div>
+        </div>
+        <div id="hero-container">
+          <div class="container">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <image id="hero-image" href="/kid.svg" x="0" y="0" width="100" height="100" />
+            </svg>
+          </div>
+        </div>
+        <p id="enemyInfo" class="pixelFont text-xs pt-2 whitespace-normal break-words overflow-ellipsis"></p>
+        <div id="healthbar-right" class="health-bar-right flex flex-col items-center">
+          <div class="healthbar-wrapper max-w-full">
+            <p id="enemyInfo" class="pixelFont text-sm pt-2">
+            </p>
+            <%- include('healthbar.html') %>
+          </div>
+        </div>
+        <div id="enemy-container">
+          <div class="container">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <image id="enemy-image" href="<%= enemyImage %>" x="0" y="0" width="100" height="100" />
+            </svg>
+          </div>
         </div>
       </div>
-    
-      <div id="hero-container">
-        <div class="heroSVG">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <image id="hero-image" href="/kid.svg" x="0" y="0" width="100" height="100" />
-          </svg>
-        </div>
+
+      <div id="questionContainer">
       </div>
 
-      <div id="healthbar-right" class="health-bar-right flex flex-col">
-        <div class="healthbar-wrapper-right">
-          <p id="enemyInfo" class="pixelFont text-sm text-right pr-1">
-          </p>
-          <%- include('healthbar.html') %>
-        </div>
-      </div>
-
-      <div id="enemy-container">
-        <div class="enemySVG">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <image id="enemy-image" href="<%= enemyImage %>" x="0" y="0" width="100" height="100" />
-          </svg>
-        </div>
-      </div>
-    </div>
-    
-    <div id="questionContainer">
-      <div class="max-w-lg mx-auto p-8 rounded bg-white">
-        <h1 class=" text-lg font-bold mb-4">
-          <%= question.questionText %>
-        </h1>
-        <ul class="bg-white">
-          <% question.options.forEach((option, index)=> { %>
-            <li class="mb-2">
-              <form id="<%= index %>" class="feedback-form" data-question-id="<%= question._id %>">
-                <input type="hidden" name="option" value="<%= index %>">
-                <button id="opt-btn" type="submit" class="w-full pixel-border text-black font-bold rounded">
-                  <%= option.text %>
-                </button>
-              </form>
-              <div id="feedbackResult<%= index %>"></div>
-            </li>
-            <% }); %>
-        </ul>
-      </div>
-    </div>
-
-    <div id="feedbackContainer" class="hidden mx-auto p-8 rounded">
-      <p id="modalFeedback" class="mt-4"></p>
-      <div class="flex justify-center" id="modalButtons">
-        <button id="learn-more" class="pixel-border text-black font-bold px-2 z-10" onclick="openModal()">
-          Learn More
-        </button>
-        <button id="closeFeedback" class="pixel-border text-black font-bold px-2 z-10"
-          onclick="closeFeedbackFunction()">Next Question</button>
-      </div>
-    </div>
       <div id="feedbackContainer" class="hidden mx-auto p-8 rounded">
         <p id="modalFeedback" class="mt-4"></p>
         <div class="flex justify-center" id="modalButtons">
@@ -505,10 +455,3 @@
     </script>
   </body>
   <%- include("templates/footer") %>
-    // Close the modal
-    function closeModal() {
-      var modal = document.getElementById("learnMoreModal");
-      modal.classList.add("hidden");
-    }
-  </script>
-</body>
