@@ -37,7 +37,7 @@
   }
 
   #opt-btn {
-    margin-top: 30px;
+    
   }
 
   #mainContainer {
@@ -185,6 +185,14 @@
     background-color: #5d375a;
   }
 
+  .qshadow {
+    text-shadow: 3px 3px 2px #000000;
+  }
+
+  .sshadow {
+    color: white;
+    text-shadow: 2px 2px  black;
+  }
 </style>
   
 <body class="flex flex-col justify-center items-center mx-auto">
@@ -196,7 +204,7 @@
 
       <div id="healthbar-left" class="health-bar-left">
         <div class="healthbar-wrapper">
-          <p id="heroInfo" class="pixelFont text-sm pl-3">
+          <p id="heroInfo" class="pixelFont text-sm pl-3 sshadow">
             <%=userName%>
           </p>
           <%- include('healthbar.html') %>
@@ -213,7 +221,7 @@
 
       <div id="healthbar-right" class="health-bar-right flex flex-col">
         <div class="healthbar-wrapper-right">
-          <p id="enemyInfo" class="pixelFont text-sm text-right pr-1">
+          <p id="enemyInfo" class="pixelFont text-sm text-right pr-1 sshadow">
           </p>
           <%- include('healthbar.html') %>
         </div>
@@ -289,11 +297,11 @@
 
           questionContainer = document.getElementById('questionContainer');
           questionContainer.innerHTML = `
-            <div class="max-w-lg mx-auto p-8 rounded  ">
-              <h1 class="text-md mb-4 text-white basicPixel">${questionTextFormatted}</h1>
+            <div class="max-w-lg mx-auto px-3 rounded  ">
+              <h1 class="text-md mb-4 text-white basicPixel qShadow">${questionTextFormatted}</h1>
               <ul>
                 ${question.question.options.map((option, index) => `
-                  <li class="mb-2">
+                  <li class="">
                     <form id="${index}" class="feedback-form" data-question-id="${question._id}">
                       <input type="hidden" name="option" value="${index}">
                       <button id="opt-btn" class="w-full pixel-button-long text-black">${option.text}</button>
