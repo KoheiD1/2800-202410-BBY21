@@ -21,10 +21,10 @@
   <%- include("templates/mapTemplates/connections", {rowConnect: path.r0connect}) %>
   <%- include("templates/mapTemplates/row", {arr: path.row0, active: path.r0active, row: 0}) %>
 </div>
-<div class="grid max-w-md mx-auto">
+<div class="grid max-w-md mx-auto py-4">
   <form action="/mapreset" method="post" class="mx-auto"> 
     <input type="hidden" name="id" value="<%- id %>">
-    <input type="image" src="/reset.png" class="w-50 mt-10" alt="home">
+    <button type="submit"  class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" alt="home" value="Reset and Start from the Beginning">Reset and Start from the Beginning</button>
   </form>
 </div>
 <%- include("templates/footer") %>
