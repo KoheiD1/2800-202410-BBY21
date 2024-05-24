@@ -2,12 +2,6 @@
   <link href="/defaultBG.css" rel="stylesheet" type="text/css">
 
   <style>
-    @font-face {
-      font-family: 'basicPixel';
-      src: url('/Apple_.ttf') format('truetype');
-    }
-
-
     #player-stats, h2 {
       font-family: 'basicPixel';
     }
@@ -33,7 +27,7 @@
       <div class="flex justify-between p-2">
 
         <button id="editButton" type="submit"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          class="pixel-button py-2 px-4 rounded"
           onclick="editProfile('<%= userBio %>', '<%= userTitle %>', <%= JSON.stringify(ownedUserTitles) %>)">
           Edit Profile
         </button>
@@ -52,7 +46,7 @@
             <img id="profileImg" class="h-28 w-28 rounded-full bg-white mx-auto border-2 border-gray-500 cursor-pointer"
               src="<%= userProfilePic %>" alt="Profile Picture" onclick="openModal()">
             
-            <h1 class="text-2xl font-bold mt-4">
+            <h1 class=" basicPixel text-2xl font-bold mt-4">
               <%= userName %>
             </h1>
           <div id="user-info">
@@ -62,7 +56,7 @@
             <p id="userBio" class="text-sm text-black mt-2">
               <%= userBio %>
             </p>
-            <p id="userBio" class="text-sm text-black mt-2">
+            <p id="userBio" class="basicPixel text-sm text-black mt-2">
               Email: <%= userEmail %>
           </p>
           </div>
@@ -106,12 +100,12 @@
       <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
         <div class="px-4 py-2 flex items-center">
           <form action="/friends" method="get">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">
+            <button type="submit" class="pixel-button py-2 px-4 rounded mr-4">
               Friends List
             </button>
           </form>
           <form action="/findFriends" method="get">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            <button type="submit" class="pixel-button py-2 px-4 rounded">
               Add Friends
             </button>
           </form>
@@ -122,17 +116,17 @@
       <div class="mt-20 place-self-center">
         <% if (from == 'map') { %>
           <form action="/map">
-            <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+            <input type="submit" class="pixel-button py-2 px-4 rounded mr-4"
               value="Back to Map">
           </form>
           <% } else if (from == 'prem') { %>
             <form action="/premiumShop">
-              <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+              <input type="submit" class="pixel-button py-2 px-4 rounded mr-4"
                 value="Back to Premium Shop">
             </form>
           <% } else { %>
             <form action="/">
-              <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+              <input type="submit" class="pixel-button-long py-2 px-4 rounded mr-4"
                 value="Back to Main Menu">
             </form>
             <% } %>
