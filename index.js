@@ -624,11 +624,17 @@ app.get('/capsuleopening', async (req, res) => {
 	const userEmail = req.session.email;
 
 	const user = await userCollection.findOne({ email: userEmail });
-	const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
-	const allTitles = userTitlesArray.map(item => item.title);
 	const ownedTitles = user ? user.titles : [];
+	const unownedTitles = [];
+	const allTitles = await userTitlesCollection.find().toArray();
 
-	const unownedTitles = allTitles.filter(title => (!ownedTitles.includes(title) && title.rarity == "triangle"));
+	for (let i = 0; i < allTitles.length; i++) {
+		const fileName = allTitles[i].title;
+		const fileRarity = allTitles[i].rarity;
+		if (!ownedTitles.includes(fileName) && fileRarity == "triangle") {
+			unownedTitles.push(fileName);
+		}
+	}
 
 	const result = await userCollection.findOne({ email: userEmail });
 	const ownedProfilePics = result ? result.ownedProfilePics : [];
