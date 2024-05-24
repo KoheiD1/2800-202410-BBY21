@@ -663,17 +663,18 @@ app.get('/premiumShop', async (req, res) => {
 	var pfpArray = await pfpCollection.find({ rarity: { $ne: "triangle" } }).toArray();
 	var user = await userCollection.findOne({ email: req.session.email });
 	var newArray = [];
+
 	for (let i = 0; i < pfpArray.length; i++) {
-		if (!user.profile_pic.includes(pfpArray[i].src)) {
+		if (!user.ownedProfilePics.includes(pfpArray[i].src)) {
 			newArray.push(pfpArray[i]);
 		}
 	}
 
 	var titlesArray = await userTitlesCollection.find({ rarity: { $ne: "triangle" } }).toArray();
 	var newTitles = [];
-
+	
 	for (let i = 0; i < titlesArray.length; i++) {
-		if (!user.titles.includes(titlesArray[i].src)) {
+		if (!user.titles.includes(titlesArray[i].title)) {
 			newTitles.push(titlesArray[i]);
 		}
 	}
@@ -687,7 +688,7 @@ app.post('/buyPFP', async (req, res) => {
 	const user = await userCollection.findOne({ email: userEmail });
 
 	if (user.slotsCurrency < price) {
-		res.json({ error: "Not enough currency" });
+		res.status(400).json({ error: "Not enough currency" });
 		return;
 	} else {
 		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: pfp } });
@@ -698,16 +699,16 @@ app.post('/buyPFP', async (req, res) => {
 
 app.post('/buyTitle', async (req, res) => {
 	const title = req.body.title;
-
-	const price = parseInt(title.price);
+	
+	const price = parseInt(req.body.price);
 	const userEmail = req.session.email;
 	const user = await userCollection.findOne({ email: userEmail });
 
 	if (user.slotsCurrency < price) {
-		res.json({ error: "Not enough currency" });
+		res.status(400).json({ error: "Not enough currency" });
 		return;
 	} else {
-		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: title.title } });
+		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: title} });
 		res.redirect('/profile');
 	}
 }
