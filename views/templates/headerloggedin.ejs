@@ -9,53 +9,19 @@
     <link rel="stylesheet" type="text/css" href="/healthbar.css">
     <link rel="stylesheet" type="text/css" href="/pixelBorder.css">
     <link rel="icon" type="image/png" href="favicon.png">
-    <style>
-        /* CSS for the coin animation */
-        .coin-animation-container {
-            width: 36px; /* Adjust size as needed */
-            height: 36px; /* Adjust size as needed */
-            position: relative;
-            z-index: 10; /* Ensure the coin is on top */
-        }
-
-        .coin-animation-container img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-        }
-
-        .coin-animation-container img.active {
-            display: block;
-        }
-
-        @keyframes spinCoin {
-            0% { transform: translateX(0%); }
-            12.5% { transform: translateX(-100%); }
-            25% { transform: translateX(-200%); }
-            37.5% { transform: translateX(-300%); }
-            50% { transform: translateX(-400%); }
-            62.5% { transform: translateX(-500%); }
-            75% { transform: translateX(-600%); }
-            87.5% { transform: translateX(-700%); }
-            100% { transform: translateX(-800%); }
-        }
-    </style>
 </head>
 <body class="<%= overflowVariable %>">
     <div class="header sticky pt-4 pb-4 pr-2.5 relative z-10 bg-transparent" style="height: 7vh;">
         <div class="flex justify-end items-center h-full">
           <% if (gameStarted) { %>
             <div class="flex items-center mr-4">
-                <img src="coin.png" class="w-8 h-8">
-              <span class="ml-1 text-gray-900 text-2xl"><%= playerCoins %></span>
+                <img src="coin.png" class="w-10 h-10">
+              <span class="ml-1 text-gray-900 text-3xl"><%= playerCoins %></span>
             </div>
           <% } %>
             <div class="flex items-center mr-4">
-                <img src="diamond.png" class="w-8 h-8" onclick="clicker()">
-                <span class="ml-1 text-gray-900 text-2xl"><%= slotsCurrency %></span>
+                <img src="diamond.png" class="w-10 h-10" onclick="clicker()">
+                <span class="ml-1 text-gray-900 text-3xl"><%= slotsCurrency %></span>
             </div>
         <img class="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer" src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=home'">
         </div>
