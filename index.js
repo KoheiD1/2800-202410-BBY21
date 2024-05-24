@@ -628,7 +628,7 @@ app.get('/capsuleopening', async (req, res) => {
 	const allTitles = userTitlesArray.map(item => item.title);
 	const ownedTitles = user ? user.titles : [];
 
-	const unownedTitles = allTitles.filter(title => !ownedTitles.includes(title));
+	const unownedTitles = allTitles.filter(title => (!ownedTitles.includes(title) && title.rarity == "triangle"));
 
 	const result = await userCollection.findOne({ email: userEmail });
 	const ownedProfilePics = result ? result.ownedProfilePics : [];
