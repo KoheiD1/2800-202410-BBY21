@@ -17,6 +17,11 @@ module.exports = function(userCollection) {
 
             const friend = await userCollection.findOne({ username: friendName });
             const friendProfilePic = friend ? friend.profile_pic : 'profile-logo.png';
+            const friendBio = friend ? friend.bio : '';
+            const friendTitle = friend ? friend.UserTitle : '';
+            const friendGold = friend ? friend.goldCollected : 0;
+            const friendRuns = friend ? friend.runsCompleted : 0;
+            const friendDamage = friend ? friend.totalDamageDealt : 0;
 
             if (req.session.authenticated) {
                 res.render("friendProfile", { 
@@ -24,7 +29,13 @@ module.exports = function(userCollection) {
                     userProfilePic: friendProfilePic, 
                     currentUser: currentUser,
                     isFriend: isFriend,
-                    source: source
+                    source: source,
+                    friendBio: friendBio,
+                    friendTitle: friendTitle,
+                    friendGold: friendGold,
+                    friendRuns: friendRuns,
+                    friendDamage: friendDamage
+
                 });
             } else {
                 res.redirect('/login');

@@ -44,7 +44,7 @@ module.exports = function (itemCollection, userCollection) {
                 for (let i = 0; i < 3 && i < items.length; i++) {
                     let rand;
                     do {
-                        rand = parseInt(Math.random() * 4);
+                        rand = parseInt(Math.random() * 7);
                     } while (items[rand] == null);
                     req.session.shop.itemsPicked.push({
                         type: items[rand].type,

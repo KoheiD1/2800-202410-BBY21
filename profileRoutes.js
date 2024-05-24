@@ -5,6 +5,7 @@ const router = express.Router();
 
 module.exports = function(userCollection, userTitlesCollection) {
     router.get('/profile', async (req, res) => {
+        const from = req.query.from;
         res.locals.gameStarted = req.session.gameSession ? true : false;
         if (req.session.authenticated) {
             const userName = req.session.username;
@@ -15,16 +16,19 @@ module.exports = function(userCollection, userTitlesCollection) {
             const userProfilePic = user ? user.profile_pic : 'profile-logo.png';
             const friendsList = user.friendsList; 
             const userBio = user.bio;
-            
-            userTitle = user.UserTitle;
-
+            const userTitle = user.UserTitle;
             const ownedProfilePics = user ? user.ownedProfilePics : [];
+            const goldCollected = user ? user.goldCollected : 0;
+            const runsCompleted = user ? user.runsCompleted : 0;
+            const damageDealt = user ? user.totalDamageDealt : 0;
 
             console.log(ownedProfilePics);
 
-            const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
+            const ownedUserTitles = user ? user.titles : [];
+
+            console.log(ownedUserTitles);
             
-            res.render("profile", { userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, userTitles: userTitlesArray, ownedProfilePics: ownedProfilePics});
+            res.render("profile", { goldCollected: goldCollected, runsCompleted: runsCompleted, damageDealt: damageDealt, userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles, from: from });
         } else {
             res.redirect('/login');
         }

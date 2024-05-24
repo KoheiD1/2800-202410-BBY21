@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'basicPixel';
+  src: url('Apple_.ttf') format('truetype');
+}
+
+.basicPixel {
+  font-family: 'basicPixel', sans-serif;
+}

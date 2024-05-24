@@ -1,11 +1,34 @@
 <%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
-<link href="/defaultBG.css" rel="stylesheet" type="text/css">
-  <body class="bg-gray-100">
+  <link href="/defaultBG.css" rel="stylesheet" type="text/css">
+
+  <style>
+    #player-stats, h2 {
+      font-family: 'basicPixel';
+    }
+
+    #player-stats {
+      background-color: #f8f8f8;
+      border-radius: 10px;
+      border-width: 3px;
+      border-color: black;
+      margin: 0 auto;
+      width: 90%;
+    }
+
+    #user-info{
+      padding: 5px;
+    }
+
+
+  </style>
+
+  <body class="bg-gray-10s0">
     <div class="grid">
       <div class="flex justify-between p-2">
 
         <button id="editButton" type="submit"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onclick="editProfile('<%= userBio %>', '<%= userTitle %>')">
+          class="pixel-button py-2 px-4 rounded"
+          onclick="editProfile('<%= userBio %>', '<%= userTitle %>', <%= JSON.stringify(ownedUserTitles) %>)">
           Edit Profile
         </button>
 
@@ -22,54 +45,67 @@
             <!-- Add outline to the profile picture -->
             <img id="profileImg" class="h-28 w-28 rounded-full bg-white mx-auto border-2 border-gray-500 cursor-pointer"
               src="<%= userProfilePic %>" alt="Profile Picture" onclick="openModal()">
-            <h1 class="text-2xl font-bold mt-4">
+            
+            <h1 class=" basicPixel text-2xl font-bold mt-4">
               <%= userName %>
             </h1>
-            <p id="userTitle" class="text-sm text-gray-600 mt-2">
+          <div id="user-info">
+            <p id="userTitle" class="text-sm text-black mt-2">
               <%= userTitle %>
             </p>
-            <p id="userBio" class="text-sm text-gray-600 mt-2">
+            <p id="userBio" class="text-sm text-black mt-2">
               <%= userBio %>
             </p>
+            <p id="userBio" class="basicPixel text-sm text-black mt-2">
+              Email: <%= userEmail %>
+          </p>
+          </div>
           </div>
         </div>
       </div>
       <div class="grid grid-flow-col auto-cols-auto mt-4 mx-5">
-        <div class="flex justify-center">
-          <div>
-            <span class="text-lg text-gray-600">Email:</span>
-            <span class="text-lg text-gray-900">
-              <%= userEmail %>
-            </span>
-          </div>
+        <div class="flex justify-center items-center"> <!-- Added 'items-center' -->
+            
         </div>
-        <div></div>
+    </div>
+
+    <div id="player-stats">
+      <div class="p-4 text-center relative z-10">
+        <h2 class="font-bold"><u>Stats</u></h2>
+          <p id="gold" class="text-sm text-black mt-2">Gold Collected: <%= goldCollected %></p>
+          <p id="runs" class="text-sm text-black mt-2">Runs Completed: <%= runsCompleted %></p>
+          <p id="damage" class="text-sm text-black mt-2">Damage Dealt: <%= damageDealt %></p>
       </div>
+  </div>
+  
+  
+
       <div id="myModal" class="modal fixed inset-0 flex items-center justify-center z-10">
         <div class="overlay fixed inset-0"></div>
         <div class="modal-content bg-white p-8 rounded-lg shadow-lg relative">
-            <h2 class="text-2xl font-bold mb-4">Choose Profile Picture</h2>
-            <div class="grid grid-cols-3 gap-4 justify-center">
-                <% ownedProfilePics.forEach(profilePicture => { %>
-                    <img class="h-16 w-16 rounded-full cursor-pointer" src="/<%= profilePicture %>" alt="<%= profilePicture %>"
-                        onclick="selectProfilePicture('<%= profilePicture %>')">
-                <% }) %>  
-            </div>
-            <span class="close-modal absolute top-0 right-0 m-4 text-gray-600 cursor-pointer" onclick="closeModal()">&times;</span>
+          <h3 class="text-2xl font-bold mb-4">Choose Profile Picture</h2>
+          <div class="grid grid-cols-3 gap-4 justify-center">
+            <% ownedProfilePics.forEach(profilePicture=> { %>
+              <img class="h-16 w-16 rounded-full cursor-pointer" src="/<%= profilePicture %>"
+                alt="<%= profilePicture %>" onclick="selectProfilePicture('<%= profilePicture %>')">
+              <% }) %>
+          </div>
+          <span class="close-modal absolute top-0 right-0 m-4 text-gray-600 cursor-pointer"
+            onclick="closeModal()">&times;</span>
         </div>
-    </div>
-    
-      
+      </div>
+
+
 
       <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
         <div class="px-4 py-2 flex items-center">
           <form action="/friends" method="get">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">
+            <button type="submit" class="pixel-button py-2 px-4 rounded mr-4">
               Friends List
             </button>
           </form>
           <form action="/findFriends" method="get">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            <button type="submit" class="pixel-button py-2 px-4 rounded">
               Add Friends
             </button>
           </form>
@@ -77,15 +113,20 @@
 
       </div>
 
-      <div class="mt-40 place-self-center">
-        <% if (gameStarted) { %>
+      <div class="mt-20 place-self-center">
+        <% if (from == 'map') { %>
           <form action="/map">
-            <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+            <input type="submit" class="pixel-button py-2 px-4 rounded mr-4"
               value="Back to Map">
           </form>
+          <% } else if (from == 'prem') { %>
+            <form action="/premiumShop">
+              <input type="submit" class="pixel-button py-2 px-4 rounded mr-4"
+                value="Back to Premium Shop">
+            </form>
           <% } else { %>
             <form action="/">
-              <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4"
+              <input type="submit" class="pixel-button-long py-2 px-4 rounded mr-4"
                 value="Back to Main Menu">
             </form>
             <% } %>
@@ -95,6 +136,10 @@
       // Define the userId variable and assign it the value passed from the server
       const userId = '<%= userId %>';
 
+      const ownedUserTitles = '<%= ownedUserTitles %>';
+
+      console.log("Owned user titles: ", ownedUserTitles);
+
       function openModal() {
         document.getElementById('myModal').style.display = "flex";
       }
@@ -103,15 +148,17 @@
         document.getElementById('myModal').style.display = "none";
       }
 
-      function editProfile(currentBio, userTitle) {
+      function editProfile(currentBio, userTitle, ownedUserTitles) {
 
         console.log("Current bio: ", currentBio);
 
+
+
         document.getElementById('userTitle').innerHTML = `
         <select id="titleDropdown" class="border border-gray-300 rounded p-2">
-          <% userTitles.forEach(titleObj => { %>
-                <option value="<%= titleObj.title %>" <%= titleObj.title === userTitle ? 'selected' : '' %>><%= titleObj.title %></option>
-                <% }) %>
+        ${ownedUserTitles.map(title => `
+          <option value="${title}" ${title === userTitle ? 'selected' : ''}>${title}</option>
+        `).join('')}
         </select>
           
         `;
@@ -120,7 +167,7 @@
         <textarea id="bioInput" class="border border-gray-300 rounded p-2" placeholder="Enter your bio">${currentBio}</textarea>
         `;
 
-        
+
         document.getElementById('bioInput').value = "<%= userBio %>";
 
         document.getElementById('editButton').innerHTML = `
@@ -131,9 +178,9 @@
 
       function saveProfile() {
         const title = document.getElementById('titleDropdown').value;
-        console.log("Title: ", title);  
+        console.log("Title: ", title);
         const bio = document.getElementById('bioInput').value;
-        
+
 
         fetch('/updateProfile', {
           method: 'POST',
@@ -189,8 +236,8 @@
     </script>
   </body>
   <%- include("templates/footer") %>
-<style>
-.modal {
-    display: none;
-  }
-</style>
+    <style>
+      .modal {
+        display: none;
+      }
+    </style>
