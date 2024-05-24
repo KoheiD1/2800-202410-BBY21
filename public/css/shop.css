@@ -76,11 +76,11 @@ body {
 	display: grid;
 	padding-inline: min(5vw, 1em);
 }
-section {
+/* section {
 	margin: auto;
 	padding-inline: min(5vw, 1em);
 	text-align: center;
-}
+} */
 h1 {
 	font-size: clamp(.625rem, calc(.625rem + 4vw), 2rem);
 }
