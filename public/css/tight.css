@@ -1,3 +1,7 @@
 .tight {
   letter-spacing: -0.45rem;
 }
+
+.tight-sm{
+  letter-spacing: -0.2rem;
+}
