@@ -545,7 +545,7 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty) });
+	res.render("victory",{coinsWon:coinDistribution(difficulty), redirect: "/map", page: "map"});
 });
 
 app.get('/levelup', async (req, res) => {
@@ -573,7 +573,7 @@ app.get('/levelup', async (req, res) => {
 		console.error('Error updating user level:', error);
 	}
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty) });
+	res.render("victory", {coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu"});
 });
 
 app.get('/defeat', (req, res) => {
