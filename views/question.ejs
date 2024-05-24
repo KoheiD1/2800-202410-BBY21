@@ -60,8 +60,14 @@
   #feedbackContainer {
     grid-row: 2;
     height: 100%;
-    background-color: white;
+    background-color: #5d375a;
+    background-image: url('/dirt.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
     width: 100%;
+  }
+  #feedbackContainer p {
+    color: white;
   }
 
   #battleContainer {
@@ -228,10 +234,10 @@
       <div id="feedbackContainer" class="hidden mx-auto p-8 rounded">
         <p id="modalFeedback" class="mt-4"></p>
         <div class="flex justify-center" id="modalButtons">
-          <button id="learn-more" class="pixel-border text-black font-bold px-2 z-10" onclick="openModal()">
+          <button id="learn-more" class="pixel-button-long text-black font-bold px-2 z-10" onclick="openModal()">
             Learn More
           </button>
-          <button id="closeFeedback" class="pixel-border text-black font-bold px-2 z-10"
+          <button id="closeFeedback" class="pixel-button-long text-black font-bold px-2 z-10"
             onclick="closeFeedbackFunction()">Next Question</button>
         </div>
       </div>
@@ -321,6 +327,8 @@
         h2Element.style.fontSize = "2rem";
         h2Element.style.textAlign = "center";
         h2Element.style.marginTop = "1rem";
+        h2Element.style.color = "white";
+        h2Element.style.fontFamily = "basicPixel";
 
         modalFeedback.appendChild(h2Element);
 

@@ -60,8 +60,8 @@
     <img src="./easterEgg/gatchaBall.svg" alt="Gacha Ball" class="gatchaBall animate__animated animate__shakeX"
       id="gatchaBall">
     <div class="flex justify-start">
-      <button id="mm-btn" type="submit" onclick="window.location.href='/'"
-        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">Back to Main Menu</button>
+      <button id="mm-btn" type="submit" onclick="window.location.href='/'" class="pixel-button py-2 px-4 mr-4">Back to
+        Main Menu</button>
     </div>
   </div>
 
@@ -175,12 +175,49 @@
     .shadow {
       text-shadow: 2px 2px #ffffff, 4px 4px #000000;
     }
+
+    .titleReward {
+      text-shadow: 2px 2px 4px white, -2px -2px white;
+      border-radius: 50%;
+    }
+
+    .glow {
+      box-shadow:
+        inset 0px 0px 0px 30px rgb(255, 255, 255, 0.55),
+        /* inner white */
+        inset 0px 0px 0px 60px rgb(255, 0, 255, 0.55),
+        /* middle magenta */
+        inset 0px 0px 0px 90px rgb(0, 255, 255, 0.55),
+        /* outer cyan */
+        0px 0px 60px 15px #fff,
+        /* inner white */
+        0x 0px 100px 30px #f0f,
+        /* middle magenta */
+        0px 0px 140px 45px #0ff;
+      /* outer cyan */
+      animation: glow 1.5s linear infinite alternate;
+    }
+
+    @keyframes glow {
+      to {
+        box-shadow:
+          inset 0px 0px 0px 30px rgb(255, 255, 255, 0.8),
+          /* inner white */
+          inset 0px 0px 0px 60px rgb(255, 0, 255, 0.8),
+          /* middle magenta */
+          inset 0px 0px 0px 90px rgb(0, 255, 255, 0.8),
+          /* outer cyan */
+          0px 0px 60px 30px #fff,
+          /* inner white */
+          0px 0px 100px 60px #f0f,
+          /* middle magenta */
+          0px 0px 140px 90px #0ff;
+        /* outer cyan */
+      }
+    }
   </style>
 
   <script>
-
-    console.log("<%= rewardType %>");
-    console.log("<%= playerReward %>");
 
     document.addEventListener('DOMContentLoaded', (event) => {
       const rewardType = '<%= rewardType %>';
@@ -188,11 +225,11 @@
 
       if (rewardType == 0) {
         document.getElementById('player-reward').innerHTML = `
-          <img src="${playerReward}" alt="Player Reward"> 
+          <img src="${playerReward}" alt="Player Reward" class="glow"> 
         `;
       } else {
         document.getElementById('player-reward').innerHTML = `
-          <p>${playerReward}</p>
+          <p class="titleReward text-5xl text-bold glow">${playerReward}</p>
         `;
       }
     });

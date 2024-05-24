@@ -33,7 +33,7 @@
         </button>
 
         <form action="/logout" method="get">
-          <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+          <button type="submit" class="pixel-button-red hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
             Logout
           </button>
         </form>
@@ -171,7 +171,7 @@
         document.getElementById('bioInput').value = "<%= userBio %>";
 
         document.getElementById('editButton').innerHTML = `
-        <button onclick="saveProfile()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded">Save</button>
+        <button onclick="saveProfile()" >Save</button>
         `;
 
       }
@@ -199,7 +199,7 @@
             document.getElementById('userTitle').innerHTML = title;
             document.getElementById('userBio').innerHTML = bio;
             document.getElementById('editButton').innerHTML = `
-              <button id="editButton" type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded" onclick="editProfile('${bio}, ${title}')">
+              <button id="editButton" type="submit" onclick="editProfile('${bio}, ${title}')">
                 Edit Profile
               </button>
               `;
