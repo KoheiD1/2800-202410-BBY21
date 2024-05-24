@@ -37,7 +37,8 @@
   background-size: 100% 100%; /* Stretch the background image to cover the entire button */
   background-repeat: no-repeat; /* Prevent the image from repeating */
   text-align: center; /* Center the text */
-  color: black; /* Text color */
+  text: bold;
+  color: white; /* Text color */
   font-family: 'basicPixel', sans-serif; /* Use the pixel font */
   padding: 10px 10px; /* Padding for the button */
   border: none; /* Remove default border */
