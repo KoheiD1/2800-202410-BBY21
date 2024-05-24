@@ -215,45 +215,36 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/startGame', async (req, res) => {
-	// When the player starts the game it creates a new game session
-	req.session.gameSession = await {
-		mapSet: false,
-		playerHealth: 100,
-		maxPlayerHealth: 100,
-		playerLevel: 0,
-		playerDMG: 25,
-		playerInventory: [],
-		playerCoins: 0,
-		gameStarted: true,
-		mapID: null,
-		totalDamage: 0,
-	}
 
-	try {
-		await new Promise((resolve, reject) => {
-			if (!req.session.gameSession.mapSet) {
-				resolve();
-			} else {
-				reject(new Error('Game session map is not set'));
-			}
-		});
+    req.session.gameSession = {
+        mapSet: false,
+        playerHealth: 100,
+        maxPlayerHealth: 100,
+        playerLevel: 0,
+        playerDMG: 25,
+        playerInventory: [],
+        playerCoins: 0,
+        gameStarted: true,
+        mapID: null,
+        totalDamage: 0,
+    };
 
+    try {
+        await new Promise((resolve, reject) => {
+            if (req.session.gameSession) {
+                resolve();
+            } else {
+                reject(new Error('Game session map is not set'));
+            }
+        });
 
-		// Check if the map is set
-		if (!req.session.gameSession.mapSet) {
-			// If not set, redirect to '/map'
-			setTimeout(() => {
-				res.redirect('/map');
-			}, 300);
-		} else {
-			// If set, redirect to '/'
-			res.redirect('/');
-		}
-	} catch (error) {
-		// Handle any errors
-		res.redirect('/');
-	}
+        res.json({ success: true });
+    } catch (error) {
+        console.log('Error starting game:', error);
+        res.redirect('/startGame')
+    }
 });
+
 
 
 app.get('/map', async (req, res) => {
