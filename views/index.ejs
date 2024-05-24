@@ -1,66 +1,55 @@
-<% if (authenticated) { %>
-  <%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
-  <div class="relative flex justify-center h-screen">
-    <div class="z-10">
-      <h1 class="text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16">CODECRYPT</h1>
-      <!-- Add the route to the game Start Button is here -->
-      
-      <% if (gameStarted){ %>
-        <button onclick="window.location.href='/map'"
-        class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Continue</button>
-      <% } else { %>
-        <button onclick="window.location.href='/startGame'"
-        class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Start
-        Game</button>
-      <% } %>
+<%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
+<link href="/defaultBG.css" rel="stylesheet" type="text/css">
+<body>
+  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+      <div class="flex items-center justify-center">
+        <h1 class="text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl text-black title-font mt-16">CODECRYPT</h1>
+      </div>
+      <h2 class="mt-6 pb-10 text-center text-3xl font-extrabold text-gray-900">Lets level up together!</h2>
+
+      <form class="bg-white p-8 shadow-md rounded-lg" action="/loggingin" method="POST">
+        <input type="hidden" name="remember" value="true">
+        <h1 class="text-2xl font-semibold mb-4">Login</h1>
+        <div class="rounded-md shadow-sm">
+          <div>
+            <label for="email-address" class="sr-only">Email address</label>
+            <input id="email-address" name="email" type="email" autocomplete="email" required
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="Email address">
+          </div>
+          <div>
+            <label for="password" class="sr-only">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="Password">
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-between">
+
+          <div class="text-sm">
+            <a href="/forgotPassword" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
+        </div>
+
+        <div>
+          <button type="submit"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            Log in
+          </button>
+        </div>
+      </form>
     </div>
   </div>
-  <% } else { %>
-    <%- include("templates/header", { overflowVariable: 'overflow-hidden' }) %>
-      <div class="relative flex justify-center h-screen overflow-hidden">
-        <div class="z-10">
-          <h1 class="text-3xl md:text-5xl lg:text-7xl xl:text-9xl text-black title-font mt-16">CODECRYPT</h1>
-          <button onclick="window.location.href='/login'"
-            class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Login</button>
-          <button onclick="window.location.href='/createUser'"
-            class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Signup</button>
-        </div>
-      </div>
-  <% } %>
-  <div class="fixed inset-0 bg-no-repeat bg-right z-0">
-    <img src="/mainIMG.png" alt="Image" class="w-full h-full object-cover">
-  </div>
-  <style>
-    @font-face {
-    font-family: 'titlefont';
-    src: url('startgame.ttf') format('truetype');
-    }
-  
-    .title-font {
-    font-family: 'titlefont', sans-serif;
-    }
-  
-    @keyframes bounce-slow {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-  
-    .animate-bounce-slow {
-      animation: bounce-slow 3s infinite;
-    }
-  
-    @font-face {
-    font-family: 'startfont';
-    src: url('titlefont.ttf') format('truetype');
-    }
-  
-    .start-font {
-    font-family: 'startfont', sans-serif;
-    }
-  </style>
-  <%- include("templates/footer") %>
-  
+</body>
+<%- include("templates/footer") %>
+<style>
+  @font-face {
+  font-family: 'titlefont';
+  src: url('startgame.ttf') format('truetype');
+  }
+
+  .title-font {
+  font-family: 'titlefont', sans-serif;
+  }
+</style>
