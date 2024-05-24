@@ -46,13 +46,16 @@ module.exports = function (itemCollection, userCollection) {
                     do {
                         rand = parseInt(Math.random() * 7);
                     } while (items[rand] == null);
+                    // console.log(items[rand].type + "," + items[rand][items[rand].effects[0]]);
                     req.session.shop.itemsPicked.push({
                         type: items[rand].type,
                         description: items[rand].description,
                         effects: items[rand].effects,
                         price: items[rand].price
                     });
+                    console.log(parseInt("10") + 1);
                     for (let j = 0; j < items[rand].effects.length; j++) {
+                        console.log(items[rand].type + "," + items[rand].effects[j] + "," + items[rand][items[rand].effects[j]].length);
                         if (items[rand][items[rand].effects[j]].length > 1) {
                             let x = parseInt(Math.random() * (parseInt(items[rand][items[rand].effects[j]][1]) - parseInt(items[rand][items[rand].effects[j]][0]))) + parseInt(items[rand][items[rand].effects[j]][0]);
                             req.session.shop.itemsPicked[i][items[rand].effects[j]] = x;
