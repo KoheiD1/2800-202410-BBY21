@@ -26,11 +26,11 @@ module.exports = function (itemCollection, userCollection) {
         if (req.session.authenticated) {
             var email = req.session.email;
             var username = req.session.username;
-            resetCoinsReceived();
-            coinDistribution(req, "hexagon");
-            console.log(req.session.gameSession.playerCoins);
-            res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-            res.locals.gameStarted = req.session.gameSession ? req.session.gameSession.gameStarted : false;
+            // resetCoinsReceived();
+            // coinDistribution(req, "hexagon");
+            // console.log(req.session.gameSession.playerCoins);
+            // res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
+            // res.locals.gameStarted = req.session.gameSession ? req.session.gameSession.gameStarted : false;
             const result = await userCollection.find({ email: email, username: username }).project({ slotsCurrency: 1 }).toArray();
             if (result.length > 0) {
                 res.locals.slotsCurrency = result[0].slotsCurrency;
