@@ -90,7 +90,7 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, regenCalculator, enemeyScaling, additionalHealth, additionalDMG} = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, regenCalculator, enemeyScaling, additionalHealth, additionalDMG } = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -242,7 +242,9 @@ app.get('/startGame', async (req, res) => {
 		// Check if the map is set
 		if (!req.session.gameSession.mapSet) {
 			// If not set, redirect to '/map'
-			res.redirect('/map');
+			setTimeout(() => {
+				res.redirect('/map');
+			}, 300);
 		} else {
 			// If set, redirect to '/'
 			res.redirect('/');
@@ -311,7 +313,7 @@ app.get('/question', async (req, res) => {
 		const battleSession = req.session.battleSession;
 		const gameSession = req.session.gameSession;
 		battleSession.answeredQuestions = battleSession.answeredQuestions || [];
-		
+
 		res.render('question', { enemyHealth: battleSession.enemyHealth, playerHealth: gameSession.playerHealth, maxEnemyHealth: battleSession.maxEnemyHealth, enemyImage: battleSession.enemyImage, enemyName: battleSession.enemyName, userName: req.session.username, difficulty: battleSession.difficulty, maxPlayerHealth: gameSession.maxPlayerHealth, totalDamage: gameSession.totalDamage, playerDMG: gameSession.playerDMG });
 	} catch (error) {
 		res.redirect('/map');
@@ -387,7 +389,7 @@ app.post('/feedback', async (req, res) => {
 		}
 
 
-		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty, maxPlayerHealth: req.session.gameSession.maxPlayerHealth});
+		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty, maxPlayerHealth: req.session.gameSession.maxPlayerHealth });
 
 	} catch (error) {
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -660,22 +662,25 @@ app.get('/capsuleopening', async (req, res) => {
 });
 
 app.get('/premiumShop', async (req, res) => {
-	var pfpArray = await pfpCollection.find({rarity: {$ne : "triangle"}}).toArray();
- 	var user = await userCollection.findOne({email: req.session.email});
+	var pfpArray = await pfpCollection.find({ rarity: { $ne: "triangle" } }).toArray();
+	var user = await userCollection.findOne({ email: req.session.email });
 	var newArray = [];
+
 	for (let i = 0; i < pfpArray.length; i++) {
-		if (!user.profile_pic.includes(pfpArray[i].src)) {
-		newArray.push(pfpArray[i]);
-	}}
+		if (!user.ownedProfilePics.includes(pfpArray[i].src)) {
+			newArray.push(pfpArray[i]);
+		}
+	}
 
-	var titlesArray = await userTitlesCollection.find({rarity: {$ne : "triangle"}}).toArray();
+	var titlesArray = await userTitlesCollection.find({ rarity: { $ne: "triangle" } }).toArray();
 	var newTitles = [];
+	
 	for (let i = 0; i < titlesArray.length; i++) {
-		if (!user.titles.includes(titlesArray[i].src)) {
+		if (!user.titles.includes(titlesArray[i].title)) {
 			newTitles.push(titlesArray[i]);
-	}}
-
-	res.render("premiumShop", { pfpList: newArray , titleList: newTitles});
+		}
+	}
+	res.render("premiumShop", { pfpList: newArray, titleList: newTitles });
 });
 
 app.post('/buyPFP', async (req, res) => {
@@ -685,10 +690,27 @@ app.post('/buyPFP', async (req, res) => {
 	const user = await userCollection.findOne({ email: userEmail });
 
 	if (user.slotsCurrency < price) {
-		res.json({ error: "Not enough currency" });
+		res.status(400).json({ error: "Not enough currency" });
 		return;
 	} else {
 		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: pfp } });
+		res.redirect('/profile');
+	}
+}
+);
+
+app.post('/buyTitle', async (req, res) => {
+	const title = req.body.title;
+	
+	const price = parseInt(req.body.price);
+	const userEmail = req.session.email;
+	const user = await userCollection.findOne({ email: userEmail });
+
+	if (user.slotsCurrency < price) {
+		res.status(400).json({ error: "Not enough currency" });
+		return;
+	} else {
+		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: title} });
 		res.redirect('/profile');
 	}
 }
