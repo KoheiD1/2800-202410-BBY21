@@ -25,7 +25,7 @@ function damageCalculator(choice, req) {
     }
 
     if (choice) {
-        enemyHealth -= playerDamage * (1 + Math.round((speedStatus/100 * answerStreak)));
+        enemyHealth -= Math.round(playerDamage * (1 + (speedStatus/100 * answerStreak)));
         req.session.battleSession.enemyHealth = enemyHealth;
     } else {
         playerHealth -= enemyDamage;

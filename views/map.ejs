@@ -8,6 +8,9 @@
     background-attachment: fixed;
     min-height: 100vh;
   }
+  .redShadow {
+    text-shadow: -2px 0px  #000000, 0px -2px  #000000;
+  }
 </style>
 
 <div class="grid grid-rows-9 p-2 max-w-md mx-auto">
@@ -24,7 +27,7 @@
 <div class="grid max-w-md mx-auto py-4">
   <form action="/mapreset" method="post" class="mx-auto"> 
     <input type="hidden" name="id" value="<%- id %>">
-    <button type="submit"  class="pixel-button-red py-2 px-4 mx-5" alt="home" value="Reset and Start from the Beginning">Reset and Start from the Beginning</button>
+    <button type="submit"  class="pixel-button-red py-2 px-4 mx-5 redShadow" alt="home" value="Reset and Start from the Beginning">Reset and <br> Start Over</button>
   </form>
 </div>
 <%- include("templates/footer") %>
