@@ -4,3 +4,8 @@ body {
   background-position: center;
   min-height: 100vh;
 }
+
+.form-bg {
+  background-image: url('/dirt.svg');
+  background-size: cover;
+}
