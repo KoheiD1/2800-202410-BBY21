@@ -48,10 +48,10 @@
     <ul>
       <% for (let i=0; i < titleList.length; i++) { %>
         <li
-          class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-5 cursor-pointer"
+          class="pl-7 pr-6 flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-5 cursor-pointer"
           onclick="buyTitle('<%- titleList[i].title %>', <%= titleList[i].price %>)"
           style="background-image: url('/username-box.png');">
-          <span class="text-gray-900 mx-auto text-3xl">
+          <span class="text-gray-900 mx-auto text-2xl">
             <%- titleList[i].title %>
           </span>
           <div class="flex items-center">
