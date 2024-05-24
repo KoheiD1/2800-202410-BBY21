@@ -1,13 +1,14 @@
 <%- include("templates/headerloggedin", {overflowVariable: "overflow-hidden bg-[url('/wood.png')]" }) %>
-    <dialog class="w-80 text-center text-xl bg-[url('/chalkboard.png')] bg-center bg-[width: auto, height: auto]">
+    <dialog class="w-80 text-center text-xl pixel-border">
         <div class="w-64 m-auto">
             <h1 id="itemName" class="font-bold text-2xl"></h1>
             <div id="desc"></div>
-            <div id="effects" class="p-1 border-black border-2 w-fit m-auto"></div>
+            <div id="effects" class=" w-fit m-auto font-bold pixelFont scale-75"></div>
             <div id="price"></div>
-            <div id="button" class="flex justify-center align-bottom space-x-32">
-                <button id="close" onclick="close()">Close</button>
-                <button id="purchase">Purchase</button>
+            <div id="button" class="">
+                <button id="close" class="pixel-button scale-75" onclick="close()">Close</button>
+                <br>        
+                <button id="purchase" class="pixel-button scale-75">Purchase</button>
             </div>
         </div>
     </dialog>
@@ -23,19 +24,30 @@
     </div>
     <div class="flex justify-center items-center z-20">
         <a href="/refresh"
-            class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Refresh</a>
+            class="pixel-button">Refresh</a>
     </div>
     <br>
     <div class="flex justify-center items-center z-20">
         <a href="/inventory"
-            class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Inventory</a>
+            class="pixel-button">Inventory</a>
     </div>
     <br>
     <div class="flex justify-center items-center z-20">
         <a href="/map"
-            class="text-2xl px-6 py-3 text-blue-100 no-underline bg-blue-500 rounded hover:bg-blue-600 hover:underline hover:text-blue-200 z-0">Back
+            class="pixel-button">Back
             to map</a>
     </div>
+
+    <style>
+          @font-face {
+    font-family: 'basicPixel';
+    src: url('Apple_.ttf') format('truetype');
+  }
+
+  .pixelFont {
+    font-family: 'basicPixel', sans-serif;
+  }
+    </style>
     <script>
 
         function showDialog(string) {
