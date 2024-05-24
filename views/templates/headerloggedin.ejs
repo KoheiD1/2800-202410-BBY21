@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <link href="/spin.css" rel="stylesheet" type="text/css">
+    <link href="/tight.css" rel="stylesheet" type="text/css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,12 +18,12 @@
           <% if (gameStarted) { %>
             <div class="flex items-center mr-4">
                 <img src="coin.png" class="w-10 h-10">
-              <span class="basicPixel ml-1 text-gray-900 text-3xl"><%= playerCoins %></span>
+              <span class="basicPixel ml-1 text-gray-900 text-3xl tight"><%= playerCoins %></span>
             </div>
           <% } %>
             <div class="flex items-center mr-4">
                 <img src="diamond.png" class="w-10 h-10" onclick="clicker()">
-                <span class="basicPixel ml-1 text-gray-900 text-3xl"><%= slotsCurrency %></span>
+                <span class="basicPixel ml-1 text-gray-900 text-3xl tight"><%= slotsCurrency %></span>
             </div>
         <img class="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer" src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=home'">
         </div>

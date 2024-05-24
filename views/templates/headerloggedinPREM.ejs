@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<link href="/spin.css" rel="stylesheet" type="text/css">
+<link href="/tight.css" rel="stylesheet" type="text/css">
 <link href="/hoverglow.css" rel="stylesheet" type="text/css">
 <head>
     <meta charset="UTF-8">
@@ -14,20 +14,32 @@
     <link rel="stylesheet" type="text/css" href="/header.css">
 </head>
 <body class="<%= overflowVariable %>">
-  <div class="header pt-4 pb-4 pr-1 relative z-10 sticky top-0 bg-opacity-40 px-4 pr-5">
-    <div class="pl-2">
-        <div class="flex justify-start">
-          <form action="/">
-            <input type="submit" class="pixel-button-long py-2 px-4 rounded mr-4"
-              value="Back to Main Menu">
-          </form>
-        </div>
+  <div class="header pt-5 px-3 relative mb-10" style="height: 7vh;">
+    <div class="flex justify-between items-center h-full">
+      <div>
+        <form action="/">
+          <input type="submit" class="text-black basicPixel pixel-button" value="Back to Main Menu">
+        </form>
       </div>
-    <div class="flex justify-end items-center -mt-10">
-        <div class="flex items-center mr-4">
-          <img src="diamond.png" class="w-10 h-10" onclick="clicker()">
-          <span class="ml-1 text-gray-900 text-3xl basicPixel"><%= slotsCurrency %></span>
+      <div class="flex items-center">
+        <% if (gameStarted) { %>
+        <div class="flex items-center mr-6">
+          <img src="coin.png" class="w-10 h-10">
+          <span class=" text-3xl basicPixel tight">
+            <%= playerCoins %>
+          </span>
         </div>
-        <img class="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer" src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=prem'">
+        <% } %>
+        <div class="flex items-center mr-6">
+          <img src="diamond.png" class="w-10 h-10" onclick="clicker()">
+          <span class="text-3xl basicPixel tight">
+            <%= slotsCurrency %>
+          </span>
+        </div>
+        <img
+          class="ml-4 h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer"
+          src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=prem'">
+      </div>
     </div>
-</div>
+  </div>
+</body>
