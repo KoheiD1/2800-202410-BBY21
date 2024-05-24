@@ -321,7 +321,7 @@ app.get('/question', async (req, res) => {
 app.get('/getNewQuestion', async (req, res) => {
 
 	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
-	
+
 	await levelOneCollection.deleteOne({ _id: question._id });
 
 
@@ -355,7 +355,7 @@ app.post('/feedback', async (req, res) => {
 		const { optionIndex, questionID } = req.body;
 		const parsedQuestionID = new ObjectId(questionID);
 		const question = await questionCollection.findOne({ _id: parsedQuestionID });
-		
+
 		if (!question) {
 			return res.status(404).json({ error: 'No question found' });
 		}
@@ -618,52 +618,81 @@ app.get('/easteregganimation', async (req, res) => {
 	}
 });
 
-
-
 app.get('/capsuleopening', async (req, res) => {
-    const userEmail = req.session.email;
+	const userEmail = req.session.email;
 
-    const user = await userCollection.findOne({ email: userEmail });
-    const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
-    const allTitles = userTitlesArray.map(item => item.title);
-    const ownedTitles = user ? user.titles : [];
+	const user = await userCollection.findOne({ email: userEmail });
+	const userTitlesArray = await userTitlesCollection.find({}, { projection: { title: 1, _id: 0 } }).toArray();
+	const allTitles = userTitlesArray.map(item => item.title);
+	const ownedTitles = user ? user.titles : [];
 
-    const unownedTitles = allTitles.filter(title => !ownedTitles.includes(title));
+	const unownedTitles = allTitles.filter(title => !ownedTitles.includes(title));
 
-    const result = await userCollection.findOne({ email: userEmail });
-    const ownedProfilePics = result ? result.ownedProfilePics : [];
-    const unOwnedProfilePics = [];
+	const result = await userCollection.findOne({ email: userEmail });
+	const ownedProfilePics = result ? result.ownedProfilePics : [];
+	const unOwnedProfilePics = [];
 	const allProfilePic = await pfpCollection.find().toArray();
 
-    for (let i = 0; i < allProfilePic.length; i++) {
-        const fileName = allProfilePic[i].src;
-        if (!ownedProfilePics.includes(fileName)) {
-            unOwnedProfilePics.push(fileName);
-        }
-    }
+	for (let i = 0; i < allProfilePic.length; i++) {
+		const fileName = allProfilePic[i].src;
+		const fileRarity = allProfilePic[i].rarity;
+		if (!ownedProfilePics.includes(fileName) && fileRarity == "triangle") {
+			unOwnedProfilePics.push(fileName);
+		}
+	}
 
-    const rewardType = Math.floor(Math.random() * 2);
-    let playerReward;
+	const rewardType = Math.floor(Math.random() * 2);
+	let playerReward;
 
-    if (rewardType === 0 && unOwnedProfilePics.length > 0) {
-        const rand = Math.floor(Math.random() * unOwnedProfilePics.length);
-        playerReward = unOwnedProfilePics[rand];
-        await userCollection.updateOne({ email: userEmail }, { $push: { ownedProfilePics: playerReward } });
-    } else if (unownedTitles.length > 0) {
-        const rand = Math.floor(Math.random() * unownedTitles.length);
-        playerReward = unownedTitles[rand];
-        await userCollection.updateOne({ email: userEmail }, { $push: { titles: playerReward } });
-    } else {
-        playerReward = "No rewards available";
-    }
-
-    console.log("Player reward", playerReward);
-
-    res.render('capsuleopening', { playerReward, rewardType });
+	if (rewardType === 0 && unOwnedProfilePics.length > 0) {
+		const rand = Math.floor(Math.random() * unOwnedProfilePics.length);
+		playerReward = unOwnedProfilePics[rand];
+		await userCollection.updateOne({ email: userEmail }, { $push: { ownedProfilePics: playerReward } });
+	} else if (unownedTitles.length > 0) {
+		const rand = Math.floor(Math.random() * unownedTitles.length);
+		playerReward = unownedTitles[rand];
+		await userCollection.updateOne({ email: userEmail }, { $push: { titles: playerReward } });
+	} else {
+		playerReward = "No rewards available";
+	}
+	console.log("Player reward", playerReward);
+	res.render('capsuleopening', { playerReward, rewardType });
 });
 
+app.get('/premiumShop', async (req, res) => {
+	var pfpArray = await pfpCollection.find({rarity: {$ne : "triangle"}}).toArray();
+ 	var user = await userCollection.findOne({email: req.session.email});
+	var newArray = [];
+	for (let i = 0; i < pfpArray.length; i++) {
+		if (!user.profile_pic.includes(pfpArray[i].src)) {
+		newArray.push(pfpArray[i]);
+	}}
 
+	var titlesArray = await userTitlesCollection.find({rarity: {$ne : "triangle"}}).toArray();
+	var newTitles = [];
+	for (let i = 0; i < titlesArray.length; i++) {
+		if (!user.titles.includes(titlesArray[i].src)) {
+			newTitles.push(titlesArray[i]);
+	}}
 
+	res.render("premiumShop", { pfpList: newArray , titleList: newTitles});
+});
+
+app.post('/buyPFP', async (req, res) => {
+	const pfp = req.body.pfp;
+	const price = parseInt(req.body.price);
+	const userEmail = req.session.email;
+	const user = await userCollection.findOne({ email: userEmail });
+
+	if (user.slotsCurrency < price) {
+		res.json({ error: "Not enough currency" });
+		return;
+	} else {
+		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: pfp } });
+		res.redirect('/profile');
+	}
+}
+);
 
 app.get("*", (req, res) => {
 	res.status(404);
