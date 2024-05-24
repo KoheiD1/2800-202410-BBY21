@@ -1,0 +1,37 @@
+.pixel-button-long {
+  background-image: url('button_box_long.svg');
+  background-size: 100% 100%; /* Stretch the background image to cover the entire button */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  text-align: center; /* Center the text */
+  color: black; /* Text color */
+  font-family: 'basicPixel', sans-serif; /* Use the pixel font */
+  padding: 10px 20px; /* Padding for the button */
+  border: none; /* Remove default border */
+  cursor: pointer; /* Change cursor to pointer */
+  white-space: normal; /* Allow text to wrap */
+  display: inline-block; /* Allow the button to expand with content */
+  word-wrap: break-word; /* Break long words */
+}
+
+.pixel-button-long:hover {
+  opacity: 0.8; /* Slightly dim the button on hover */
+}
+
+.pixel-button {
+  background-image: url('button_box.svg');
+  background-size: 100% 100%; /* Stretch the background image to cover the entire button */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  text-align: center; /* Center the text */
+  color: black; /* Text color */
+  font-family: 'basicPixel', sans-serif; /* Use the pixel font */
+  padding: 10px 20px; /* Padding for the button */
+  border: none; /* Remove default border */
+  cursor: pointer; /* Change cursor to pointer */
+  white-space: normal; /* Allow text to wrap */
+  display: inline-block; /* Allow the button to expand with content */
+  word-wrap: break-word; /* Break long words */
+}
+
+.pixel-button:hover {
+  opacity: 0.8; /* Slightly dim the button on hover */
+}

@@ -67,8 +67,8 @@
   #battleContainer {
     position: relative;
     background-image: url('/battle_bg.svg');
-    background-size: 175%;
-    background-position: bottom right;
+    background-size: 150%;
+    background-position: bottom;
     background-repeat: no-repeat;
     margin: 0;
     padding: 0;
@@ -79,7 +79,17 @@
     height: 57vh;
     width: 100%;
   }
-
+  #questionContainer {
+    grid-row: 2;
+    height: 100%;
+    background-color: #5d375a;
+    background-image: url('/dirt.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    grid-row: 2;
+    overflow: auto;
+  }
+  
   .header {
     grid-column: 1 / span 3;
     display: flex;
@@ -91,7 +101,6 @@
     background: linear-gradient(to bottom, rgba(116, 166, 214, 0.4), rgba(116, 166, 214, 0.3), rgba(116, 166, 214, 0.2), rgba(116, 166, 214, 0)); /* White background with gradient fade out */
     backdrop-filter: blur(5px); /* Optional: Adds a blur effect to the background */
   }
-
 
   .healthbar-wrapper-left {
     display: flex;
@@ -161,6 +170,13 @@
   }
   #heroInfo, #enemyInfo {
     white-space: nowrap; /* Prevent text wrapping */
+  }
+
+  body {
+    background-image: url('/dirt.svg'); /* Ensure the path is correct */
+    background-size: cover; /* Ensure the image covers the entire div */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-color: #5d375a;
   }
 
 </style>
@@ -267,21 +283,21 @@
 
           questionContainer = document.getElementById('questionContainer');
           questionContainer.innerHTML = `
-      <div class="max-w-lg mx-auto p-8 rounded bg-white">
-        <h1 class="text-lg font-bold mb-4">${questionTextFormatted}</h1>
-        <ul class="bg-white">
-          ${question.question.options.map((option, index) => `
-            <li class="mb-2">
-              <form id="${index}" class="feedback-form" data-question-id="${question._id}">
-                <input type="hidden" name="option" value="${index}">
-                <button id="opt-btn" class="w-full pixel-border text-black font-bold rounded">${option.text}</button>
-              </form>
-              <div id="feedbackResult${index}"></div>
-            </li>
-          `).join('')}
-        </ul>
-      </div>
-    `;
+            <div class="max-w-lg mx-auto p-8 rounded  ">
+              <h1 class="text-lg font-bold mb-4 text-white">${questionTextFormatted}</h1>
+              <ul>
+                ${question.question.options.map((option, index) => `
+                  <li class="mb-2">
+                    <form id="${index}" class="feedback-form" data-question-id="${question._id}">
+                      <input type="hidden" name="option" value="${index}">
+                      <button id="opt-btn" class="w-full pixel-button-long text-black">${option.text}</button>
+                    </form>
+                    <div id="feedbackResult${index}"></div>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          `;
     
           attachFeedbackListeners(question.question);
         } catch (error) {
