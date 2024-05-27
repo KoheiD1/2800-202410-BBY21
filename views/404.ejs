@@ -1,0 +1,61 @@
+<% if (authenticated) { %>
+  <%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
+<% } else { %>
+  <%- include("templates/header", { overflowVariable: 'overflow-hidden' }) %>
+<% } %>
+
+<div class="relative flex justify-center h-screen">
+  <div class="z-10">
+    <h1 class="text-center text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16 cursor-default">CODECRYPT</h1>
+    <h2 class="text-center text-xl md:text-2xl lg:text-4xl xl:text-6xl text-black start-font mt-16 cursor-default">404 Page Not Found</h2>
+    <p class="text-center text-lg md:text-xl lg:text-2xl xl:text-3xl text-black start-font mt-16 cursor-default">Sorry, the page you are looking for does not exist.</p>
+    <button onclick="window.location.href='/'"
+      class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Back
+      to Main Menu</button>
+  </div>
+</div>
+
+<div class="fixed inset-0 bg-no-repeat bg-right z-0">
+  <img src="/indexBG.png" alt="Image" class="w-full h-full object-cover">
+</div>
+<%- include("templates/footer") %>
+
+<style>
+  @font-face {
+    font-family: 'titlefont';
+    src: url('startgame.ttf') format('truetype');
+  }
+
+  .title-font {
+    font-family: 'titlefont', sans-serif;
+    text-shadow: -6px -6px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4)
+  }
+
+  @keyframes bounce-slow {
+
+    0%,
+    100% {
+      transform: translateY(0);
+      text-shadow: -4px -4px white, 2px 2px hsla(0, 0%, 0%, 0.4);
+    }
+
+    50% {
+      transform: translateY(-10px);
+      text-shadow: -4px -4px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4);
+    }
+  }
+
+  .animate-bounce-slow:hover {
+    animation: bounce-slow 3s infinite;
+  }
+
+  @font-face {
+    font-family: 'startfont';
+    src: url('titlefont.ttf') format('truetype');
+  }
+
+  .start-font {
+    font-family: 'startfont', sans-serif;
+    text-shadow: -4px -4px white, 2px 2px hsla(0, 0%, 0%, 0.4);
+  }
+</style>

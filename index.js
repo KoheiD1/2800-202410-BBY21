@@ -745,7 +745,7 @@ app.post('/buyTitle', async (req, res) => {
 
 app.get("*", (req, res) => {
 	res.status(404);
-	res.send("Page not found - 404");
+	res.render('404');
 });
 
 app.listen(port, () => {
