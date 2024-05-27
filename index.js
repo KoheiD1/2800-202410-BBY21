@@ -91,8 +91,8 @@ const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
 //Passing in the functions from game.js which are used for the game logic
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, regenCalculator, enemeyScaling, 
-		additionalHealth, additionalDMG } = require('./game');
+const { damageCalculator, coinDistribution, chooseEnemy, regenCalculator, enemeyScaling,
+	additionalHealth, additionalDMG } = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -218,33 +218,33 @@ app.get('/logout', (req, res) => {
 
 app.get('/startGame', async (req, res) => {
 
-    req.session.gameSession = {
-        mapSet: false,
-        playerHealth: 100,
-        maxPlayerHealth: 100,
-        playerLevel: 0,
-        playerDMG: 25,
-        playerInventory: [],
-        playerCoins: 0,
-        gameStarted: true,
-        mapID: null,
-        totalDamage: 0,
-    };
+	req.session.gameSession = {
+		mapSet: false,
+		playerHealth: 100,
+		maxPlayerHealth: 100,
+		playerLevel: 0,
+		playerDMG: 25,
+		playerInventory: [],
+		playerCoins: 0,
+		gameStarted: true,
+		mapID: null,
+		totalDamage: 0,
+	};
 
-    try {
-        await new Promise((resolve, reject) => {
-            if (req.session.gameSession) {
-                resolve();
-            } else {
-                reject(new Error('Game session map is not set'));
-            }
-        });
+	try {
+		await new Promise((resolve, reject) => {
+			if (req.session.gameSession) {
+				resolve();
+			} else {
+				reject(new Error('Game session map is not set'));
+			}
+		});
 
-        res.json({ success: true });
-    } catch (error) {
-        console.log('Error starting game:', error);
-        res.redirect('/startGame')
-    }
+		res.json({ success: true });
+	} catch (error) {
+		console.log('Error starting game:', error);
+		res.redirect('/startGame')
+	}
 });
 
 
@@ -274,9 +274,6 @@ app.post('/startencounter', async (req, res) => {
 	await levelOneCollection.deleteMany({});
 	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 25 } }]).toArray();
 	await levelOneCollection.insertMany(encounterQuestions);
-
-	// lets player receive coins after beating the current stage.
-	resetCoinsReceived()
 
 	/*
 	Checks if the player has any additional health or damage from items in their inventory.
@@ -309,7 +306,8 @@ app.post('/startencounter', async (req, res) => {
 		answerStreak: 0,
 		index: req.body.index,
 		row: req.body.row,
-		difficulty: req.body.difficulty
+		difficulty: req.body.difficulty,
+		coinsReceived: false
 	};
 	res.redirect('/question');
 });
@@ -392,7 +390,7 @@ app.post('/feedback', async (req, res) => {
 		 Calculate the damage dealt to the enemy or the player 
 		 based on the player's answer
 		*/
-		 damageCalculator(result, req);
+		damageCalculator(result, req);
 
 		if (result) {
 			req.session.battleSession.answerStreak++;
@@ -494,7 +492,10 @@ app.get('/victory', async (req, res) => {
 	});
 
 	//Update player coins based on difficulty of the current level.
-	req.session.gameSession.playerCoins += coinDistribution(difficulty);
+	if (req.session.battleSession.coinsReceived == false) {
+		req.session.gameSession.playerCoins += coinDistribution(difficulty);
+		req.session.battleSession.coinsReceived = true;
+	}
 
 	/*
 	Update the player coins in the response locals so 
@@ -562,22 +563,26 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
 
-	res.render("victory",{coinsWon:coinDistribution(difficulty), redirect: "/map", page: "map"});
+	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/map", page: "map" });
 });
 
 app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
 	req.session.gameSession.playerLevel++;
 
-	//Update player coins based on difficulty of the current level.
-	req.session.gameSession.playerCoins += coinDistribution(difficulty);
-	
+	//if the player has not received coins yet, give them coins
+	if (req.session.battleSession.coinsReceived == false) {
+		req.session.gameSession.playerCoins += coinDistribution(difficulty);
+		userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
+		req.session.battleSession.coinsReceived = true;
+	}
+
 	/*
 	Update the player coins in the response locals so 
 	the right amount is displayed in headers.
 	*/
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-	userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
+	
 
 	req.session.gameSession.mapSet = false;
 
@@ -596,7 +601,7 @@ app.get('/levelup', async (req, res) => {
 		console.error('Error updating user level:', error);
 	}
 
-	res.render("victory", {coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu"});
+	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu" });
 });
 
 app.get('/defeat', (req, res) => {
@@ -701,7 +706,7 @@ app.get('/premiumShop', async (req, res) => {
 
 	var titlesArray = await userTitlesCollection.find({ rarity: { $ne: "triangle" } }).toArray();
 	var newTitles = [];
-	
+
 	for (let i = 0; i < titlesArray.length; i++) {
 		if (!user.titles.includes(titlesArray[i].title)) {
 			newTitles.push(titlesArray[i]);
@@ -728,7 +733,7 @@ app.post('/buyPFP', async (req, res) => {
 
 app.post('/buyTitle', async (req, res) => {
 	const title = req.body.title;
-	
+
 	const price = parseInt(req.body.price);
 	const userEmail = req.session.email;
 	const user = await userCollection.findOne({ email: userEmail });
@@ -737,7 +742,7 @@ app.post('/buyTitle', async (req, res) => {
 		res.status(400).json({ error: "Not enough currency" });
 		return;
 	} else {
-		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: title} });
+		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: title } });
 		res.redirect('/profile');
 	}
 }
