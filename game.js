@@ -3,7 +3,7 @@ This file contains the game logic. It contains the functions that are used to ca
 and other stats of the player and the enemy. It also contains the functions that are used to purchase items
 and choose enemies for the player to fight.
 
-Main Functions: damageCalculator, coinDistribution, purchaseItem, chooseEnemy, resetCoinsReceived, regenCalculator, enemeyScaling,
+Main Functions: damageCalculator, coinDistribution, purchaseItem, chooseEnemy, regenCalculator, enemeyScaling,
 additionalHealth, additionalDMG
 
 Helper Functions: purchasable, itemDamage, calculateHealth
@@ -137,8 +137,7 @@ function regenCalculator(req) {
 Description: This function distributes coins to the player based
 on the difficulty of the enemy.
 */
-var coinsReceived = false;
-function coinDistribution(difficulty) {
+function coinDistribution(difficulty, coinsReceived, req) {
     if (!coinsReceived) {
         switch (difficulty) {
             case "triangle":
@@ -150,18 +149,15 @@ function coinDistribution(difficulty) {
             case "hexagon":
                 return 50;
         }
+         /*
+        Set coinsReceived to true so that the player does
+        not receive coins multiple times
+        */
+        req.session.battleSession.coinsReceived = true;
     }
-    /*
-    Set coinsReceived to true so that the player does
-    not receive coins multiple times
-    */
+   
 
-    coinsReceived = true;
-}
-
-//Description: This function resets the coinsReceived variable to false
-function resetCoinsReceived() {
-    coinsReceived = false;
+   
 }
 
 /*
@@ -293,7 +289,6 @@ module.exports = {
     coinDistribution,
     purchaseItem,
     chooseEnemy,
-    resetCoinsReceived,
     regenCalculator,
     enemeyScaling,
     additionalHealth,
