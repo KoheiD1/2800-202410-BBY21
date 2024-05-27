@@ -270,18 +270,31 @@ app.get('/map', async (req, res) => {
 });
 
 app.post('/startencounter', async (req, res) => {
-	// When the player starts the game it creates a new game session
+	// When the player starts the game it creates a new game session.
 	await levelOneCollection.deleteMany({});
 	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 25 } }]).toArray();
 	await levelOneCollection.insertMany(encounterQuestions);
+
+	// lets player receive coins after beating the current stage.
 	resetCoinsReceived()
+
+	/*
+	Checks if the player has any additional health or damage from items in their inventory.
+	If they do, it adds the additional health and damage to the player's health and damage.
+	*/
 	additionalHealth(req);
 	additionalDMG(req);
+
 	let enemies = await enemiesCollection.find().toArray();
+
+	// Chooses an enemy based on the difficulty of the level
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
+
 	res.locals.gameStarted = true;
 
+	// Regenerates the player's health based on the items in the player's inventory
 	req.session.gameSession.playerHealth = req.session.gameSession.playerHealth + regenCalculator(req);
+
 	if (req.session.gameSession.playerHealth > (req.session.gameSession.maxPlayerHealth)) {
 		req.session.gameSession.playerHealth = (req.session.gameSession.maxPlayerHealth);
 	}
@@ -480,12 +493,12 @@ app.get('/victory', async (req, res) => {
 		await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
 	});
 
-	//Update player coins based on difficulty of the current level
+	//Update player coins based on difficulty of the current level.
 	req.session.gameSession.playerCoins += coinDistribution(difficulty);
-	
+
 	/*
 	Update the player coins in the response locals so 
-	the right amount is displayed on headers
+	the right amount is displayed on headers.
 	*/
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 
@@ -556,7 +569,13 @@ app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
 	req.session.gameSession.playerLevel++;
 
+	//Update player coins based on difficulty of the current level.
 	req.session.gameSession.playerCoins += coinDistribution(difficulty);
+	
+	/*
+	Update the player coins in the response locals so 
+	the right amount is displayed in headers.
+	*/
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 	userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
 
