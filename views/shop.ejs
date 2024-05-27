@@ -27,7 +27,7 @@
     <div class="flex justify-center items-center z-20">
         <a href="/refresh" class="flex pixel-button-long w-auto flex-nowrap items-center">Refresh: <div class="flex items-center justify-center"> 
             
-            </div><div class = "pl-2">5</div><img src="coin.png" class="w-10 h-10 pr-2"> </a>
+            </div><img src="coin.png" class="w-10 h-10 pl-2"><div class = "">5</div> </a>
             
     </div>
     <br>
@@ -87,9 +87,9 @@
             purchaseInfo += ',' + item.price;
             console.log(purchaseInfo);
             dialog.querySelector('#purchase').setAttribute('onclick', "window.location.href='/purchase?info=" + purchaseInfo + "'");
-            dialog.querySelector('#purchase').innerHTML = '<div class="flex items-center justify-center"></div>Purchase: <div class = "pl-2">' + 
+            dialog.querySelector('#purchase').innerHTML = '<div class="flex items-center justify-center"></div>Purchase: <img src="coin.png" class="w-10 h-10 pl-2"><div class = "pr-5">' + 
                 item.price + 
-                '</div><img src="coin.png" class="w-10 h-10 pr-4">';
+                '</div>';
             dialog.showModal();
         }
 
