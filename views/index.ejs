@@ -1,128 +1,118 @@
 <% if (authenticated) { %>
-  <%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
-    <div class="relative flex justify-center h-screen">
+<%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
+<div class="relative flex justify-center h-screen">
+  <div class="z-10">
+    <h1 class="text-center text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16 cursor-default"> CODECRYPT</h1>
+    <% if (gameStarted) { %>
+      <button onclick="window.location.href='/map'"
+        class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Continue</button>
+      <button onclick="showModal()"
+        class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Start
+        Game</button>
+      <button onclick="window.location.href='/premiumShop'"
+        class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Premium
+        Shop</button>
+      <% } else if (!gameStarted) { %>
+        <button onclick="confirmStartGame()"
+          class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Start
+          Game</button>
+        <button onclick="window.location.href='/premiumShop'"
+          class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Premium
+          Shop</button>
+        <% } %>
+  </div>
+</div>
+<% } else { %>
+  <%- include("templates/header", { overflowVariable: 'overflow-hidden' }) %>
+    <div class="relative flex justify-center h-screen overflow-hidden">
       <div class="z-10">
-        <h1
-          class="text-center text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16 cursor-default">
-          CODECRYPT</h1>
-
-        <% if (gameStarted) { %>
-          <button onclick="window.location.href='/map'"
-            class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Continue</button>
-          <button onclick="showModal()"
-            class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Start
-            Game</button>
-          <button onclick="window.location.href='/premiumShop'"
-            class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Premium
-            Shop</button>
-          <% } else if (!gameStarted) { %>
-            <button onclick="confirmStartGame()"
-              class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Start
-              Game</button>
-            <button onclick="window.location.href='/premiumShop'"
-              class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Premium
-              Shop</button>
-            <% } %>
+        <h1 class="text-center text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16">CODECRYPT
+        </h1>
+        <button onclick="window.location.href='/login'"
+          class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Login</button>
+        <button onclick="window.location.href='/createUser'"
+          class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Signup</button>
       </div>
     </div>
-    <% } else { %>
-      <%- include("templates/header", { overflowVariable: 'overflow-hidden' }) %>
-        <div class="relative flex justify-center h-screen overflow-hidden">
-          <div class="z-10">
-            <h1 class="text-center text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16">CODECRYPT
-            </h1>
-            <button onclick="window.location.href='/login'"
-              class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Login</button>
-            <button onclick="window.location.href='/createUser'"
-              class="mt-16 px-6 py-2 bg-transparent text-black rounded-lg block mx-auto start-font text-2xl md:text-3xl lg:text-4xl xl:text-5xl animate-bounce-slow hover:text-red-600">Signup</button>
-          </div>
-        </div>
-        <% } %>
+    <% } %>
+<div class="fixed inset-0 bg-no-repeat bg-right z-0">
+  <img src="/mainIMG.png" alt="Image" class="w-full h-full object-cover">
+</div>
 
-          <div class="fixed inset-0 bg-no-repeat bg-right z-0">
-            <img src="/mainIMG.png" alt="Image" class="w-full h-full object-cover">
-          </div>
+<div id="warningModal"
+  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+  <div class="bg-white rounded-lg p-8 text-center">
+    <h2 class="text-xl basicPixel mb-4">This will overwrite current game data</h2>
+    <div class="flex justify-center space-x-4">
+      <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No way</button>
+      <button onclick="confirmStartGame()"
+        class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Sure</button>
+    </div>
+  </div>
+</div>
+<script>
+  function showModal() {
+    document.getElementById('warningModal').classList.remove('hidden');
+  }
 
-          <div id="warningModal"
-            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
-            <div class="bg-white rounded-lg p-8 text-center">
-              <h2 class="text-xl basicPixel mb-4">This will overwrite current game data</h2>
-              <div class="flex justify-center space-x-4">
-                <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No way</button>
-                <button onclick="confirmStartGame()"
-                  class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Sure</button>
-              </div>
-            </div>
-          </div>
-          <script>
-            function showModal() {
-              document.getElementById('warningModal').classList.remove('hidden');
-            }
+  function hideModal() {
+    document.getElementById('warningModal').classList.add('hidden');
+  }
 
-            function hideModal() {
-              document.getElementById('warningModal').classList.add('hidden');
-            }
+  function confirmStartGame() {
+    fetch('/startGame', { method: 'GET' })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = '/map';
+        } else {
+          alert('Failed to start the game. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('Error starting game:', error);
+        window.location.href = '/';
+      });
+  }
+</script>
+<%- include("templates/footer") %>
 
-            function confirmStartGame() {
-              fetch('/startGame', { method: 'GET' })
-                .then(response => response.json())
-                .then(data => {
-                  if (data.success) {
-                    window.location.href = '/map';
-                  } else {
-                    alert('Failed to start the game. Please try again.');
-                  }
-                })
-                .catch(error => {
-                  console.error('Error starting game:', error);
-                  window.location.href = '/';
-                });
-            }
+<style>
+  @font-face {
+    font-family: 'titlefont';
+    src: url('startgame.ttf') format('truetype');
+  }
 
-          </script>
+  .title-font {
+    font-family: 'titlefont', sans-serif;
+    text-shadow: -6px -6px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4)
+  }
 
-          <%- include("templates/footer") %>
+  @keyframes bounce-slow {
 
-            <style>
-              @font-face {
-                font-family: 'titlefont';
-                src: url('startgame.ttf') format('truetype');
-              }
+    0%,
+    100% {
+      transform: translateY(0);
+      text-shadow: -4px -4px white, 2px 2px hsla(0, 0%, 0%, 0.4);
+    }
 
-              .title-font {
-                font-family: 'titlefont', sans-serif;
-                text-shadow: -6px -6px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4)
-              }
+    50% {
+      transform: translateY(-10px);
+      text-shadow: -4px -4px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4);
+    }
+  }
 
-              @keyframes bounce-slow {
+  .animate-bounce-slow:hover {
+    animation: bounce-slow 3s infinite;
+  }
 
-                0%,
-                100% {
-                  transform: translateY(0);
-                  text-shadow: -4px -4px white, 2px 2px hsla(0, 0%, 0%, 0.4);
-                }
+  @font-face {
+    font-family: 'startfont';
+    src: url('titlefont.ttf') format('truetype');
+  }
 
-                50% {
-                  transform: translateY(-10px);
-                  text-shadow: -4px -4px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4);
-                }
-              }
-
-              .animate-bounce-slow:hover {
-                animation: bounce-slow 3s infinite;
-              }
-
-              @font-face {
-                font-family: 'startfont';
-                src: url('titlefont.ttf') format('truetype');
-              }
-
-              .start-font {
-                font-family: 'startfont', sans-serif;
-                text-shadow: -4px -4px white, 2px 2px hsla(0, 0%, 0%, 0.4);
-              }
-            </style>
-
-            </body>
-
-            </html>
+  .start-font {
+    font-family: 'startfont', sans-serif;
+    text-shadow: -4px -4px white, 2px 2px hsla(0, 0%, 0%, 0.4);
+  }
+</style>
