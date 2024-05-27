@@ -47,7 +47,7 @@ body {
         <h2 class="text-xl basicPixel mb-4">Are you sure you want to buy <%- pfpList[i].name %>?</h2>
         <div class="flex justify-center space-x-4">
           <button onclick="hideModal(this)" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No</button>
-          <button onclick="buyPFP('<%= pfpList[i].src %>', <%= pfpList[i].price %>)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
+          <button onclick="buyPFP('<%= pfpList[i].src %>', <%= pfpList[i].price %>, this)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
         </div>
       </div>
     </div>
@@ -75,15 +75,32 @@ body {
         <h2 class="text-xl basicPixel mb-4">Are you sure you want to buy <%- titleList[i].title %>?</h2>
         <div class="flex justify-center space-x-4">
           <button onclick="hideModal(this)" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No</button>
-          <button onclick="buyTitle('<%- titleList[i].title %>', <%= titleList[i].price %>)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
+          <button onclick="buyTitle('<%- titleList[i].title %>', <%= titleList[i].price %>, this)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
         </div>
       </div>
     </div>
   <% } %>
 </ul>
 </div>
+<div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+  <div class="bg-white rounded-lg p-8 text-center">
+    <h2 class="text-xl basicPixel mb-4"></h2>
+    <div class="flex justify-center space-x-4">
+      <button onclick="hideModalText()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Okay</button>
+    </div>
+  </div>
+</div>
 <%- include("templates/footer") %>
 <script>
+function showModalText(text) {
+  document.getElementById('warningModal').classList.remove('hidden');
+  document.querySelector('#warningModal h2').innerText = text;
+}
+
+function hideModalText() {
+  document.getElementById('warningModal').classList.add('hidden');
+}
+
 function showModal(obj) {
   obj.nextElementSibling.classList.remove('hidden');
 }
@@ -91,7 +108,7 @@ function showModal(obj) {
 function hideModal(obj) {
   obj.parentElement.parentElement.parentElement.classList.add('hidden');
 }
-function buyPFP(item, price) {
+function buyPFP(item, price, obj) {
   fetch('/buyPFP', {
     method: 'POST',
     headers: {
@@ -105,12 +122,13 @@ function buyPFP(item, price) {
     if (response.status === 200) {
       window.location.href = '/profile?from=prem';
     } else {
-      alert('You do not have enough coins to buy this title!');
+      showModalText('You do not have enough coins to buy this profile picture!');
     }
-  })
+  });
+  obj.parentElement.parentElement.parentElement.classList.add('hidden');
 }
 
-function buyTitle(item, price) {
+function buyTitle(item, price, obj) {
   fetch('/buyTitle', {
     method: 'POST',
     headers: {
@@ -124,8 +142,9 @@ function buyTitle(item, price) {
     if (response.status === 200) {
       window.location.href = '/profile?from=prem';
     } else {
-      alert('You do not have enough coins to buy this title!');
+      showModalText('You do not have enough coins to buy this title!');
     }
-  })
+  });
+  obj.parentElement.parentElement.parentElement.classList.add('hidden');
 }
 </script>
