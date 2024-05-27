@@ -90,7 +90,9 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, regenCalculator, enemeyScaling, additionalHealth, additionalDMG } = require('./game');
+//Passing in the functions from game.js which are used for the game logic
+const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, regenCalculator, enemeyScaling, 
+		additionalHealth, additionalDMG } = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -373,7 +375,11 @@ app.post('/feedback', async (req, res) => {
 			req.session.battleSession.answerStreak = 0;
 		}
 
-		damageCalculator(result, req);
+		/*
+		 Calculate the damage dealt to the enemy or the player 
+		 based on the player's answer
+		*/
+		 damageCalculator(result, req);
 
 		if (result) {
 			req.session.battleSession.answerStreak++;
@@ -474,8 +480,13 @@ app.get('/victory', async (req, res) => {
 		await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
 	});
 
-	//distribute coins depending on difficulty
+	//Update player coins based on difficulty of the current level
 	req.session.gameSession.playerCoins += coinDistribution(difficulty);
+	
+	/*
+	Update the player coins in the response locals so 
+	the right amount is displayed on headers
+	*/
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
