@@ -122,7 +122,7 @@ app.get('/createUser', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-	res.render("login");
+	res.render("login" , { success: true });
 });
 
 const emailRoute = require('./emailRoute');
@@ -140,52 +140,57 @@ app.get('/resetPassword', (req, res) => {
 });
 
 app.post('/submitUser', async (req, res) => {
-	var username = req.body.username;
-	var email = req.body.email;
-	var password = req.body.password;
+	
+	const {schema} = require('./joi-schema');
+    const { username, email, password } = req.body;
 
-	const schema = Joi.object(
-		{
-			username: Joi.string().alphanum().max(20).required(),
-			email: Joi.string().email().max(320).required(),
-			password: Joi.string().max(20).required()
-		});
+    const result = schema.validate(req.body, { abortEarly: false });
+    if (result.error) {
+        console.log("Error");
+        res.render("createUser", { errors: result.error.details });
+        return;
+    }
 
-	const validationResult = schema.validate({ username, email, password });
-	if (validationResult.error != null) {
-		res.redirect("/createUser");
-		return;
-	}
+    try {
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-	var hashedPassword = await bcrypt.hash(password, saltRounds);
+        await userCollection.insertOne({
+            username,
+            profile_pic: "profile-logo.png",
+            friendsList: [],
+            itemList: [],
+            email,
+            password: hashedPassword,
+            slotsCurrency: 0,
+            ownedProfilePics: [],
+            titles: [" "]
+        });
 
-	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword, slotsCurrency: 0, ownedProfilePics: ["pfp-1.png", "pfp-2.png", "pfp-3.png"], titles: ["New around the block"], bio: "Click Edit Profile to change your profile", UserTitle : "New around the block"});
+        req.session.authenticated = true;
+        req.session.username = username;
+        req.session.email = email;
+        req.session.cookie.maxAge = expireTime;
 
-	req.session.authenticated = true;
-	req.session.username = username;
-	req.session.email = email;
-	req.session.cookie.maxAge = expireTime;
-
-	res.redirect('profile');
+        console.log("Success");
+        res.redirect(`/profile?username=${username}`);
+    } catch (error) {
+        console.error("Database insertion error:", error);
+        res.status(500).send("Internal server error");
+    }
 });
 
 app.post('/loggingin', async (req, res) => {
-	var email = req.body.email;
-	var password = req.body.password;
 
-	const schema = Joi.string().max(320).required();
-	const validationResult = schema.validate(email);
-	if (validationResult.error != null) {
-		res.redirect("/login");
-		return;
-	}
 
+	const { email, password } = req.body;
+	
 	const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, _id: 1, profile_pic: 1 }).toArray();
 
 	if (result.length != 1) {
-		res.redirect("/login");
+		res.render("login", { success: false });
 		return;
 	}
+
 	if (await bcrypt.compare(password, result[0].password)) {
 		req.session.authenticated = true;
 		req.session.email = email;
@@ -197,7 +202,7 @@ app.post('/loggingin', async (req, res) => {
 		return;
 	}
 	else {
-		res.redirect("/login");
+		res.render("login", { success: false });
 		return;
 	}
 });
