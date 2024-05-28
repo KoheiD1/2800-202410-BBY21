@@ -718,38 +718,32 @@ app.get('/premiumShop', async (req, res) => {
 	res.render("premiumShop", { pfpList: newArray, titleList: newTitles });
 });
 
-app.post('/buyPFP', async (req, res) => {
-	const pfp = req.body.pfp;
-	const price = parseInt(req.body.price);
-	const userEmail = req.session.email;
-	const user = await userCollection.findOne({ email: userEmail });
+app.post('/buyItem', async (req, res) => {
+  const item = req.body.item;
+  const price = parseInt(req.body.price);
+  const userEmail = req.session.email;
+  const user = await userCollection.findOne({ email: userEmail });
 
-	if (user.slotsCurrency < price) {
-		res.status(400).json({ error: "Not enough currency" });
-		return;
-	} else {
-		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: pfp } });
-		res.redirect('/profile');
-	}
-}
-);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
 
-app.post('/buyTitle', async (req, res) => {
-	const title = req.body.title;
+  if (user.slotsCurrency < price) {
+    return res.status(400).json({ error: "Not enough currency" });
+  }
 
-	const price = parseInt(req.body.price);
-	const userEmail = req.session.email;
-	const user = await userCollection.findOne({ email: userEmail });
-
-	if (user.slotsCurrency < price) {
-		res.status(400).json({ error: "Not enough currency" });
-		return;
-	} else {
-		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: title } });
-		res.redirect('/profile');
-	}
-}
-);
+  try {
+    if (item.type === 'pfp') {
+      await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: item.src } });
+    } else if (item.type === 'title') {
+      await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: item.title } });
+    }
+    res.redirect('/profile');
+  } catch (error) {
+    console.error("An error occurred:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 app.get("*", (req, res) => {
 	res.status(404);
