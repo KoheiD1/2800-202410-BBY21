@@ -8,7 +8,7 @@
 
 .help-button {
   position: absolute;
-  text-shadow: 2px 2px 5px white, -2px 2px 5px white, 2px -2px 5px white, -2px -2px 5px white;
+  left: 0;
   margin-left: 5px;
   font-size: 2.5em;
   color: #000;

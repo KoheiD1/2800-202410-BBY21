@@ -16,6 +16,9 @@
 <body class="<%= overflowVariable %>">
     <div class="header sticky pt-4 pb-4 pr-2.5 relative z-10 bg-transparent" style="height: 7vh;">
         <div class="flex justify-end items-center h-full">
+            <div class="help-button" onclick="showModal()">
+                <img id="image" src="i_orange.svg" class="w-10 h-10 mt-2" onclick="toggleImageColor()" onmouseover="hoveredImage()" onmouseleave="revertImage()">
+              </div>
           <% if (gameStarted) { %>
             <div class="flex items-center mr-4">
                 <img src="coin.png" class="w-10 h-10">
@@ -30,13 +33,14 @@
         </div>
     </div>
     <script>
-        var clicked = 0;
+        var clicks = 0;
         
         function clicker() {
-            clicked++;
+            clicks++;
             if (clicked == 7) {
                 window.location.href = "/gatchaPage";
             }
         }
         
     </script>
+    <%- include("informationIcon") %>

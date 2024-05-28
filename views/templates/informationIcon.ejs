@@ -1,4 +1,14 @@
 <script>
+     function showModal() {
+      document.getElementById('warningModal').classList.remove('hidden');
+    }
+
+    function hideModal() {
+      document.getElementById('warningModal').classList.add('hidden');
+      document.getElementById("image").src = "i_orange.svg";
+      clicked = false;
+    }
+
     let clicked = false;
 
     function toggleImageColor() {
@@ -9,7 +19,6 @@
             document.getElementById("image").src = "i_orange.svg";
         }
     }
-    
     function revertImage() {
         if (!clicked) {
             document.getElementById("image").src = "i_orange.svg";
