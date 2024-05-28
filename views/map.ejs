@@ -1,33 +1,71 @@
 <%- include("templates/headerloggedinMAP", { overflowVariable: '' }) %>
-<link href="/hoverglow.css" rel="stylesheet" type="text/css">
-<style>
-  body {
-    background-image: url('/indexBG.png');
-    background-size: cover;
-    background-position: top;
-    background-attachment: fixed;
-    min-height: 100vh;
-  }
-  .redShadow {
-    text-shadow: -2px 0px  #000000, 0px -2px  #000000;
-  }
-</style>
+  <link href="/hoverglow.css" rel="stylesheet" type="text/css">
+  <style>
+    body {
+      background-image: url('/indexBG.png');
+      background-size: cover;
+      background-position: top;
+      background-attachment: fixed;
+      min-height: 100vh;
 
-<div class="grid grid-rows-9 p-2 max-w-md mx-auto">
-  <%- include("templates/mapTemplates/row", {arr: path.row4, active: path.r4active, row: 4}) %>
-  <%- include("templates/mapTemplates/connections", {rowConnect: path.r3connect}) %>
-  <%- include("templates/mapTemplates/row", {arr: path.row3, active: path.r3active, row: 3}) %>
-  <%- include("templates/mapTemplates/connections", {rowConnect: path.r2connect}) %>
-  <%- include("templates/mapTemplates/row", {arr: path.row2, active: path.r2active, row: 2}) %>
-  <%- include("templates/mapTemplates/connections", {rowConnect: path.r1connect}) %>
-  <%- include("templates/mapTemplates/row", {arr: path.row1, active: path.r1active, row: 1}) %>
-  <%- include("templates/mapTemplates/connections", {rowConnect: path.r0connect}) %>
-  <%- include("templates/mapTemplates/row", {arr: path.row0, active: path.r0active, row: 0}) %>
-</div>
-<div class="grid max-w-md mx-auto py-4">
-  <form action="/mapreset" method="post" class="mx-auto"> 
-    <input type="hidden" name="id" value="<%- id %>">
-    <button type="submit"  class="pixel-button-red py-2 px-4 mx-5 redShadow" alt="home" value="Reset and Start from the Beginning">Reset and <br> Start Over</button>
-  </form>
-</div>
-<%- include("templates/footer") %>
+    }
+
+    .outer-grid {
+      background-image: url('/parchment.svg');
+      background-size: contain;
+      background-repeat: no-repeat;
+      margin-top: 15px;
+    }
+
+    .middle-grid {
+      padding-left: 60px;
+      padding-bottom: 50px;
+    }
+
+
+    .redShadow {
+      text-shadow: -2px 0px #000000, 0px -2px #000000;
+    }
+  </style>
+  <div class="outer-grid max-w-md mx-auto">
+    <div class ="middle-grid pt-3 ml-1">
+      <div class="grid grid-rows-9 p-4 max-w-md mx-auto">
+        <%- include("templates/mapTemplates/row", {arr: path.row4, active: path.r4active, row: 4}) %>
+          <%- include("templates/mapTemplates/connections", {rowConnect: path.r3connect}) %>
+            <%- include("templates/mapTemplates/row", {arr: path.row3, active: path.r3active, row: 3}) %>
+              <%- include("templates/mapTemplates/connections", {rowConnect: path.r2connect}) %>
+                <%- include("templates/mapTemplates/row", {arr: path.row2, active: path.r2active, row: 2}) %>
+                  <%- include("templates/mapTemplates/connections", {rowConnect: path.r1connect}) %>
+                    <%- include("templates/mapTemplates/row", {arr: path.row1, active: path.r1active, row: 1}) %>
+                      <%- include("templates/mapTemplates/connections", {rowConnect: path.r0connect}) %>
+                        <%- include("templates/mapTemplates/row", {arr: path.row0, active: path.r0active, row: 0}) %>
+      </div>
+    </div>
+  </div>
+  <div class="grid max-w-md mx-auto py-4">
+    <form action="/mapreset" method="post" class="mx-auto">
+      <input type="hidden" name="id" value="<%- id %>">
+      <button type="submit" class="pixel-button-red py-2 px-4 mx-5 redShadow" alt="home"
+        value="Reset and Start from the Beginning">Reset and <br> Start Over</button>
+    </form>
+  </div>
+  
+
+  <script>
+    function showModal() {
+      document.getElementById('warningModal').classList.remove('hidden');
+    }
+
+    function hideModal() {
+      document.getElementById('warningModal').classList.add('hidden');
+      document.getElementById("image").src = "i_orange.svg";
+      clicked = false;
+    }
+
+    function confirmStartGame() {
+      window.location.href = '/map';
+    }
+
+  </script>
+  <%- include("templates/informationIcon") %>
+  <%- include("templates/footer") %>

@@ -4,7 +4,9 @@
   "description": "Group BBY21 2800 project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "echo browserify-ing joi.js && browserify joi.js -o public/joi-client.js",
+    "start": "node app.js",
+    "watch": "nodemon --exec \"npm run build && npm start\" --ignore public/"
   },
   "author": "",
   "license": "ISC",

@@ -1,5 +1,5 @@
 <%- include("templates/headerloggedin", {overflowVariable: "overflow-hidden bg-[url('/wood.png')]" }) %>
-    <dialog class="w-80 text-center text-xl pixel-border">
+    <dialog id="item" class="w-80 text-center text-xl pixel-border">
         <div class="w-64 m-auto">
             <h1 id="itemName" class="font-bold text-2xl title-font"></h1>
             <div id="desc" class="pixelFont scale-75"></div>
@@ -8,27 +8,37 @@
             <div id="button" class="flex flex-wrap justify-center">
                 <button id="close" class="pixel-button scale-75" onclick="close()">Close</button>
                 <br>
-                <button id="purchase" class="scale-75 flex pixel-button-long w-auto flex-nowrap items-center m-auto">Purchase</button>
+                <button id="purchase"
+                    class="scale-75 flex pixel-button-long w-auto flex-nowrap items-center m-auto">Purchase</button>
             </div>
         </div>
+    </dialog>
+
+    <dialog id="effect" class="w-72 text-center text-xl pixel-border-brown">
+        <div id="effect_name" class="title-font"></div>
+        <div id="effect_description" class="pixelFont"></div>
+        <div id="close" class="scale-75 pixel-button">Close</div>
     </dialog>
     <div class="">
         <div class="bg-[url('/shelf.png')] bg-no-repeat bg-center bg-contain h-96">
             <div id="items"
-                class="grid grid-cols-1 grid-rows-3 space-y-4 mx-6 pt-6 p-5 py-4 shopItem overflow-hidden grid-rows">
+                class="grid grid-cols-1 grid-rows-3 space-y-5 mx-6 pt-6 p-5 py-4 shopItem overflow-hidden grid-rows">
                 <% for(let i=0; i < items.length; i++) { %>
                     <% if(items[i]==null) {continue;} %>
-                    <% console.log(items[i]) %>
-                        <%- include('templates/shopItem', {item: items[i]}) %>
-                            <% } %>
+                        <% console.log(items[i]) %>
+                            <%- include('templates/shopItem', {item: items[i]}) %>
+                                <% } %>
             </div>
         </div>
     </div>
     <div class="flex justify-center items-center z-20">
-        <a href="/refresh" class="flex pixel-button-long w-auto flex-nowrap items-center">Refresh: <div class="flex items-center justify-center"> 
-            
-            </div><img src="coin.png" class="w-10 h-10 pl-2"><div class = "">5</div> </a>
-            
+        <a href="/refresh" class="flex pixel-button-long w-auto flex-nowrap items-center">Refresh: <div
+                class="flex items-center justify-center">
+
+            </div><img src="coin.png" class="w-10 h-10 pl-2">
+            <div class="">5</div>
+        </a>
+
     </div>
     <br>
     <div class="flex justify-center items-center z-20">
@@ -38,6 +48,14 @@
     <div class="flex justify-center items-center z-20">
         <a href="/map" class="pixel-button-red">Back
             to map</a>
+    </div>
+    <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+        <div class="bg-white rounded-lg p-8 text-center">
+            <h2 class="text-xl basicPixel mb-4">Welcome to the Shop! Boost your strength with computer parts sporting powerful stats to crush your foes and reign supreme!</h2>
+            <div class="flex justify-center space-x-4">
+                <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
+            </div>
+        </div>
     </div>
     <style>
         @font-face {
@@ -59,6 +77,26 @@
         }
     </style>
     <script>
+        function showEffect(effect) {
+            let dialog = document.getElementById("effect");
+            dialog.querySelector("#effect_name").innerHTML = effect.charAt(0).toUpperCase() + effect.slice(1);
+            dialog.querySelector("#close").addEventListener("click", function () {
+                dialog.close();
+            });
+
+            if (effect == "speed") {
+                dialog.querySelector("#effect_description").innerHTML = "Speed scales the damage of your character after every correct answer. Answering incorrectly resets back to base damage.";
+            } else if (effect == "health") {
+                dialog.querySelector("#effect_description").innerHTML = "Health increases the total health of your character.";
+            } else if (effect == "cooling") {
+                dialog.querySelector("#effect_description").innerHTML = "Cooling heals your character at the start of every encounter.";
+            } else if (effect == "damage") {
+                dialog.querySelector("#effect_description").innerHTML = "Damage increases the attack damage of your character.";
+            }
+            dialog.showModal();
+        }
+
+
 
         function showDialog(string) {
             let dialog = document.querySelector('dialog');
@@ -69,7 +107,10 @@
             effects.innerHTML = '';
             for (let i = 0; i < item.effects.length; i++) {
                 let effect = document.createElement('p');
-                effect.innerHTML = item.effects[i] + ': ' + item[item.effects[i]];
+                effect.setAttribute("class", "flex justify-center items-center")
+                effect.innerHTML = '<img src="i.svg" class="inline-block align-top scale-150 px-3">' + item.effects[i] + ': ' + item[item.effects[i]];
+                effect.setAttribute("onclick", "showEffect('" + item.effects[i] + "')");
+                effect.classList.add('cursor-pointer');
                 effects.appendChild(effect);
             }
             // dialog.querySelector('#price').innerHTML = 'Price: ' + item.price;
@@ -87,8 +128,8 @@
             purchaseInfo += ',' + item.price;
             console.log(purchaseInfo);
             dialog.querySelector('#purchase').setAttribute('onclick', "window.location.href='/purchase?info=" + purchaseInfo + "'");
-            dialog.querySelector('#purchase').innerHTML = '<div class="flex items-center justify-center"></div>Purchase: <img src="coin.png" class="w-10 h-10 pl-2"><div class = "pr-5">' + 
-                item.price + 
+            dialog.querySelector('#purchase').innerHTML = '<div class="flex items-center justify-center"></div>Purchase: <img src="coin.png" class="w-10 h-10 pl-2"><div class = "pr-5">' +
+                item.price +
                 '</div>';
             dialog.showModal();
         }
@@ -96,6 +137,18 @@
         function close() {
             let dialog = document.querySelector('dialog');
             dialog.close();
+        }
+
+        function showModal() {
+            document.getElementById('warningModal').classList.remove('hidden');
+        }
+
+        function hideModal() {
+            document.getElementById('warningModal').classList.add('hidden');
+
+            //Code below is used in tandem with the code from informationIcon.ejs
+            document.getElementById("image").src = "i_orange.svg";
+            clicked = false;
         }
     </script>
     <%- include("templates/footer") %>

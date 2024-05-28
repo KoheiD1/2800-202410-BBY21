@@ -124,7 +124,7 @@ module.exports = function (itemCollection, userCollection) {
     });
 
     router.get("/refresh", (req, res) => {
-        if(req.session.gameSession.playerCoins > 5) {
+        if(req.session.gameSession.playerCoins >= 5) {
             req.session.shop = null;
             req.session.gameSession.playerCoins -= 5;
             res.redirect("/shop");

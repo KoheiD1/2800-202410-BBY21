@@ -22,26 +22,40 @@
         <form action="/">
           <input type="submit" class="text-black basicPixel pixel-button" value="Main Menu">
         </form>
+        <div class="help-button" onclick="showModal()">
+          <img id="image" src="i_orange.svg" class="w-10 h-10 mt-2" onmouseover="hoveredImage()" onmouseleave="revertImage()">
+        </div>
       </div>
+
       <div class="flex items-center">
         <% if (gameStarted) { %>
-        <div class="flex items-center mr-6">
-          <img src="coin.png" class="w-10 h-10">
-          <span class=" text-2xl basicPixel tight">
-            <%= playerCoins %>
-          </span>
-        </div>
-        <% } %>
-        <div class="flex items-center mr-6">
-          <img src="diamond.png" class="w-10 h-10" onclick="clicker()">
-          <span class="text-2xl basicPixel tight">
-            <%= slotsCurrency %>
-          </span>
-        </div>
-        <img
-          class="ml-4 h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer"
-          src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=map'">
+          <div class="flex items-center mr-6">
+            <img src="coin.png" class="w-10 h-10">
+            <span class=" text-2xl basicPixel tight">
+              <%= playerCoins %>
+            </span>
+          </div>
+          <% } %>
+            <div class="flex items-center mr-6">
+              <img src="diamond.png" class="w-10 h-10" onclick="clicker()">
+              <span class="text-2xl basicPixel tight">
+                <%= slotsCurrency %>
+              </span>
+            </div>
+            <img
+              class="ml-4 h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer"
+              src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=map'">
       </div>
     </div>
   </div>
-</body>
+  <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+    <div class="bg-white rounded-lg p-8 text-center">
+      <h2 class="text-xl basicPixel mb-4">Welcome to the map, brave adventurer! Chart your path through the crypt,
+        collect precious gems, and discover a treasure chest at the journey's end. Click on the map legend for more
+        information!</h2>
+      <div class="flex justify-center space-x-4">
+        <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
+      </div>
+    </div>
+  </div>
+  <!-- SCRIPTS FOR THIS PAGE ARE IN THE map.ejs -->
