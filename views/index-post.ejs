@@ -1,0 +1,22 @@
+<%- include('templates/header') %>
+    <div class="container mt-5">
+        <div>
+            <% if (typeof errors !== 'undefined') { %>
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                        <% errors.forEach(function(error) { %>
+                            <li><%= error.message %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            <% } %>
+        </div>
+        <div>
+            <% if (typeof success !== 'undefined') { %>
+                <div class="alert alert-success" role="alert">
+                    Yay!
+                </div>
+            <% } %>
+        </div>
+    </div>
+ <%- include('templates/footer') %>
