@@ -247,8 +247,6 @@ app.get('/startGame', async (req, res) => {
 	}
 });
 
-
-
 app.get('/map', async (req, res) => {
 	req.session.shop = null;
 	if (!req.session.gameSession.mapSet) {
