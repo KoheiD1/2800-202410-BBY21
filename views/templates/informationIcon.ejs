@@ -1,0 +1,24 @@
+<script>
+    let clicked = false;
+
+    function toggleImageColor() {
+        clicked = !clicked;
+        if (clicked) {
+            document.getElementById("image").src = "i_red.svg";
+        } else {
+            document.getElementById("image").src = "i_orange.svg";
+        }
+    }
+    
+    function revertImage() {
+        if (!clicked) {
+            document.getElementById("image").src = "i_orange.svg";
+        }
+    }
+
+    function hoveredImage() {
+        if (!clicked) {
+            document.getElementById("image").src = "i_red.svg";
+        }
+    }
+</script>

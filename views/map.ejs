@@ -18,8 +18,8 @@
     }
 
     .middle-grid {
-     padding-left: 60px;
-     padding-bottom: 50px;
+      padding-left: 60px;
+      padding-bottom: 50px;
     }
 
 
@@ -28,7 +28,7 @@
     }
   </style>
   <div class="outer-grid max-w-md mx-auto">
-    <div class ="middle-grid pt-9">
+    <div class="middle-grid pt-9">
       <div class="grid grid-rows-9 p-3 pl-10 max-w-md mx-auto">
         <%- include("templates/mapTemplates/row", {arr: path.row4, active: path.r4active, row: 4}) %>
           <%- include("templates/mapTemplates/connections", {rowConnect: path.r3connect}) %>
@@ -49,24 +49,28 @@
         value="Reset and Start from the Beginning">Reset and <br> Start Over</button>
     </form>
   </div>
-  <div id="warningModal"
-  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
-  <div class="bg-white rounded-lg p-8 text-center">
-    <h2 class="text-xl basicPixel mb-4">Welcome to the map page, brave adventurer! Chart your path through the crypt, 
-      collect precious gems, and discover a treasure chest at the journey's end. Click on the map legend for more information!</h2>
-    <div class="flex justify-center space-x-4">
-      <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
+  <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+    <div class="bg-white rounded-lg p-8 text-center">
+      <h2 class="text-xl basicPixel mb-4">Welcome to the map page, brave adventurer! Chart your path through the crypt,
+        collect precious gems, and discover a treasure chest at the journey's end. Click on the map legend for more
+        information!</h2>
+      <div class="flex justify-center space-x-4">
+        <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
+      </div>
     </div>
   </div>
-</div>
- 
- <script>
+
+  <script>
     function showModal() {
       document.getElementById('warningModal').classList.remove('hidden');
     }
 
     function hideModal() {
       document.getElementById('warningModal').classList.add('hidden');
+
+      //Code below is used in tandem with the code from informationIcon.ejs
+      document.getElementById("image").src = "i_orange.svg";
+      clicked = false;
     }
 
     function confirmStartGame() {
@@ -74,4 +78,5 @@
     }
   </script>
 
+  <%- include("templates/informationIcon") %>
   <%- include("templates/footer") %>
