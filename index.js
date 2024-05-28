@@ -159,7 +159,7 @@ app.post('/submitUser', async (req, res) => {
 
 	var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword, slotsCurrency: 0, ownedProfilePics: [], titles: [] });
+	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword, slotsCurrency: 0, ownedProfilePics: ["pfp-1.png", "pfp-2.png", "pfp-3.png"], titles: ["New around the block"], bio: "Click Edit Profile to change your profile", UserTitle : "New around the block"});
 
 	req.session.authenticated = true;
 	req.session.username = username;
