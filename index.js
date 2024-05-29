@@ -566,12 +566,18 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
 
+	await userCollection.updateOne(
+		{username: req.session.username}, 
+		{$inc: {goldCollected: coinDistribution(difficulty, req)}});
+
+	req.session.battleSession.coinsReceived = false;
+
 	res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/map", page: "map" });
 });
 
 app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
-	req.session.gameSession.playerLevel++;
+	req.session.battleSession.playerLevel++;
 
 	//if the player has not received coins yet, give them coins
 	if (req.session.battleSession.coinsReceived == false) {
@@ -591,14 +597,15 @@ app.get('/levelup', async (req, res) => {
 
 	try {
 		const user = req.session.username;
-
-		const goldCollected = req.session.gameSession.playerCoins;
+		req.session.battleSession.coinsReceived = false;
+		const goldWon = coinDistribution(difficulty, req);
+		req.session.battleSession.coinsReceived = false;
 
 		const totalDamage = req.session.gameSession.totalDamage;
 
 		await userCollection.updateOne(
 			{ username: user },
-			{ $inc: { runsCompleted: 1, goldCollected: goldCollected, totalDamageDealt: totalDamage } }
+			{ $inc: { runsCompleted: 1, goldCollected: goldWon, totalDamageDealt: totalDamage } }
 		);
 	} catch (error) {
 		console.error('Error updating user level:', error);
