@@ -43,6 +43,7 @@ const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
 const userTitlesCollection = database.db(mongodb_database).collection('UserTitles');
 const pfpCollection = database.db(mongodb_database).collection('profile-pics');
+const achievementsCollection = database.db(mongodb_database).collection('achievements');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -163,7 +164,9 @@ app.post('/submitUser', async (req, res) => {
             password: hashedPassword,
             slotsCurrency: 0,
             ownedProfilePics: [],
-            titles: [" "]
+            titles: [],
+						achievements: [],
+						claimedAchievements: []
         });
 
         req.session.authenticated = true;
@@ -330,10 +333,7 @@ app.get('/question', async (req, res) => {
 app.get('/getNewQuestion', async (req, res) => {
 
 	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
-
 	await levelOneCollection.deleteOne({ _id: question._id });
-
-
 	res.json({ question: question });
 
 });
@@ -341,20 +341,13 @@ app.get('/getNewQuestion', async (req, res) => {
 app.post('/updateTotalDamage', async (req, res) => {
 
 	const { playerDMG } = req.body;
-
-	console.log("Player Damage Server side: ", playerDMG)
-
 	if (!req.session.gameSession) {
 		req.session.gameSession = { totalDamage: 0 };
 	}
 	if (typeof req.session.gameSession.totalDamage !== 'number') {
 		req.session.gameSession.totalDamage = 0;
 	}
-
-
 	req.session.gameSession.totalDamage += playerDMG;
-	console.log("Total Damage Server side: ", req.session.gameSession.totalDamage);
-
 	res.json({ totalDamage: req.session.gameSession.totalDamage });
 
 });
@@ -459,8 +452,6 @@ app.post('/preshop', async (req, res) => {
 				if (prevConnections[i][n] == (parseInt(index) + 1)) {
 
 				} else {
-					console.log(prevConnections[i][n]);
-					console.log(parseInt(index) + 1);
 					prevConnections[i][n]--;
 				}
 			}
@@ -471,8 +462,6 @@ app.post('/preshop', async (req, res) => {
 			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
 
 			} else {
-				console.log(prevConnections[lastVisitedIndex][n]);
-				console.log(parseInt(index) + 1);
 				prevConnections[lastVisitedIndex][n]--;
 			}
 		}
@@ -542,10 +531,7 @@ app.get('/victory', async (req, res) => {
 		for (var i = 0; i < prevConnections.length; i++) {
 			for (var n = 0; n < prevConnections[i].length; n++) {
 				if (prevConnections[i][n] == (parseInt(index) + 1)) {
-
 				} else {
-					console.log(prevConnections[i][n]);
-					console.log(parseInt(index) + 1);
 					prevConnections[i][n]--;
 				}
 			}
@@ -556,8 +542,6 @@ app.get('/victory', async (req, res) => {
 			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
 
 			} else {
-				console.log(prevConnections[lastVisitedIndex][n]);
-				console.log(parseInt(index) + 1);
 				prevConnections[lastVisitedIndex][n]--;
 			}
 		}
@@ -572,7 +556,7 @@ app.get('/victory', async (req, res) => {
 
 	//setting the coins received to false so the victory page can display the coins won
 	req.session.battleSession.coinsReceived = false;
-	res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/map", page: "map" });
+	res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/map", page: "map", special: ""});
 });
 
 app.get('/levelup', async (req, res) => {
@@ -611,7 +595,14 @@ app.get('/levelup', async (req, res) => {
 	}
 	//setting the coins received to false so the victory page can display the coins won
 	req.session.battleSession.coinsReceived = false;
-	res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu" });
+	var result = await userCollection.findOne({ email: req.session.email });
+
+	if(result.achievements.includes("First Level Up") == false){
+		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Level Up" } });
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu", special: "firstLevelUp" });
+	} else {
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu", special: "" });
+	}
 });
 
 app.get('/defeat', (req, res) => {
@@ -684,7 +675,6 @@ app.get('/capsuleopening', async (req, res) => {
 	} else {
 		playerReward = "No rewards available";
 	}
-	console.log("Player reward", playerReward);
 	res.render('capsuleopening', { playerReward, rewardType });
 });
 
@@ -735,6 +725,32 @@ app.post('/buyItem', async (req, res) => {
     console.error("An error occurred:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+app.get('/achievements', async (req, res) => {
+	const achievements = await achievementsCollection.find().toArray();
+	const user = await userCollection.findOne({ email: req.session.email });
+	const userAchievements = user ? user.achievements : [];
+	const userClaimedAchievements = user ? user.claimedAchievements : [];
+	var unclaimedAchievements = [];
+	var claimedAchievements = [];
+	for (let i = 0; i < achievements.length; i++) {
+		if (userAchievements.includes(achievements[i].name)) {
+			unclaimedAchievements.push(achievements[i]);
+		} else {
+			claimedAchievements.push(achievements[i]);
+		}
+	}
+	res.render('achievements', { unclaimedAchievements: unclaimedAchievements, claimedAchievements: claimedAchievements });
+});
+
+app.post('/claimAchievement', async (req, res) => {
+	const achievementName = req.body.achievementName;
+	const userEmail = req.session.email;
+	const diamonds = req.body.diamonds;
+
+	await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName }, $inc: { slotsCurrency: diamonds }, $pull: { achievements: achievementName }});
+	res.redirect('/achievements');
 });
 
 app.get("*", (req, res) => {
