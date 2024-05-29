@@ -22,6 +22,11 @@ body {
 }
 </style>
 <h1 class="text-3xl px-4 font-bold mb-7 mx-auto text-center start-font whiteshadow">Achievements</h1>
+<% if (unclaimedAchievements.length == 0 && claimedAchievements.length == 0) { %>
+  <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font whiteshadow">No achievements found. </h2>
+  <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font whiteshadow">Start a game to discover and unlock new achievements</h2>
+<% } %>
+<% if (unclaimedAchievements.length > 0) { %>
 <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font whiteshadow">Unclaimed Rewards</h2>
 <div class="grid p-2 max-w-md mx-auto">
   <ul>
@@ -45,6 +50,8 @@ body {
     <% } %>
   </ul>
 </div>
+<% } %>
+<% if (claimedAchievements.length > 0) { %>
 <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font whiteshadow">Claimed Rewards</h2>
 <div class="grid p-2 max-w-md mx-auto">
   <ul>
@@ -67,7 +74,7 @@ body {
     <% } %>
   </ul>
 </div>
-
+<% } %>
 <%- include("templates/footer") %>
 
 <script>
