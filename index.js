@@ -163,8 +163,10 @@ app.post('/submitUser', async (req, res) => {
             email,
             password: hashedPassword,
             slotsCurrency: 0,
-            ownedProfilePics: [],
-            titles: [],
+            ownedProfilePics: ["pfp-1.png", "pfp-2.png", "pfp-3.png"],
+            titles: ["New around the block"],
+						bio: "Click Edit Profile to change your profile",
+						UserTitle : "New around the block",
 						achievements: [],
 						claimedAchievements: []
         });
@@ -184,11 +186,8 @@ app.post('/submitUser', async (req, res) => {
 
 app.post('/loggingin', async (req, res) => {
 
-
 	const { email, password } = req.body;
-	
 	const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, _id: 1, profile_pic: 1 }).toArray();
-
 	if (result.length != 1) {
 		res.render("login", { success: false });
 		return;
@@ -737,7 +736,7 @@ app.get('/achievements', async (req, res) => {
 	for (let i = 0; i < achievements.length; i++) {
 		if (userAchievements.includes(achievements[i].name)) {
 			unclaimedAchievements.push(achievements[i]);
-		} else {
+		} else if (userClaimedAchievements.includes(achievements[i].name)) {
 			claimedAchievements.push(achievements[i]);
 		}
 	}
