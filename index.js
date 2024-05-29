@@ -736,7 +736,7 @@ app.get('/achievements', async (req, res) => {
 	for (let i = 0; i < achievements.length; i++) {
 		if (userAchievements.includes(achievements[i].name)) {
 			unclaimedAchievements.push(achievements[i]);
-		} else {
+		} else if (userClaimedAchievements.includes(achievements[i].name)) {
 			claimedAchievements.push(achievements[i]);
 		}
 	}
