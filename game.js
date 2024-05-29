@@ -137,7 +137,9 @@ function regenCalculator(req) {
 Description: This function distributes coins to the player based
 on the difficulty of the enemy.
 */
-function coinDistribution(difficulty, coinsReceived, req) {
+function coinDistribution(difficulty, req) {
+    coinsReceived = req.session.battleSession.coinsReceived;
+    
     if (!coinsReceived) {
         switch (difficulty) {
             case "triangle":
