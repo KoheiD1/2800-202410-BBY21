@@ -496,7 +496,7 @@ app.get('/victory', async (req, res) => {
 
 	//Update player coins based on difficulty of the current level.
 	if (req.session.battleSession.coinsReceived == false) {
-		req.session.gameSession.playerCoins += coinDistribution(difficulty);
+		req.session.gameSession.playerCoins += coinDistribution(difficulty, req.session.battleSession.coinsReceived, req);
 		req.session.battleSession.coinsReceived = true;
 	}
 
@@ -566,7 +566,7 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/map", page: "map" });
+	res.render("victory", { coinsWon: coinDistribution(difficulty, req.session.battleSession.coinsReceived, req), redirect: "/map", page: "map" });
 });
 
 app.get('/levelup', async (req, res) => {
@@ -575,7 +575,7 @@ app.get('/levelup', async (req, res) => {
 
 	//if the player has not received coins yet, give them coins
 	if (req.session.battleSession.coinsReceived == false) {
-		req.session.gameSession.playerCoins += coinDistribution(difficulty);
+		req.session.gameSession.playerCoins += coinDistribution(difficulty, req.session.battleSession.coinsReceived, req);
 		userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
 		req.session.battleSession.coinsReceived = true;
 	}
@@ -604,7 +604,7 @@ app.get('/levelup', async (req, res) => {
 		console.error('Error updating user level:', error);
 	}
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu" });
+	res.render("victory", { coinsWon: coinDistribution(difficulty, req.session.battleSession.coinsReceived, req), redirect: "/", page: "menu" });
 });
 
 app.get('/defeat', (req, res) => {
