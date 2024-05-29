@@ -568,7 +568,7 @@ app.get('/victory', async (req, res) => {
 
 	await userCollection.updateOne(
 		{username: req.session.username}, 
-		{$inc: {goldCollected: coinWon(difficulty)}});
+		{$inc: {goldCollected: coinsWon(difficulty)}});
 
 	res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/map", page: "map" });
 });
@@ -596,7 +596,7 @@ app.get('/levelup', async (req, res) => {
 	try {
 		const user = req.session.username;
 
-		const goldWon = coinWon(difficulty);
+		const goldWon = coinsWon(difficulty);
 
 		const totalDamage = req.session.gameSession.totalDamage;
 
