@@ -14,7 +14,7 @@
   <div class="grid">
     <div class="flex justify-between p-2">
       <button id="editButton" type="submit" class="pixel-button py-2 px-4 rounded"
-        onclick="editProfile('<%= userBio %>', '<%= userTitle %>', <%= JSON.stringify(ownedUserTitles) %>, this)">
+        onclick="editProfile('<%= userBio %> ', '<%= userTitle %>', <%= JSON.stringify(ownedUserTitles) %>, this)">
         Edit Profile
       </button>
 
@@ -39,10 +39,11 @@
             <p id="userTitle" class="text-sm text-black mt-2">
               <%= userTitle %>
             </p>
-            <p id="userBio" class="text-sm text-black mt-2">
-              <%= userBio %>
-            </p>
-            <p id="userBio" class="basicPixel text-sm text-black mt-2">
+
+            <p id="userBio" class="text-sm text-black mt-2 max-w-40 whitespace-normal"></p>
+
+
+            <p id="userEmail" class="basicPixel text-sm text-black mt-2">
               Email: <%= userEmail %>
             </p>
           </div>
@@ -118,9 +119,15 @@
     </div>
   </div>
   <script>
-    // Define the userId variable and assign it the value passed from the server
+  
     const userId = '<%= userId %>';
     const ownedUserTitles = '<%= ownedUserTitles %>';
+    const userBio = '<%= userBio %>';
+
+    console.log(userBio);
+
+    const userBioField = document.getElementById('userBio');
+    userBioField.innerHTML = userBio.replace(/\n/g, '');
 
     function openModal() {
       document.getElementById('myModal').style.display = "flex";
@@ -131,6 +138,7 @@
     }
 
     function editProfile(currentBio, userTitle, ownedUserTitles) {
+      console.log("Current bio parsed", currentBio.replace(/\n/g, ''));
       document.querySelectorAll('.edit').forEach(button => {
         var obj = button.getAttribute("onclick");
         button.onclick = () => openModalEdit(obj);
@@ -144,7 +152,7 @@
       `;
 
       document.getElementById('userBio').innerHTML = `
-      <textarea id="bioInput" class="border border-gray-300 rounded p-2" placeholder="Enter your bio">${currentBio}</textarea>
+      <textarea id="bioInput" class="border border-gray-300 rounded p-2" maxlength="50" placeholder="Enter your bio">${currentBio.replace(/\n/g, '')}</textarea>
       `;
 
       document.getElementById('bioInput').value = "<%= userBio %>";
