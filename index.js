@@ -163,7 +163,7 @@ app.post('/submitUser', async (req, res) => {
             email,
             password: hashedPassword,
             slotsCurrency: 0,
-            ownedProfilePics: [],
+            ownedProfilePics: ["pfp-1.png", "pfp-2.png", "pfp-3.png"],
             titles: [],
 						achievements: [],
 						claimedAchievements: []
