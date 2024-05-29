@@ -43,6 +43,7 @@ const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
 const userTitlesCollection = database.db(mongodb_database).collection('UserTitles');
 const pfpCollection = database.db(mongodb_database).collection('profile-pics');
+const achievementsCollection = database.db(mongodb_database).collection('profile-pics');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -751,6 +752,19 @@ app.post('/buyItem', async (req, res) => {
     console.error("An error occurred:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+app.get('/achievements', async (req, res) => {
+	const achievements = await achievementsCollection.find().toArray();
+	const user = await userCollection.findOne({ email: req.session.email });
+	const userAchievements = user ? user.achievements : [];
+	var filteredAchievements = [];
+	for (let i = 0; i < achievements.length; i++) {
+		if (!userAchievements.includes(achievements[i].name)) {
+			filteredAchievements.push(achievements[i]);
+		}
+	}
+	res.render('filteredAchievements', { filteredAchievements });
 });
 
 app.get("*", (req, res) => {
