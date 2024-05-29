@@ -269,7 +269,10 @@ app.get('/map', async (req, res) => {
 		req.session.gameSession.mapSet = true;
 	}
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
-	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID });
+
+	const currentCell = req.session.currentCell;
+
+	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID, currentCell: currentCell });
 });
 
 app.post('/startencounter', async (req, res) => {
@@ -486,6 +489,9 @@ app.post('/preshop', async (req, res) => {
 app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
+	
+	req.session.currentCell = { row: row, index: index };
+	
 	const difficulty = req.session.battleSession.difficulty;
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
