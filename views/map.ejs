@@ -7,7 +7,6 @@
       background-position: top;
       background-attachment: fixed;
       min-height: 100vh;
-
     }
 
     .outer-grid {
@@ -22,7 +21,6 @@
       padding-bottom: 50px;
     }
 
-
     .redShadow {
       text-shadow: -2px 0px #000000, 0px -2px #000000;
     }
@@ -32,13 +30,13 @@
       <div class="grid grid-rows-9 p-4 max-w-md mx-auto">
         <%- include("templates/mapTemplates/row", {arr: path.row4, active: path.r4active, row: 4}) %>
           <%- include("templates/mapTemplates/connections", {rowConnect: path.r3connect}) %>
-            <%- include("templates/mapTemplates/row", {arr: path.row3, active: path.r3active, row: 3}) %>
-              <%- include("templates/mapTemplates/connections", {rowConnect: path.r2connect}) %>
-                <%- include("templates/mapTemplates/row", {arr: path.row2, active: path.r2active, row: 2}) %>
-                  <%- include("templates/mapTemplates/connections", {rowConnect: path.r1connect}) %>
-                    <%- include("templates/mapTemplates/row", {arr: path.row1, active: path.r1active, row: 1}) %>
-                      <%- include("templates/mapTemplates/connections", {rowConnect: path.r0connect}) %>
-                        <%- include("templates/mapTemplates/row", {arr: path.row0, active: path.r0active, row: 0}) %>
+        <%- include("templates/mapTemplates/row", {arr: path.row3, active: path.r3active, row: 3}) %>
+          <%- include("templates/mapTemplates/connections", {rowConnect: path.r2connect}) %>
+        <%- include("templates/mapTemplates/row", {arr: path.row2, active: path.r2active, row: 2}) %>
+          <%- include("templates/mapTemplates/connections", {rowConnect: path.r1connect}) %>
+        <%- include("templates/mapTemplates/row", {arr: path.row1, active: path.r1active, row: 1}) %>
+          <%- include("templates/mapTemplates/connections", {rowConnect: path.r0connect}) %>
+        <%- include("templates/mapTemplates/row", {arr: path.row0, active: path.r0active, row: 0}) %>
       </div>
     </div>
   </div>
@@ -50,7 +48,6 @@
     </form>
   </div>
   
-
   <script>
     function showModal() {
       document.getElementById('warningModal').classList.remove('hidden');

@@ -1,7 +1,7 @@
 <% switch(shape) {
   case 'empty' : %>
-  <div>
-  </div>
+    <div>
+    </div>
   <% break;
   case 'circle' : %>
     <%- include("./circle", {status: status, index: index, row: row}) %>
@@ -20,6 +20,10 @@
   <% break;
   case 'shop' : %>
   <%- include("./shopshape", {status: status, index: index, row: row}) %>
-<% break;
+  <% break;
+  case 'legend' : %>
+    <div id="legend">
+    </div>
+  <% break;
   }
 %>
