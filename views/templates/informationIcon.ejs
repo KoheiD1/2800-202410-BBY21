@@ -1,12 +1,12 @@
 <script>
-     function showModal() {
-      document.getElementById('warningModal').classList.remove('hidden');
+    function showModal() {
+        document.getElementById('warningModal').classList.remove('hidden');
     }
 
     function hideModal() {
-      document.getElementById('warningModal').classList.add('hidden');
-      document.getElementById("image").src = "i_orange.svg";
-      clicked = false;
+        document.getElementById('warningModal').classList.add('hidden');
+        revertImage(); // Call the function to revert the image color
+        clicked = false;
     }
 
     let clicked = false;
@@ -19,10 +19,9 @@
             document.getElementById("image").src = "i_orange.svg";
         }
     }
+
     function revertImage() {
-        if (!clicked) {
-            document.getElementById("image").src = "i_orange.svg";
-        }
+        document.getElementById("image").src = "i_orange.svg";
     }
 
     function hoveredImage() {
