@@ -275,10 +275,10 @@ app.get('/map', async (req, res) => {
 });
 
 app.post('/startencounter', async (req, res) => {
-	// When the player starts the game it creates a new game session.
-	await levelOneCollection.deleteMany({});
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 25 } }]).toArray();
-	await levelOneCollection.insertMany(encounterQuestions);
+
+	const battleQuestions = await questionCollection.aggregate([{ $sample: { size: 25 } }]).toArray();
+
+	await userCollection.updateOne({ email: req.session.email }, { $set: { battleQuestions: battleQuestions } });
 
 	/*
 	Checks if the player has any additional health or damage from items in their inventory.
@@ -331,8 +331,12 @@ app.get('/question', async (req, res) => {
 
 app.get('/getNewQuestion', async (req, res) => {
 
-	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
-	await levelOneCollection.deleteOne({ _id: question._id });
+	const user = await userCollection.findOne({ email: req.session.email });
+
+	const question = user.battleQuestions.pop();
+
+    await userCollection.updateOne({ email: req.session.email }, { $set: { battleQuestions: user.battleQuestions } });
+	
 	res.json({ question: question });
 
 });
