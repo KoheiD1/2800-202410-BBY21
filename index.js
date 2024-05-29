@@ -43,7 +43,7 @@ const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
 const userTitlesCollection = database.db(mongodb_database).collection('UserTitles');
 const pfpCollection = database.db(mongodb_database).collection('profile-pics');
-const achievementsCollection = database.db(mongodb_database).collection('profile-pics');
+const achievementsCollection = database.db(mongodb_database).collection('achievements');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -164,8 +164,9 @@ app.post('/submitUser', async (req, res) => {
             password: hashedPassword,
             slotsCurrency: 0,
             ownedProfilePics: [],
-            titles: [" "],
-						achievements: [" "]
+            titles: [],
+						achievements: [],
+						claimedAchievements: []
         });
 
         req.session.authenticated = true;
@@ -611,9 +612,9 @@ app.get('/levelup', async (req, res) => {
 	if(result.achievements.includes("First Level Up") == false){
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Level Up" } });
 		res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu", special: "firstLevelUp" });
+	} else {
+		res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu", special: "" });
 	}
-
-	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu", special: "" });
 });
 
 app.get('/defeat', (req, res) => {
@@ -760,11 +761,11 @@ app.get('/achievements', async (req, res) => {
 	const userAchievements = user ? user.achievements : [];
 	var filteredAchievements = [];
 	for (let i = 0; i < achievements.length; i++) {
-		if (!userAchievements.includes(achievements[i].name)) {
+		if (userAchievements.includes(achievements[i].name)) {
 			filteredAchievements.push(achievements[i]);
 		}
 	}
-	res.render('filteredAchievements', { filteredAchievements });
+	res.render('achievements', { filteredAchievements: filteredAchievements });
 });
 
 app.get("*", (req, res) => {
