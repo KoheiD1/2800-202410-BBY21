@@ -92,7 +92,7 @@ app.use('/', inventoryRouter(userCollection));
 
 //Passing in the functions from game.js which are used for the game logic
 const { damageCalculator, coinDistribution, chooseEnemy, regenCalculator, enemeyScaling,
-	additionalHealth, additionalDMG } = require('./game');
+	additionalHealth, additionalDMG, coinsWon } = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -566,7 +566,7 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/map", page: "map" });
+	res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/map", page: "map" });
 });
 
 app.get('/levelup', async (req, res) => {
@@ -604,7 +604,7 @@ app.get('/levelup', async (req, res) => {
 		console.error('Error updating user level:', error);
 	}
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu" });
+	res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/", page: "menu" });
 });
 
 app.get('/defeat', (req, res) => {
