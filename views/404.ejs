@@ -1,7 +1,7 @@
 <% if (authenticated) { %>
-  <%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
+  <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
 <% } else { %>
-  <%- include("templates/header", { overflowVariable: 'overflow-hidden' }) %>
+  <%- include("templates/header", { overflowVariable: '' }) %>
 <% } %>
 
 <div class="relative flex justify-center h-screen">

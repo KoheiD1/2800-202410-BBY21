@@ -1,6 +1,6 @@
 <% if (authenticated) { %>
-<%- include("templates/headerloggedin", { overflowVariable: 'overflow-hidden' }) %>
-<div class="relative flex justify-center h-screen">
+<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<div class="relative flex justify-center h-screen" style="height: 93vh">
   <div class="z-10">
     <h1 class="text-center text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16 cursor-default"> CODECRYPT</h1>
     <% if (gameStarted) { %>
@@ -29,7 +29,7 @@
   </div>
 </div>
 <% } else { %>
-  <%- include("templates/header", { overflowVariable: 'overflow-hidden' }) %>
+  <%- include("templates/header", { overflowVariable: '' }) %>
     <div class="relative flex justify-center h-screen overflow-hidden">
       <div class="z-10">
         <h1 class="text-center text-3xl md:text-6xl lg:text-8xl xl:text-10xl text-black title-font mt-16">CODECRYPT
