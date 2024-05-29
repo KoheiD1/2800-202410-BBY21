@@ -759,13 +759,20 @@ app.get('/achievements', async (req, res) => {
 	const achievements = await achievementsCollection.find().toArray();
 	const user = await userCollection.findOne({ email: req.session.email });
 	const userAchievements = user ? user.achievements : [];
-	var filteredAchievements = [];
+	const userClaimedAchievements = user ? user.claimedAchievements : [];
+	var unclaimedAchievements = [];
+	var claimedAchievements = [];
 	for (let i = 0; i < achievements.length; i++) {
 		if (userAchievements.includes(achievements[i].name)) {
-			filteredAchievements.push(achievements[i]);
+			if (userClaimedAchievements.includes(achievements[i].name)) {
+				claimedAchievements.push(achievements[i]);
+			} else {
+				unclaimedAchievements.push(achievements[i]);
+			}
 		}
 	}
-	res.render('achievements', { filteredAchievements: filteredAchievements });
+	
+	res.render('achievements', { unclaimedAchievements: unclaimedAchievements, claimedAchievements: claimedAchievements });
 });
 
 app.get("*", (req, res) => {
