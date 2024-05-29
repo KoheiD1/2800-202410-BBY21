@@ -163,7 +163,8 @@ app.post('/submitUser', async (req, res) => {
             password: hashedPassword,
             slotsCurrency: 0,
             ownedProfilePics: [],
-            titles: [" "]
+            titles: [" "],
+						achievements: [" "]
         });
 
         req.session.authenticated = true;
@@ -566,7 +567,7 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/map", page: "map" });
+	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/map", page: "map", special: "none"});
 });
 
 app.get('/levelup', async (req, res) => {
@@ -604,7 +605,13 @@ app.get('/levelup', async (req, res) => {
 		console.error('Error updating user level:', error);
 	}
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu" });
+	var res = await userCollection.findOne({ email: req.session.email });
+
+	if(res.achievements.includes("First Level Up") == false){
+		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Level Up" } });
+	}
+
+	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu", special: "firstLevelUp" });
 });
 
 app.get('/defeat', (req, res) => {
