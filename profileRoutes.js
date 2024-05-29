@@ -18,7 +18,7 @@ module.exports = function (userCollection, userTitlesCollection) {
       const user = await userCollection.findOne({ username: userName });
       const userProfilePic = user ? user.profile_pic : 'profile-logo.png';
       const friendsList = user.friendsList;
-      const userBio = user.bio;
+      var userBio = user.bio;
       const userTitle = user.UserTitle;
       const ownedProfilePics = user ? user.ownedProfilePics : [];
       const goldCollected = user ? user.goldCollected : 0;
@@ -26,6 +26,12 @@ module.exports = function (userCollection, userTitlesCollection) {
       const damageDealt = user ? user.totalDamageDealt : 0;
       const ownedUserTitles = user ? user.titles : [];
 
+      if (userBio !== undefined) {
+        userBio = userBio.replace(/\n/g, '');
+      }
+
+      console.log(userBio); 
+    
       res.render("profile", { goldCollected: goldCollected, runsCompleted: runsCompleted, damageDealt: damageDealt, userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles, from: from });
     } else {
       res.redirect('/login');

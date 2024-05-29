@@ -26,9 +26,61 @@
     }
   }
 
+  @keyframes shake {
+    0% {
+      transform: translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+      transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+      transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+      transform: translate(3px, 2px) rotate(0deg);
+    }
+
+    40% {
+      transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+      transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+      transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+      transform: translate(3px, 1px) rotate(-1deg);
+    }
+
+    80% {
+      transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+      transform: translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+      transform: translate(1px, -2px) rotate(-1deg);
+    }
+  }
+
   .flash-animation {
     animation-name: flash;
     animation-duration: 1s;
+    animation-fill-mode: both;
+  }
+
+  .shake-animation {
+    animation-name: shake;
+    animation-duration: 0.5s;
     animation-fill-mode: both;
   }
 
@@ -283,7 +335,8 @@
 
   <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
     <div class="bg-white rounded-lg p-8 text-center">
-      <h2 class="text-xl basicPixel mb-4">Welcome to the battle! This is where your knowledge will get put to the test</h2>
+      <h2 class="text-xl basicPixel mb-4">Welcome to the battle! This is where your knowledge will get put to the test
+      </h2>
       <div class="flex justify-center space-x-4">
         <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
       </div>
@@ -317,7 +370,10 @@
         questionContainer.classList.remove("hidden");
         feedbackContainer.classList.add("hidden");
         document.getElementById('enemy-image').classList.remove('flash-animation');
+        document.getElementById('enemy-image').classList.remove('shake-animation');
+
         document.getElementById('hero-image').classList.remove('flash-animation');
+        document.getElementById('hero-image').classList.remove('shake-animation');
 
         questionContainer = document.getElementById('questionContainer');
         questionContainer.innerHTML = `
@@ -376,6 +432,7 @@
           enemyHealth = 0;
         }
         document.getElementById('enemy-image').classList.add('flash-animation');
+        document.getElementById('enemy-image').classList.add('shake-animation');
         document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "      " + enemyHealth + "/" + maxEnemyHealth;
       } else {
 
@@ -385,6 +442,7 @@
           playerHealth = 0;
         }
         document.getElementById('hero-image').classList.add('flash-animation');
+        document.getElementById('hero-image').classList.add('shake-animation');
         document.getElementById('heroInfo').textContent = "<%=userName%> " + "      " + playerHealth + "/" + maxPlayerHealth;
       }
     }
@@ -530,7 +588,7 @@
       var modal = document.getElementById("learnMoreModal");
       modal.classList.add("hidden");
     }
-  
+
     /*
     * The code below is the code for the information icon modal
     */

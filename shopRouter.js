@@ -53,9 +53,7 @@ module.exports = function (itemCollection, userCollection) {
                         effects: items[rand].effects,
                         price: items[rand].price
                     });
-                    console.log(parseInt("10") + 1);
                     for (let j = 0; j < items[rand].effects.length; j++) {
-                        console.log(items[rand].type + "," + items[rand].effects[j] + "," + items[rand][items[rand].effects[j]].length);
                         if (items[rand][items[rand].effects[j]].length > 1) {
                             let x = parseInt(Math.random() * (parseInt(items[rand][items[rand].effects[j]][1]) - parseInt(items[rand][items[rand].effects[j]][0]))) + parseInt(items[rand][items[rand].effects[j]][0]);
                             req.session.shop.itemsPicked[i][items[rand].effects[j]] = x;
@@ -71,7 +69,6 @@ module.exports = function (itemCollection, userCollection) {
             res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
             res.locals.gameStarted = req.session.gameSession ? true : false;
 
-
             res.render('shop', { items: req.session.shop.itemsPicked });
         } else {
             res.redirect('/login');
@@ -81,7 +78,7 @@ module.exports = function (itemCollection, userCollection) {
     router.get('/purchase', async (req, res) => {
         let info = req.query.info;
         // res.redirect('/');
-        console.log(info);
+        // console.log(info);
         let name = req.session.username;
         let item = {
             type: info.substring(0, info.indexOf(',')),

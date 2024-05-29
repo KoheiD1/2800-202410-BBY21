@@ -6,3 +6,12 @@
 .basicPixel {
   font-family: 'basicPixel', sans-serif;
 }
+
+@font-face {
+  font-family: 'titleFont';
+  src: url('titlefont.ttf') format('truetype');
+}
+
+.titleFont {
+  font-family: 'titleFont', sans-serif;
+}

@@ -136,8 +136,12 @@ function regenCalculator(req) {
 /*
 Description: This function distributes coins to the player based
 on the difficulty of the enemy.
+
+returns: the amount of coins the player will receive
 */
-function coinDistribution(difficulty, coinsReceived, req) {
+function coinDistribution(difficulty, req) {
+    coinsReceived = req.session.battleSession.coinsReceived;
+
     if (!coinsReceived) {
         switch (difficulty) {
             case "triangle":
@@ -158,6 +162,25 @@ function coinDistribution(difficulty, coinsReceived, req) {
    
 
    
+}
+/*
+Description: This function calculates the amount of coins won 
+from the diffculty level of the enemy.
+
+returns: the amount of coins the player will win
+*/
+
+function coinsWon(difficulty){
+    switch (difficulty) {
+        case "triangle":
+            return 500;
+        case "square":
+            return 10;
+        case "pentagon":
+            return 25;
+        case "hexagon":
+            return 50;
+    }
 }
 
 /*
@@ -292,5 +315,6 @@ module.exports = {
     regenCalculator,
     enemeyScaling,
     additionalHealth,
-    additionalDMG
+    additionalDMG,
+    coinsWon
 };
