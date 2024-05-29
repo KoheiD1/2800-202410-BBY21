@@ -164,7 +164,9 @@ app.post('/submitUser', async (req, res) => {
             password: hashedPassword,
             slotsCurrency: 0,
             ownedProfilePics: ["pfp-1.png", "pfp-2.png", "pfp-3.png"],
-            titles: [],
+            titles: ["New around the block"],
+						bio: "Click Edit Profile to change your profile",
+						UserTitle : "New around the block",
 						achievements: [],
 						claimedAchievements: []
         });
@@ -184,11 +186,8 @@ app.post('/submitUser', async (req, res) => {
 
 app.post('/loggingin', async (req, res) => {
 
-
 	const { email, password } = req.body;
-	
 	const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, _id: 1, profile_pic: 1 }).toArray();
-
 	if (result.length != 1) {
 		res.render("login", { success: false });
 		return;
