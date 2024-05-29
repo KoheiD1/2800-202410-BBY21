@@ -579,7 +579,7 @@ app.get('/levelup', async (req, res) => {
 
 	//if the player has not received coins yet, give them coins
 	if (req.session.battleSession.coinsReceived == false) {
-		req.session.gameSession.playerCoins += coinDistributio(difficulty, req);
+		req.session.gameSession.playerCoins += coinDistribution(difficulty, req);
 		userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
 		req.session.battleSession.coinsReceived = true;
 	}
