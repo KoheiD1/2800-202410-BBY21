@@ -20,7 +20,7 @@
         <form action="/">
           <input type="submit" class="text-black basicPixel pixel-button" value="Main Menu">
         </form>
-        <div class="help-button" onclick="showModalText('Welcome to the Premium Shop! Splurge your diamonds on exclusive profile pictures and titles to personalize and distinguish your profile')">
+        <div class="help-button" onclick="selectModal()">
           <img id="image" src="i_orange.svg" class="w-10 h-10 mt-2" onmouseover="hoveredImage()" onmouseleave="revertImage()">
         </div>
       </div>
@@ -47,11 +47,16 @@
   </div>
   <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
     <div class="bg-white rounded-lg p-8 text-center">
-      <h2 class="text-xl basicPixel mb-4"></h2>
+      <h2 class="text-xl basicPixel mb-4">Welcome to the Premium Shop! Splurge your diamonds on exclusive profile pictures and titles to personalize and distinguish your profile!</h2>
       <div class="flex justify-center space-x-4">
-        <button onclick="hideModalText()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
+        <button onclick="hideModal(this)" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
       </div>
     </div>
   </div>
+  <script>
+    function selectModal() {
+      document.getElementById('warningModal').classList.remove('hidden');
+    }
+  </script>
   <%- include("informationIcon") %>
 </body>
