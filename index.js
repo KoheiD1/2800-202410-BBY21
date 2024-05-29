@@ -568,9 +568,7 @@ app.get('/victory', async (req, res) => {
 
 	await userCollection.updateOne(
 		{username: req.session.username}, 
-		{$inc: {goldCollected: coinWon(difficulty, req)}});
-
-	req.session.battleSession.coinsReceived = false;
+		{$inc: {goldCollected: coinWon(difficulty)}});
 
 	res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/map", page: "map" });
 });
@@ -581,7 +579,7 @@ app.get('/levelup', async (req, res) => {
 
 	//if the player has not received coins yet, give them coins
 	if (req.session.battleSession.coinsReceived == false) {
-		req.session.gameSession.playerCoins += coinDistribution(difficulty, req);
+		req.session.gameSession.playerCoins += coinDistributio(difficulty, req);
 		userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
 		req.session.battleSession.coinsReceived = true;
 	}
@@ -598,9 +596,7 @@ app.get('/levelup', async (req, res) => {
 	try {
 		const user = req.session.username;
 
-		req.session.battleSession.coinsReceived = false;
-		const goldWon = coinWon(difficulty, req);
-		req.session.battleSession.coinsReceived = false;
+		const goldWon = coinWon(difficulty);
 
 		const totalDamage = req.session.gameSession.totalDamage;
 
