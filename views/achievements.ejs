@@ -80,6 +80,7 @@ body {
 <script>
 
 async function reward(obj) {
+  await obj.setAttribute('onclick', '');
   const name = obj.querySelector('.name').innerText;
   const diamonds = parseInt(obj.querySelector('.diamonds').innerText);
 
