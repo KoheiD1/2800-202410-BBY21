@@ -597,7 +597,7 @@ app.get('/levelup', async (req, res) => {
 	var result = await userCollection.findOne({ email: req.session.email });
 
 	if(result.achievements.includes("First Level Up") == false){
-		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Level Up" } });
+		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Stage Cleared" } });
 		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu", special: "firstLevelUp" });
 	} else {
 		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu", special: "" });
