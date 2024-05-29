@@ -1,17 +1,20 @@
+// this is a router file for the profile page and related actions
 const express = require('express');
 const router = express.Router();
 
-
-
+// userCollection is the collection of users in the database
 module.exports = function (userCollection, userTitlesCollection) {
   router.get('/profile', async (req, res) => {
+    // get the from query parameter to determine where the user came from
     const from = req.query.from;
+    // check if the game has started
     res.locals.gameStarted = req.session.gameSession ? true : false;
+
+    // if the user is authenticated, render the profile page
     if (req.session.authenticated) {
       const userName = req.session.username;
       const userEmail = req.session.email;
       const userId = req.session.userId;
-
       const user = await userCollection.findOne({ username: userName });
       const userProfilePic = user ? user.profile_pic : 'profile-logo.png';
       const friendsList = user.friendsList;
@@ -21,12 +24,7 @@ module.exports = function (userCollection, userTitlesCollection) {
       const goldCollected = user ? user.goldCollected : 0;
       const runsCompleted = user ? user.runsCompleted : 0;
       const damageDealt = user ? user.totalDamageDealt : 0;
-
-      console.log(ownedProfilePics);
-
       const ownedUserTitles = user ? user.titles : [];
-
-      console.log(ownedUserTitles);
 
       res.render("profile", { goldCollected: goldCollected, runsCompleted: runsCompleted, damageDealt: damageDealt, userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles, from: from });
     } else {
@@ -38,7 +36,6 @@ module.exports = function (userCollection, userTitlesCollection) {
 
   router.post('/updateProfilePicture', async (req, res) => {
     const { profilePictureUrl } = req.body;
-
     try {
       const userName = req.session.username;
       await userCollection.updateOne({ username: userName }, { $set: { profile_pic: profilePictureUrl } });
@@ -51,7 +48,6 @@ module.exports = function (userCollection, userTitlesCollection) {
   });
 
   router.post('/updateProfile', async (req, res) => {
-    console.log("Updating profile...");
     const { title, bio } = req.body;
 
     try {
@@ -68,11 +64,9 @@ module.exports = function (userCollection, userTitlesCollection) {
   });
 
   router.get('/logout', (req, res) => {
-    console.log("logging out")
     req.session.destroy();
     res.redirect('/');
   });
-
 
   return router;
 };
