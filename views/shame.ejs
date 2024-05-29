@@ -1,3 +1,53 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/css-doodle/0.39.1/css-doodle.min.js"></script>
+<css-doodle class="doodle">
+    :doodle {
+    --color: rgba(101,0,94,1), rgba(60,132,206,1), rgba(48,238,226,1), rgba(255,25,25,1);
+  
+    @grid: 30x1 / 100vw 100vh / #270f34;
+    }
+    :container {
+    perspective: 30vmin;
+    --deg: @p(-180deg, 180deg);
+    }
+  
+    :after, :before {
+    content: '';
+    background: @p(--color);
+    @place: @r(100%) @r(100%);
+    @size: @r(6px);
+    @shape: heart;
+    }
+  
+    @place: center;
+    @size: 18vmin;
+  
+    box-shadow: @m2(0 0 50px @p(--color));
+    background: @m100(
+    radial-gradient(@p(--color) 75%, transparent 0)
+    @r(-20%, 120%) @r(-20%, 100%) / 1px 1px
+    no-repeat
+    );
+  
+    will-change: transform, opacity;
+    animation: scale-up 12s linear infinite;
+    animation-delay: calc(-12s / @I * @i);
+  
+    @keyframes scale-up {
+    0%, 95.01%, 100% {
+    transform: translateZ(0) rotate(0);
+    opacity: 0;
+    }
+    10% {
+    opacity: 1;
+    }
+    95% {
+    transform:
+    translateZ(35vmin) rotateZ(var(--deg));
+    }
+    }
+  
+  </css-doodle>
+
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
@@ -7,26 +57,29 @@
         height: 100%;
         margin: 0;
         padding: 0;
-        font-family: 'Your Custom Font', Arial, sans-serif; /* Custom font with fallbacks */
+        font-family: 'Your Custom Font', Arial, sans-serif;
+        overflow: hidden;
+    }
+
+    .doodle {
+      position: fixed;
+      top: 0;
+      z-index: -1;
     }
 
     .container {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
         height: 100%;
     }
 
     h1 {
-        font-size: 18px; /* Adjust font size for smaller screens */
+        font-size: 20px; /* Adjust font size for smaller screens */
         text-align: center;
+        text-wrap: wrap;
         margin-bottom: 20px; /* Add spacing */
-        max-width: 80%; /* Limit width for better responsiveness */
-    }
-
-    .form-container {
-        margin-top: 20px; /* Add spacing */
+        max-width: 100%; /* Limit width for better responsiveness */
     }
 
     form {
@@ -34,21 +87,6 @@
         justify-content: center;
     }
 
-    input[type="submit"] {
-        background-color: #3498db;
-        color: #fff;
-        font-size: 14px; /* Adjust font size for smaller screens */
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    input[type="submit"]:hover {
-        background-color: #2980b9;
-    }
-    
     /* Rainbow throbbing animation */
      @keyframes rainbowThrob {
         0% { color: red; transform: scale(1); }
@@ -74,15 +112,13 @@
 
 <div class="container">
     <h1 class="rainbow-throb start-font">
-        GO BACK TO THE MAIN MENU AND GET YOUR BREAD UP!
+        <p>Oops! You need more Diamonds to spin the machine. Please collect some more and try again..</p>
     </h1>
 
-    <div class="form-container">
-        <form action="/">
-            <input type="submit" value="Back to Main Menu">
-        </form>
-    </div>
-</div>
+    <button onclick="window.location.href='/'" class="pixel-button-red py-2 px-7 w-100" style="width: 50%;">
+        Main <br> Menu
+    </button>
+    
    
 
 
