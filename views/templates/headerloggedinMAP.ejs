@@ -20,7 +20,7 @@
     <div class="flex justify-between items-center h-full">
       <div>
         <form action="/">
-          <input type="submit" class="text-black basicPixel pixel-button" value="Main Menu">
+          <input type="submit" class="text-black basicPixel pixel-button text-sm sm:text-md" value="Main Menu">
         </form>
         <div class="help-button" onclick="showModal()">
           <img id="image" src="i_orange.svg" class="w-10 h-10 mt-2" onmouseover="hoveredImage()" onmouseleave="revertImage()">
@@ -31,19 +31,19 @@
         <% if (gameStarted) { %>
           <div class="flex items-center mr-6">
             <img src="coin.png" class="w-10 h-10">
-            <span class=" text-2xl basicPixel tight">
+            <span class="text-lg sm:text-2xl basicPixel tight">
               <%= playerCoins %>
             </span>
           </div>
           <% } %>
             <div class="flex items-center mr-6">
               <img src="diamond.png" class="w-10 h-10" onclick="clicker()">
-              <span class="text-2xl basicPixel tight">
+              <span class="text-lg sm:text-2xl basicPixel tight">
                 <%= slotsCurrency %>
               </span>
             </div>
             <img
-              class="ml-4 h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer"
+              class="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer"
               src="<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=map'">
       </div>
     </div>
