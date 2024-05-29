@@ -565,12 +565,14 @@ app.get('/victory', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
-
+	req.session.battleSession.coinsReceived = false;
 	await userCollection.updateOne(
 		{username: req.session.username}, 
-		{$inc: {goldCollected: coinsWon(difficulty)}});
+		{$inc: {goldCollected: coinDistribution(difficulty, req)}});
 
-	res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/map", page: "map" });
+	//setting the coins received to false so the victory page can display the coins won
+	req.session.battleSession.coinsReceived = false;
+	res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/map", page: "map" });
 });
 
 app.get('/levelup', async (req, res) => {
@@ -607,8 +609,9 @@ app.get('/levelup', async (req, res) => {
 	} catch (error) {
 		console.error('Error updating user level:', error);
 	}
-
-	res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/", page: "menu" });
+	//setting the coins received to false so the victory page can display the coins won
+	req.session.battleSession.coinsReceived = false;
+	res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu" });
 });
 
 app.get('/defeat', (req, res) => {
