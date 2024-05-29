@@ -23,12 +23,12 @@ const schema = Joi.object({
             'string.domain': 'Email must be a valid email'
         }),
     password: Joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]{10,30}$'))
+        .pattern(new RegExp('^[a-zA-Z0-9]{6,30}$'))
         .required()
         .messages({
             'string.base': 'Password must be a string',
             'string.empty': 'Password is required',
-            'string.pattern.base': 'Password must be between 10 and 30 characters long and contain only alpha-numeric characters'
+            'string.pattern.base': 'Password must be between 6 and 30 characters long and contain only alpha-numeric characters'
         })
 });
 
