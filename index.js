@@ -566,12 +566,16 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
 
+	await userCollection.updateOne(
+		{username: req.session.username}, 
+		{$inc: {goldCollected: coinsWon(difficulty)}});
+
 	res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/map", page: "map" });
 });
 
 app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
-	req.session.gameSession.playerLevel++;
+	req.session.battleSession.playerLevel++;
 
 	//if the player has not received coins yet, give them coins
 	if (req.session.battleSession.coinsReceived == false) {
@@ -592,13 +596,13 @@ app.get('/levelup', async (req, res) => {
 	try {
 		const user = req.session.username;
 
-		const goldCollected = req.session.gameSession.playerCoins;
+		const goldWon = coinsWon(difficulty);
 
 		const totalDamage = req.session.gameSession.totalDamage;
 
 		await userCollection.updateOne(
 			{ username: user },
-			{ $inc: { runsCompleted: 1, goldCollected: goldCollected, totalDamageDealt: totalDamage } }
+			{ $inc: { runsCompleted: 1, goldCollected: goldWon, totalDamageDealt: totalDamage } }
 		);
 	} catch (error) {
 		console.error('Error updating user level:', error);
@@ -617,21 +621,6 @@ app.post('/mapreset', async (req, res) => {
 	res.locals.gameStarted = false;
 	req.session.gameSession.gameStarted = false;
 	res.redirect('/');
-});
-
-app.get('/shop', async (req, res) => {
-	let items = await itemCollection.find().toArray();
-	let itemsPicked = new Array(3);
-	for (let i = 0; i < 3 && i < items.length; i++) {
-		let rand;
-		do {
-			rand = parseInt(Math.random() * items.length);
-		} while (items[rand] == null);
-
-		itemsPicked[i] = items[rand];
-		items[rand] = null;
-	}
-	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2] });
 });
 
 app.get('/gatchapage', async (req, res) => {
