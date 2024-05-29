@@ -567,7 +567,7 @@ app.get('/victory', async (req, res) => {
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/map", page: "map", special: "none"});
+	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/map", page: "map", special: ""});
 });
 
 app.get('/levelup', async (req, res) => {
@@ -605,13 +605,14 @@ app.get('/levelup', async (req, res) => {
 		console.error('Error updating user level:', error);
 	}
 
-	var res = await userCollection.findOne({ email: req.session.email });
+	var result = await userCollection.findOne({ email: req.session.email });
 
-	if(res.achievements.includes("First Level Up") == false){
+	if(result.achievements.includes("First Level Up") == false){
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Level Up" } });
+		res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu", special: "firstLevelUp" });
 	}
 
-	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu", special: "firstLevelUp" });
+	res.render("victory", { coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu", special: "" });
 });
 
 app.get('/defeat', (req, res) => {
