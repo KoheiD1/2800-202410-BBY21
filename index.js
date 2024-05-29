@@ -333,10 +333,7 @@ app.get('/question', async (req, res) => {
 app.get('/getNewQuestion', async (req, res) => {
 
 	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
-
 	await levelOneCollection.deleteOne({ _id: question._id });
-
-
 	res.json({ question: question });
 
 });
@@ -344,20 +341,13 @@ app.get('/getNewQuestion', async (req, res) => {
 app.post('/updateTotalDamage', async (req, res) => {
 
 	const { playerDMG } = req.body;
-
-	console.log("Player Damage Server side: ", playerDMG)
-
 	if (!req.session.gameSession) {
 		req.session.gameSession = { totalDamage: 0 };
 	}
 	if (typeof req.session.gameSession.totalDamage !== 'number') {
 		req.session.gameSession.totalDamage = 0;
 	}
-
-
 	req.session.gameSession.totalDamage += playerDMG;
-	console.log("Total Damage Server side: ", req.session.gameSession.totalDamage);
-
 	res.json({ totalDamage: req.session.gameSession.totalDamage });
 
 });
@@ -462,8 +452,6 @@ app.post('/preshop', async (req, res) => {
 				if (prevConnections[i][n] == (parseInt(index) + 1)) {
 
 				} else {
-					console.log(prevConnections[i][n]);
-					console.log(parseInt(index) + 1);
 					prevConnections[i][n]--;
 				}
 			}
@@ -474,8 +462,6 @@ app.post('/preshop', async (req, res) => {
 			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
 
 			} else {
-				console.log(prevConnections[lastVisitedIndex][n]);
-				console.log(parseInt(index) + 1);
 				prevConnections[lastVisitedIndex][n]--;
 			}
 		}
@@ -545,10 +531,7 @@ app.get('/victory', async (req, res) => {
 		for (var i = 0; i < prevConnections.length; i++) {
 			for (var n = 0; n < prevConnections[i].length; n++) {
 				if (prevConnections[i][n] == (parseInt(index) + 1)) {
-
 				} else {
-					console.log(prevConnections[i][n]);
-					console.log(parseInt(index) + 1);
 					prevConnections[i][n]--;
 				}
 			}
@@ -559,8 +542,6 @@ app.get('/victory', async (req, res) => {
 			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
 
 			} else {
-				console.log(prevConnections[lastVisitedIndex][n]);
-				console.log(parseInt(index) + 1);
 				prevConnections[lastVisitedIndex][n]--;
 			}
 		}
@@ -702,7 +683,6 @@ app.get('/capsuleopening', async (req, res) => {
 	} else {
 		playerReward = "No rewards available";
 	}
-	console.log("Player reward", playerReward);
 	res.render('capsuleopening', { playerReward, rewardType });
 });
 
@@ -764,15 +744,21 @@ app.get('/achievements', async (req, res) => {
 	var claimedAchievements = [];
 	for (let i = 0; i < achievements.length; i++) {
 		if (userAchievements.includes(achievements[i].name)) {
-			if (userClaimedAchievements.includes(achievements[i].name)) {
-				claimedAchievements.push(achievements[i]);
-			} else {
-				unclaimedAchievements.push(achievements[i]);
-			}
+			unclaimedAchievements.push(achievements[i]);
+		} else {
+			claimedAchievements.push(achievements[i]);
 		}
 	}
-	
 	res.render('achievements', { unclaimedAchievements: unclaimedAchievements, claimedAchievements: claimedAchievements });
+});
+
+app.post('/claimAchievement', async (req, res) => {
+	const achievementName = req.body.achievementName;
+	const userEmail = req.session.email;
+	const diamonds = req.body.diamonds;
+
+	await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName }, $inc: { slotsCurrency: diamonds }, $pull: { achievements: achievementName }});
+	res.redirect('/achievements');
 });
 
 app.get("*", (req, res) => {
