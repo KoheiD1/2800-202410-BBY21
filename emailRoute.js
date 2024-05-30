@@ -26,7 +26,7 @@ router.post('/forgotPassword', async (req, res) => {
         if (user) {
             const resetToken = generateResetToken();
             console.log('token in forgotPassword:' + resetToken);
-            const resetLink = `http://localhost:3000/resetPassword?token=${resetToken}`;
+            const resetLink = `http://codecrypt.onrender.com/resetPassword?token=${resetToken}`;
             
             // Save the reset token and expiry in the user document in the database
             await userCollection.updateOne({ email: email }, { $set: { resetToken: resetToken, resetTokenExpiry: new Date(Date.now() + 3600000) } });
