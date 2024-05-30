@@ -235,8 +235,7 @@ app.get('/startGame', async (req, res) => {
 		playerCoins: 0,
 		gameStarted: true,
 		mapID: null,
-		totalDamage: 0,
-		currentCell: { row: 0, index: 2 }
+		totalDamage: 0
 	};
 	
 	try {
@@ -275,6 +274,7 @@ app.get('/map', async (req, res) => {
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
 
 	const currentCell = req.session.gameSession.currentCell;
+	console.log("map" + currentCell.row + " " + currentCell.index);
 
 	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID, currentCell: currentCell });
 });
@@ -481,7 +481,7 @@ app.get('/victory', async (req, res) => {
 	const row = req.session.battleSession.row;
 	
 	req.session.currentCell = { row: row, index: index };
-	
+	console.log(req.session.currentCell);
 	const difficulty = req.session.battleSession.difficulty;
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
