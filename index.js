@@ -582,6 +582,8 @@ app.get('/victory', async (req, res) => {
 app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
 	req.session.battleSession.playerLevel++;
+	
+	req.session.gameSession.currentCell = { row: 0, index: 2 };
 
 	//if the player has not received coins yet, give them coins
 	if (req.session.battleSession.coinsReceived == false) {
