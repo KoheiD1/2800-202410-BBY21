@@ -25,8 +25,8 @@
                 class="grid grid-cols-1 grid-rows-3 space-y-5 mx-6 pt-6 p-5 py-4 shopItem overflow-hidden grid-rows">
                 <% for(let i=0; i < items.length; i++) { %>
                     <% if(items[i]==null) {continue;} %>
-                            <%- include('templates/shopItem', {item: items[i]}) %>
-                                <% } %>
+                        <%- include('templates/shopItem', {item: items[i]}) %>
+                            <% } %>
             </div>
         </div>
     </div>
@@ -50,7 +50,8 @@
     </div>
     <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
         <div class="bg-white rounded-lg p-8 text-center">
-            <h2 class="text-xl basicPixel mb-4">Welcome to the Shop! Boost your strength with computer parts sporting powerful stats to crush your foes and reign supreme!</h2>
+            <h2 class="text-xl basicPixel mb-4">Welcome to the Shop! Boost your strength with computer parts sporting
+                powerful stats to crush your foes and reign supreme!</h2>
             <div class="flex justify-center space-x-4">
                 <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
             </div>
@@ -76,6 +77,7 @@
         }
     </style>
     <script>
+
         function showEffect(effect) {
             let dialog = document.getElementById("effect");
             dialog.querySelector("#effect_name").innerHTML = effect.charAt(0).toUpperCase() + effect.slice(1);
@@ -95,8 +97,6 @@
             dialog.showModal();
         }
 
-
-
         function showDialog(string) {
             let dialog = document.querySelector('dialog');
             let item = string;
@@ -106,7 +106,7 @@
             effects.innerHTML = '';
             for (let i = 0; i < item.effects.length; i++) {
                 let effect = document.createElement('p');
-                effect.setAttribute("class", "flex justify-center items-center")
+                effect.setAttribute("class", "flex justify-center items-center");
                 effect.innerHTML = '<img src="i.svg" class="inline-block align-top scale-150 px-3">' + item.effects[i] + ': ' + item[item.effects[i]];
                 effect.setAttribute("onclick", "showEffect('" + item.effects[i] + "')");
                 effect.classList.add('cursor-pointer');
@@ -148,5 +148,6 @@
             document.getElementById("image").src = "i_orange.svg";
             clicked = false;
         }
+
     </script>
     <%- include("templates/footer") %>

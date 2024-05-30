@@ -25,10 +25,6 @@ module.exports = function(userCollection) {
                 },
                 { projection: { _id: 0, username: 1, profile_pic: 1 } }
             ).toArray();
-            
-            // const allUsers = documents.map(doc => doc.username);
-            
-            // console.log('Usernames:', allUsers);
     
             res.render("findFriends", { allUsers: documents });
         } catch (err) {
@@ -37,9 +33,6 @@ module.exports = function(userCollection) {
         }
     });
     
-    
-    
-
     router.post('/addFriend', async (req, res) => {
         try {
             if (!req.session.authenticated) {
