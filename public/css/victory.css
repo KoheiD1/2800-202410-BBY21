@@ -1,0 +1,12 @@
+.help-button {
+  display: none;
+}
+
+@font-face {
+font-family: 'titlefont';
+src: url('./ttf/victory.TTF') format('truetype');
+}
+
+.title-font {
+font-family: 'titlefont', sans-serif;
+}
