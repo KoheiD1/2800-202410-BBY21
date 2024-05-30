@@ -1,30 +1,6 @@
 <%- include("templates/headerloggedinMAP", { overflowVariable: '' }) %>
   <link href="/hoverglow.css" rel="stylesheet" type="text/css">
-  <style>
-    body {
-      background-image: url('/indexBG.png');
-      background-size: cover;
-      background-position: top;
-      background-attachment: fixed;
-      min-height: 100vh;
-    }
-
-    .outer-grid {
-      background-image: url('/parchment.svg');
-      background-size: contain;
-      background-repeat: no-repeat;
-      margin-top: 15px;
-    }
-
-    .middle-grid {
-      padding-left: 60px;
-      padding-bottom: 50px;
-    }
-
-    .redShadow {
-      text-shadow: -2px 0px #000000, 0px -2px #000000;
-    }
-  </style>
+  <link href="/map.css" rel="stylesheet" type="text/css">
   <div class="outer-grid max-w-md mx-auto">
     <div class ="middle-grid pt-3 ml-1">
       <div class="grid grid-rows-9 p-4 max-w-md mx-auto">
@@ -43,7 +19,7 @@
   <div class="grid max-w-md mx-auto py-4">
     <form action="/mapreset" method="post" class="mx-auto">
       <input type="hidden" name="id" value="<%- id %>">
-      <button type="submit" class="pixel-button-red py-2 px-4 mx-5 redShadow" alt="home"
+      <button type="submit" class="pixel-button-red py-2 px-4 mx-5 redShadow"
         value="Reset and Start from the Beginning">Reset and <br> Start Over</button>
     </form>
   </div>
