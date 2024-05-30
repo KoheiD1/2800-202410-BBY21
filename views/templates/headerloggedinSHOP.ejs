@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CodeCrypt</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" type="text/css" href="/healthbar.css">
+	<link rel="stylesheet" type="text/css" href="/pixelButton.css">
+	<link rel="stylesheet" href="/fonts.css">
+	<link rel="icon" type="image/png" href="favicon.png">
+	<link rel="stylesheet" type="text/css" href="/header.css">
+	<link rel="stylesheet" href="/tight.css" type="text/css">
+	<link rel="stylesheet" type="text/css" href="/<%= stylesheet %>">
+</head>
+
+<body class="<%= overflowVariable %>">
+	<div class="header sticky pt-4 pb-4 pr-2.5 relative z-10 bg-transparent" style="height: 7vh;">
+		<div class="flex justify-end items-center h-full">
+			<div class="help-button" onclick="showModal()">
+				<img id="image" src="../i_orange.svg" class="w-10 h-10 mt-2" onclick="toggleImageColor()"
+					onmouseover="hoveredImage()" onmouseleave="revertImage()" alt="info_button">
+			</div>
+			<% if (gameStarted) { %>
+				<div class="flex items-center mr-4">
+					<img src="../coin.png" class="w-10 h-10" alt="coin">
+					<span class="basicPixel ml-1 text-gray-900 text-lg sm:text-2xl tight">
+						<%= playerCoins %>
+					</span>
+				</div>
+				<% } %>
+					<div class="flex items-center mr-4">
+						<img src="../diamond.png" class="w-10 h-10" onclick="clicker()" alt="diamond">
+						<span class="basicPixel ml-1 text-gray-900 text-lg sm:text-2xl tight">
+							<%= slotsCurrency %>
+						</span>
+					</div>
+					<img
+						class="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 rounded-full bg-white border-2 border-gray-500 hover:border-black cursor-pointer"
+						src="../<%= userProfilePic %>" alt="Profile Picture" onclick="window.location.href='/profile?from=home'">
+		</div>
+	</div>
+	<script>
+		var clicks = 0;
+
+		function clicker() {
+			clicks++;
+			if (clicks == 7) {
+				window.location.href = "/gatchaPage";
+			}
+		}
+
+	</script>	<%- include("informationIcon") %>
+
+</body>
