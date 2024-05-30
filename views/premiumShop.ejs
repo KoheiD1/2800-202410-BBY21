@@ -48,7 +48,7 @@ body {
         <h2 class="text-xl basicPixel mb-4">Are you sure you want to buy <%- pfpList[i].name %>?</h2>
         <div class="flex justify-center space-x-4">
           <button onclick="hideModal(this)" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No</button>
-          <button onclick="buyItem({ type: 'pfp', src: '<%= pfpList[i].src %>' }, <%= pfpList[i].price %>, this)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
+          <button onclick="buyItem({ type: 'pfp', src: '<%= pfpList[i].src %>' }, '<%= pfpList[i].price %>', this)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@ body {
         <h2 class="text-xl basicPixel mb-4">Are you sure you want to buy <%- titleList[i].title %>?</h2>
         <div class="flex justify-center space-x-4">
           <button onclick="hideModal(this)" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No</button>
-          <button onclick="buyItem({ type: 'title', title: '<%- titleList[i].title %>' }, <%= titleList[i].price %>, this)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
+          <button onclick="buyItem({ type: 'title', title: '<%- titleList[i].title %>' }, '<%= titleList[i].price %>', this)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
         </div>
       </div>
     </div>
@@ -103,6 +103,7 @@ body {
 <%- include("templates/footer") %>
 
 <script>
+
 function showModal(obj) {
   obj.nextElementSibling.classList.remove('hidden');
 }

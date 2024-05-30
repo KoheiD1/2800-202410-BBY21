@@ -79,6 +79,7 @@
   <!-- Add a hidden input field to store the currentUser value -->
   <input type="hidden" id="currentUser" value="<%= currentUser %>">
   <script>
+    
     function toggleFriend(username) {
       fetch('/toggleFriend', {
         method: 'POST',
@@ -111,6 +112,7 @@
         friendButton.textContent = 'Add Friend';
       }
     }
+
   </script>
 </body>
 <%- include("templates/footer") %>

@@ -90,45 +90,45 @@ body {
 <script>
 
 async function reward(obj) {
-  await obj.setAttribute('onclick', '');
-  const name = obj.querySelector('.name').innerText;
-  if (obj.querySelector('.diamonds')) {
-    const diamonds = parseInt(obj.querySelector('.diamonds').innerText);
-    await fetch('/claimAchievement', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+  await obj.setAttribute("onclick", "");
+  const name = obj.querySelector(".name").innerText;
+  if (obj.querySelector(".diamonds")) {
+    const diamonds = parseInt(obj.querySelector(".diamonds").innerText);
+    await fetch("/claimAchievement", {
+      method: "POST",
       body: JSON.stringify({
         achievementName: name,
         diamonds: diamonds
-      })
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
     }).then((response) => {
       if (response.ok) {
         window.location.reload();
       } else {
-        console.log('Failed to claim achievement');
+        console.log("Failed to claim achievement");
         response.json().then((data) => {
           console.log(data);
         });
       }
     });
   } else {
-    const pfp = obj.querySelector('.pfp').alt;
-    await fetch('/claimAchievement', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+    const pfp = obj.querySelector(".pfp").alt;
+    await fetch("/claimAchievement", {
+      method: "POST",
       body: JSON.stringify({
         achievementName: name,
         pfp: pfp
-      })
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
     }).then((response) => {
       if (response.ok) {
         window.location.reload();
       } else {
-        console.log('Failed to claim achievement');
+        console.log("Failed to claim achievement");
         response.json().then((data) => {
           console.log(data);
         });
@@ -136,4 +136,5 @@ async function reward(obj) {
     });
   }
 }
+
 </script>

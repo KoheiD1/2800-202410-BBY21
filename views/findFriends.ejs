@@ -70,6 +70,7 @@
     <div id="modalOverlay" class="modal-overlay"></div>
 
     <script>
+
       function getProfileInfo(friendName, source) {
         fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
           method: 'GET'
@@ -100,7 +101,6 @@
             if (!response.ok) {
               throw new Error('Failed to add user to friends list');
             }
-
             openModal('successModal');
           })
           .catch(error => {

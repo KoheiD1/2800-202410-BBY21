@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-module.exports = function(userCollection) {
+module.exports = function (userCollection) {
 
     router.get('/friends', async (req, res) => {
         if (req.session.authenticated) {
@@ -9,12 +9,12 @@ module.exports = function(userCollection) {
 
             const user = await userCollection.findOne({ username: userName });
             const friendsList = user.friendsList;
-            
+
             var documents = [];
 
-            for (var i=0; i<friendsList.length; i++) {
-                var temp =  await userCollection.find(
-                    {  username: friendsList[i] },
+            for (var i = 0; i < friendsList.length; i++) {
+                var temp = await userCollection.find(
+                    { username: friendsList[i] },
                     { projection: { _id: 0, username: 1, profile_pic: 1 } }
                 ).toArray();
                 documents.push(temp[0]);
