@@ -1,32 +1,8 @@
-body {
-  background-image: url('/indexBG.png');
-  background-size: cover;
-  background-position: top;
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
-.outer-grid {
-  background-image: url('/parchment.svg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin-top: 15px;
-}
-
-.middle-grid {
-  padding-left: 60px;
-  padding-bottom: 50px;
-}
-
-.redShadow {
-  text-shadow: -2px 0px #000000, 0px -2px #000000;
-}
-
 .kid-location {
   position: relative;
 }
 
-.kid-location img.kid-head {
+.kid-location .kid-head {
   position: absolute;
   top: 0;
   right: 0;

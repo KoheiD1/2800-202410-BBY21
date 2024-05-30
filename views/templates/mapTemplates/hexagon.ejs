@@ -44,6 +44,9 @@
       <input type="image" src="/hexagon_green.svg" class="w-full" alt="home">
     </form> -->
     <img src="/hexagon_green.svg" class="w-full" alt="home">
+    <% if (isKidLocation) { %>
+      <img class="kid-head" src="/kid-head.png" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'notChosen' : %>
@@ -53,6 +56,9 @@
       <input type="image" src="/hexagon_red.svg" class="w-full" alt="home">
     </form> -->
     <img src="/hexagon_red.svg" class="w-full" alt="home">
+    <% if (isKidLocation) { %>
+      <img class="kid-head" src="/kid-head.png" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'inactive' : %>
@@ -66,6 +72,9 @@
         <img src="/hexagon_black.svg" alt="home" class="responsive-svg">
       </div>
     </div>
+    <% if (isKidLocation) { %>
+      <img class="kid-head" src="/kid-head.png" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
 } %>

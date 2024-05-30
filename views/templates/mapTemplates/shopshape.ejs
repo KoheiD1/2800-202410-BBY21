@@ -24,11 +24,27 @@
       width: 125%; 
     }
   }
+
+  .kid-location {
+    position: relative;
+  }
+
+  .kid-location img.kid-head {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25%;
+    height: 25%;
+  }
+
+  .remove-kid-location .kid-head {
+    display: none;
+  }
 </style>
 
 <% switch(status) {
   case 'unvisited' : %>
-  <div class="centered-container">
+  <div class="centered-container <%= isKidLocation ? 'kid-location' : '' %>">
     <div class="svg-wrapper">
       <form action="/preshop" method="post" class="hoverglow">
         <input type="hidden" name="row" value="<%- row %>">
@@ -36,27 +52,39 @@
         <input type="image" src="/shop.svg" alt="home" class="responsive-svg">
       </form>
     </div>
+    <% if (isKidLocation) { %>
+      <img src="/kid-head.png" class="kid-head" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'chosen' : %>
-  <div class="centered-container">
+  <div class="centered-container <%= isKidLocation ? 'kid-location' : '' %>">
     <div class="svg-wrapper">
       <img src="/shop_green.svg" alt="home" class="responsive-svg">
     </div>
+    <% if (isKidLocation) { %>
+      <img src="/kid-head.png" class="kid-head" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'notChosen' : %>
-  <div class="centered-container">
+  <div class="centered-container <%= isKidLocation ? 'kid-location' : '' %>">
     <div class="svg-wrapper">
       <img src="/shop_red.svg" alt="home" class="responsive-svg">
     </div>
+    <% if (isKidLocation) { %>
+      <img src="/kid-head.png" class="kid-head" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'inactive' : %>
-  <div class="centered-container">
+  <div class="centered-container <%= isKidLocation ? 'kid-location' : '' %>">
     <div class="svg-wrapper">
       <img src="/shop.svg" alt="home" class="responsive-svg">
     </div>
+    <% if (isKidLocation) { %>
+      <img src="/kid-head.png" class="kid-head" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
 } %>

@@ -1,14 +1,12 @@
 <div class="grid grid-cols-5">
   <% var index = 0; %>
+  <% var currentRow = currentCell && row === currentCell.row; %>
   <% arr.forEach((item) => { %>
-    <% 
-    // Determine if the current cell should have the kid-location class
-    let isKidLocation = currentCell && currentCell.row === row && currentCell.index === index;
-    let belowCurrentCell = currentCell && row > currentCell.row;
-    %>
-    <div class="shape <%= status %> <%= isKidLocation ? 'kid-location' : '' %> <%= belowCurrentCell ? 'remove-kid-location' : '' %>" data-row="<%= row %>" data-index="<%= index %>">
-      <img src="/<%= shape %>.svg" alt="<%= shape %>">
-    </div>
+    <% if (!(active.includes(index))) { %>
+      <%- include("./shape", {shape: item.shape, status: "inactive", index: index, row: row, isKidLocation: currentRow && currentCell.index === index}) %>
+    <% } else { %>
+      <%- include("./shape", {shape: item.shape, status: item.status, index: index, row: row, isKidLocation: currentRow && currentCell.index === index}) %>
+    <% } %>
     <% index++; %>
   <% }); %>
 </div>

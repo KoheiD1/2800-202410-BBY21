@@ -4,23 +4,23 @@
     </div>
   <% break;
   case 'circle' : %>
-    <%- include("./circle", {status: status, index: index, row: row}) %>
+    <%- include("./circle", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'triangle' : %>
-    <%- include("./triangle", {status: status, index: index, row: row}) %>
+    <%- include("./triangle", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'square' : %>
-    <%- include("./square", {status: status, index: index, row: row}) %>
+    <%- include("./square", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'pentagon' : %>
-    <%- include("./pentagon", {status: status, index: index, row: row}) %>
+    <%- include("./pentagon", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'hexagon' : %>
-    <%- include("./hexagon", {status: status, index: index, row: row}) %>
+    <%- include("./hexagon", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'shop' : %>
-  <%- include("./shopshape", {status: status, index: index, row: row}) %>
-  <% break;
+    <%- include("./shopshape", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
+  <% break; 
   case 'legend' : %>
     <div id="legend" class="pt-1">
       <img id ="legend-image" src="/legend.svg" alt="legend" class="responsive-svg" onclick="showLegendModal()" onmouseover="hoveredLegend()" onmouseout="revertLegend()">
@@ -58,7 +58,7 @@
           click = false;
           document.getElementById("image").classList.remove('hidden');
       }
-  </script>
+    </script>
   <% break;
   }
 %>

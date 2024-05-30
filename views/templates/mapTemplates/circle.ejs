@@ -1,21 +1,27 @@
 <% switch(status) {
   case 'unvisited' : %>
-  <div>
+  <div class="circle-container <%= isKidLocation ? 'kid-location' : '' %>">
     <form action="/startencounter" method="POST">
       <input type="hidden" name="row" value="<%- row %>">
       <input type="hidden" name="difficulty" value="circle">
       <input type="hidden" name="index" value="<%- index %>">
       <input type="image" src="/circle_black.svg" class="w-full" alt="home">
     </form>
+    <% if (isKidLocation) { %>
+      <img class="kid-head" src="/kid-head.png" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'chosen' : %>
-  <div>
+  <div class="circle-container <%= isKidLocation ? 'kid-location' : '' %>">
     <!-- <form action="/encounter" method="POST">
       <input type="hidden" name="difficulty" value="circle">
       <input type="image" src="/circle_green.svg" class="w-full" alt="home">
     </form> -->
     <img src="/circle_green.svg" class="w-full" alt="home">
+    <% if (isKidLocation) { %>
+      <img class="kid-head" src="/kid-head.png" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
 } %>

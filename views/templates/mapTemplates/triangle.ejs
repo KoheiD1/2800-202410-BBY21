@@ -1,39 +1,57 @@
+<style>
+  .kid-location {
+    position: relative;
+  }
+
+  .kid-location img.kid-head {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25%;
+    height: 25%;
+  }
+
+  .remove-kid-location .kid-head {
+    display: none;
+  }
+</style>
+
 <% switch(status) {
   case 'unvisited' : %>
-  <div>
+  <div class="triangle-container <%= isKidLocation ? 'kid-location' : '' %>">
     <form action="/startencounter" method="POST" class="hoverglow">
       <input type="hidden" name="row" value="<%- row %>">
       <input type="hidden" name="difficulty" value="triangle">
       <input type="hidden" name="index" value="<%- index %>">
       <input type="image" src="/triangle_black.svg" class="w-full" alt="home">
     </form>
+    <% if (isKidLocation) { %>
+      <img class="kid-head" src="/kid-head.png" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'chosen' : %>
-  <div>
-    <!-- <form action="/encounter" method="POST">
-      <input type="hidden" name="difficulty" value="triangle">
-      <input type="image" src="/triangle_green.svg" class="w-full" alt="home">
-    </form> -->
+  <div class="triangle-container <%= isKidLocation ? 'kid-location' : '' %>">
     <img src="/triangle_green.svg" class="w-full" alt="home">
+    <% if (isKidLocation) { %>
+      <img class="kid-head" src="/kid-head.png" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'notChosen' : %>
-  <div>
-    <!-- <form action="/encounter" method="POST">
-      <input type="hidden" name="difficulty" value="triangle">
-      <input type="image" src="/triangle_red.svg" class="w-full" alt="home">
-    </form> -->
+  <div class="triangle-container <%= isKidLocation ? 'kid-location' : '' %>">
     <img src="/triangle_red.svg" class="w-full" alt="home">
+    <% if (isKidLocation) { %>
+      <img class="kid-head" src="/kid-head.png" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'inactive' : %>
-  <div>
-    <!-- <form action="/encounter" method="POST">
-      <input type="hidden" name="difficulty" value="triangle">
-      <input type="image" src="/triangle_black.svg" class="w-full" alt="home">
-    </form> -->
+  <div class="triangle-container <%= isKidLocation ? 'kid-location' : '' %>">
     <img src="/triangle_black.svg" class="w-full" alt="home">
+    <% if (isKidLocation) { %>
+      <img class="kid-head" src="/kid-head.png" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
 } %>
