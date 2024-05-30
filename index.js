@@ -561,13 +561,11 @@ app.get('/victory', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
-	req.session.battleSession.coinsReceived = false;
 	await userCollection.updateOne(
 		{username: req.session.username}, 
-		{$inc: {goldCollected: coinDistribution(difficulty, req)}});
+		{$inc: {goldCollected: coinsWon(difficulty)}});
 
 	//setting the coins received to false so the victory page can display the coins won
-	req.session.battleSession.coinsReceived = false;
 	var result = await userCollection.findOne({ email: req.session.email });
 
 	if(!result.achievements.includes("First Monster Defeated") && !result.claimedAchievements.includes("First Monster Defeated")){
