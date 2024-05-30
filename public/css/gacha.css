@@ -1,0 +1,61 @@
+.grid-container {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 50vh;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 0;
+}
+
+@font-face {
+font-family: 'titlefont';
+src: url('startgame.ttf') format('truetype');
+}
+
+.title-font {
+font-family: 'titlefont', sans-serif;
+}
+
+@keyframes bounce-slow {
+0%, 100% {
+  transform: translateY(0);
+}
+50% {
+  transform: translateY(-10px);
+}
+}
+
+.animate-bounce-slow {
+animation: bounce-slow 3s infinite;
+}
+
+@font-face {
+font-family: 'startfont';
+src: url('titlefont.ttf') format('truetype');
+}
+
+.start-font {
+font-family: 'startfont', sans-serif;
+}
+
+.doodle {
+position: fixed;
+top: 0;
+z-index: -1;
+}
+
+.shadow {
+text-shadow: 4px 4px #000000;
+}
+
+.basicPixel {
+color: white;
+}
