@@ -33,10 +33,10 @@ module.exports = function (userCollection, userTitlesCollection) {
         userBio = userBio.replace(/\n/g, '');
       }
     
-      if (userBio === "Chick This Out!" && !unclaimedAchievements.includes("Chick This Out!") && !claimedAchievements.includes("Chick This Out!")) {
+      if (userBio === "Chick It Out!" && !unclaimedAchievements.includes("Chick It Out!") && !claimedAchievements.includes("Chick It Out!")) {
         await userCollection.updateOne(
           { username: userName },
-          { $push: { achievements: "Chick This Out!" } }
+          { $push: { achievements: "Chick It Out!" } }
         );
         res.render("profile", { goldCollected: goldCollected, runsCompleted: runsCompleted, damageDealt: damageDealt, userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles, from: from, special: "chick" });
       } else {
