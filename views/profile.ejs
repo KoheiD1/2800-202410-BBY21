@@ -111,6 +111,10 @@
         <button type="submit" class="pixel-button py-2 px-4 rounded edit premiumShop" onclick="window.location.href = '/premiumShop'">
           Back to Premium Shop
         </button>
+      <% } else if (from=='achievements' ) { %>
+        <button type="submit" class="pixel-button py-2 px-4 rounded edit premiumShop" onclick="window.location.href = '/achievements'">
+          Back to Achievements
+        </button>
       <% } else if (from=='question' ) { %>
         <button type="submit" class="pixel-button py-2 px-4 rounded edit premiumShop" onclick="window.location.href = '/question'">
           Back to Battle
@@ -122,8 +126,22 @@
       <% } %>
     </div>
   </div>
+<% if (special === "chick") { %>
+  <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div class="bg-white rounded-lg p-8 text-center">
+      <h2 class="text-xl basicPixel mb-4">Congratulations you have earned the achievement</h2>
+        <h2 class="text-2xl font-extrabold basicPixel mb-4">Chick this out!</h2>
+      <h2 class="text-xl basicPixel mb-4">Go to Achievements on the Main Menu to collect your rewards!</h2>
+      <div class="flex justify-center space-x-4">
+        <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Okay</button>
+      </div>
+    </div>
+  </div>
+<% } %>
   <script>
-  
+    function hideModal() {
+    document.getElementById('warningModal').classList.add('hidden');
+  }
     const userId = '<%= userId %>';
     const ownedUserTitles = '<%= ownedUserTitles %>';
     const userBio = '<%= userBio %>';

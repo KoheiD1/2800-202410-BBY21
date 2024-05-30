@@ -25,14 +25,23 @@ module.exports = function (userCollection, userTitlesCollection) {
       const runsCompleted = user ? user.runsCompleted : 0;
       const damageDealt = user ? user.totalDamageDealt : 0;
       const ownedUserTitles = user ? user.titles : [];
+      const unclaimedAchievements = user ? user.achievements : [];
+      const claimedAchievements = user ? user.claimedAchievements : [];
+
 
       if (userBio !== undefined) {
         userBio = userBio.replace(/\n/g, '');
       }
-
-      console.log(userBio); 
     
-      res.render("profile", { goldCollected: goldCollected, runsCompleted: runsCompleted, damageDealt: damageDealt, userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles, from: from });
+      if (userBio === "Chick this out!" && !unclaimedAchievements.includes("Chick this out!") && !claimedAchievements.includes("Chick this out!")) {
+        await userCollection.updateOne(
+          { username: userName },
+          { $push: { achievements: "Chick this out!" } }
+        );
+        res.render("profile", { goldCollected: goldCollected, runsCompleted: runsCompleted, damageDealt: damageDealt, userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles, from: from, special: "chick" });
+      } else {
+        res.render("profile", { goldCollected: goldCollected, runsCompleted: runsCompleted, damageDealt: damageDealt, userName: userName, userEmail: userEmail, userProfilePic: userProfilePic, userId: userId, friendsList: friendsList, userTitle: userTitle, userBio: userBio, ownedProfilePics: ownedProfilePics, ownedUserTitles: ownedUserTitles, from: from, special: "" });
+      }
     } else {
       res.redirect('/login');
     }

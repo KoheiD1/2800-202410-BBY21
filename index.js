@@ -561,7 +561,7 @@ app.get('/victory', async (req, res) => {
 	req.session.battleSession.coinsReceived = false;
 	var result = await userCollection.findOne({ email: req.session.email });
 
-	if(result.achievements.includes("First Monster Defeated") == false){
+	if(!result.achievements.includes("First Monster Defeated") && !result.claimedAchievements.includes("First Monster Defeated")){
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Monster Defeated" } });
 		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu", special: "firstBlood" });
 	} else {
@@ -607,7 +607,7 @@ app.get('/levelup', async (req, res) => {
 	req.session.battleSession.coinsReceived = false;
 	var result = await userCollection.findOne({ email: req.session.email });
 
-	if(result.achievements.includes("First Level Up") == false){
+	if(!result.achievements.includes("First Level Up") && !result.claimedAchievements.includes("First Level Up")){
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Stage Cleared" } });
 		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu", special: "firstLevelUp" });
 	} else {
@@ -757,10 +757,15 @@ app.get('/achievements', async (req, res) => {
 app.post('/claimAchievement', async (req, res) => {
 	const achievementName = req.body.achievementName;
 	const userEmail = req.session.email;
-	const diamonds = req.body.diamonds;
-
-	await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName }, $inc: { slotsCurrency: diamonds }, $pull: { achievements: achievementName }});
-	res.redirect('/achievements');
+	if (!req.body.diamonds) {
+		const pfp = req.body.pfp;
+		await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName , ownedProfilePics: pfp }, $pull: { achievements: achievementName }});
+		res.redirect('/achievements');
+	} else {
+		const diamonds = req.body.diamonds;
+		await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName }, $inc: { slotsCurrency: diamonds }, $pull: { achievements: achievementName }});
+		res.redirect('/achievements');
+	}
 });
 
 app.get("*", (req, res) => {
