@@ -1,0 +1,41 @@
+.help-button {
+  display: none;
+ }
+ 
+ @font-face {
+   font-family: 'titlefont';
+   src: url('startgame.ttf') format('truetype');
+ }
+
+ .title-font {
+   font-family: 'titlefont', sans-serif;
+   text-shadow: -6px -6px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4)
+ }
+
+ @keyframes bounce-slow {
+
+   0%,
+   100% {
+     transform: translateY(0);
+     text-shadow: -4px -4px white, 2px 2px hsla(0, 0%, 0%, 0.4);
+   }
+
+   50% {
+     transform: translateY(-10px);
+     text-shadow: -4px -4px white, 8px 8px 4px hsla(0, 0%, 0%, 0.4);
+   }
+ }
+
+ .animate-bounce-slow:hover {
+   animation: bounce-slow 3s infinite;
+ }
+
+ @font-face {
+   font-family: 'startfont';
+   src: url('titlefont.ttf') format('truetype');
+ }
+
+ .start-font {
+   font-family: 'startfont', sans-serif;
+   text-shadow: -4px -4px white, 2px 2px hsla(0, 0%, 0%, 0.4);
+ }
