@@ -35,6 +35,7 @@
             <div class="password-msg invalid-feedback">
             </div>
           <div>
+            <p id="duplicateErrorMessage" class="text-red-500 text-xs mt-2 hidden basicPixel"></p>
             <p class="text-xs mt-2 basicPixel">Required Fields:<span class="required">*</span></p>
           </div>
           <div class="col-12">
@@ -44,5 +45,15 @@
       </div>
     </div>
     <script defer src="/joi-client.js"></script>
+    <script>
+
+      var userExists = '<%= userExists %>';
+
+      if (userExists === 'true') {
+        document.getElementById('duplicateErrorMessage').classList.remove('hidden');
+        document.getElementById('duplicateErrorMessage').innerText = '<%= duplicateError %>';
+      }
+
+    </script>
   </body>
   <%- include("templates/footer") %>

@@ -88,7 +88,7 @@
             for (let i = 0; i < item.effects.length; i++) {
                 let effect = document.createElement('p');
                 effect.setAttribute("class", "flex justify-center items-center");
-                effect.innerHTML = '<img src="i.svg" class="inline-block align-top scale-150 px-3" alt="info_button">' + item.effects[i] + ': ' + item[item.effects[i]];
+                effect.innerHTML = '<img src="../i.svg" class="inline-block align-top scale-150 px-3" alt="info_button">' + item.effects[i] + ': ' + item[item.effects[i]];
                 effect.setAttribute("onclick", "showEffect('" + item.effects[i] + "')");
                 effect.classList.add('cursor-pointer');
                 effects.appendChild(effect);
