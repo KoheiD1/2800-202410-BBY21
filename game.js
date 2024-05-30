@@ -145,7 +145,7 @@ function coinDistribution(difficulty, req) {
     if (!coinsReceived) {
         switch (difficulty) {
             case "triangle":
-                return 500;
+                return 5;
             case "square":
                 return 10;
             case "pentagon":
@@ -173,7 +173,7 @@ returns: the amount of coins the player will win
 function coinsWon(difficulty){
     switch (difficulty) {
         case "triangle":
-            return 500;
+            return 5;
         case "square":
             return 10;
         case "pentagon":
