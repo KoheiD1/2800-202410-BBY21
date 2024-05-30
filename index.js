@@ -235,7 +235,8 @@ app.get('/startGame', async (req, res) => {
 		playerCoins: 0,
 		gameStarted: true,
 		mapID: null,
-		totalDamage: 0
+		totalDamage: 0,
+		currentCell: { row: 0, index: 2 }
 	};
 	
 	try {
@@ -412,6 +413,8 @@ app.post('/preshop', async (req, res) => {
 
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
+	
+	req.session.gameSession.currentCell = { row: row, index: index };
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
 	var arr = result[0].path['r' + row + 'connect'][index];
@@ -480,8 +483,7 @@ app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
 	
-	req.session.currentCell = { row: row, index: index };
-	console.log(req.session.currentCell);
+	req.session.gameSession.currentCell = { row: row, index: index };
 	const difficulty = req.session.battleSession.difficulty;
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
