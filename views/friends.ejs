@@ -1,5 +1,6 @@
 <%- include("templates/header", {overflowVariable: '' }) %>
-<link href="/defaultBG.css" rel="stylesheet" type="text/css">
+  <link href="/defaultBG.css" rel="stylesheet" type="text/css">
+
   <body class="bg-gray-100">
     <style>
       span {
@@ -14,17 +15,21 @@
             <% friendsList.forEach(friend=> { %>
               <li class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
                 style="background-image: url('/username-box.png');">
-                <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer" src="/<%= friend.profile_pic %>" alt="profile picture"
-                onclick="getProfileInfo('<%= friend.username %>', 'friends')">
-                <span class="text-gray-900 mx-auto text-3xl" onclick="getProfileInfo('<%= friend.username %>', 'friends')">
+                <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer"
+                  src="/<%= friend.profile_pic %>" alt="profile picture"
+                  onclick="getProfileInfo('<%= friend.username %>', 'friends')">
+                <span class="text-gray-900 mx-auto text-3xl"
+                  onclick="getProfileInfo('<%= friend.username %>', 'friends')">
                   <%= friend.username%>
                 </span>
-                <img class="-z-10 w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer" src="/<%= friend.profile_pic %>" alt="profile picture"
-                onclick="getProfileInfo('<%= friend.username %>')">
+                <img class="-z-10 w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer"
+                  src="/<%= friend.profile_pic %>" alt="profile picture"
+                  onclick="getProfileInfo('<%= friend.username %>')">
               </li>
               <% }); %>
                 <% } else { %>
-                  <li class="mt-5 text-gray-900 text-2xl text-center">You have not added any friends yet.<br>Click on the Add Friends Button to start.</li>
+                  <li class="mt-5 text-gray-900 text-2xl text-center">You have not added any friends yet.<br>Click on
+                    the Add Friends Button to start.</li>
                   <% } %>
         </ul>
       </div>
@@ -45,6 +50,7 @@
 
     </div>
     <script>
+
       function getProfileInfo(friendName, source) {
         fetch(`/friendProfile?friendName=${encodeURIComponent(friendName)}`, {
           method: 'GET'
@@ -53,15 +59,14 @@
             if (!response.ok) {
               throw new Error('Failed to get friend profile');
             }
-
             window.location.href = `/friendProfile?friendName=${encodeURIComponent(friendName)}&source=${source}`;
           })
-
           .catch(error => {
             console.error('Error updating friend profile:', error);
             alert('Failed to load friend profile');
           });
       }
+
     </script>
   </body>
   <%- include("templates/footer") %>

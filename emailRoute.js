@@ -27,13 +27,13 @@ router.post('/forgotPassword', async (req, res) => {
             const resetToken = generateResetToken();
             console.log('token in forgotPassword:' + resetToken);
             const resetLink = `http://codecrypt.onrender.com/resetPassword?token=${resetToken}`;
-            
+
             // Save the reset token and expiry in the user document in the database
             await userCollection.updateOne({ email: email }, { $set: { resetToken: resetToken, resetTokenExpiry: new Date(Date.now() + 3600000) } });
 
             // Send the reset password email
             await sendMail(email, 'Reset Password', `Click the link to reset your password: ${resetLink}`);
-            
+
             res.send(`
                 <html>
                 <head>
@@ -130,7 +130,7 @@ router.post('/resetPassword', async (req, res) => {
             // Hash the new password and update the user document in the database
             const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
             await userCollection.updateOne({ _id: user._id }, { $set: { password: hashedPassword }, $unset: { resetToken: "", resetTokenExpiry: "" } });
-            
+
             res.send(`
                 <html>
                 <head>

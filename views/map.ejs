@@ -48,21 +48,5 @@
     </form>
   </div>
   
-  <script>
-    function showModal() {
-      document.getElementById('warningModal').classList.remove('hidden');
-    }
-
-    function hideModal() {
-      document.getElementById('warningModal').classList.add('hidden');
-      document.getElementById("image").src = "i_orange.svg";
-      clicked = false;
-    }
-
-    function confirmStartGame() {
-      window.location.href = '/map';
-    }
-
-  </script>
   <%- include("templates/informationIcon") %>
   <%- include("templates/footer") %>
