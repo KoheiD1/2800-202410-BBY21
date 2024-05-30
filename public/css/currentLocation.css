@@ -1,0 +1,15 @@
+.kid-location {
+  position: relative;
+}
+
+.kid-location .kid-head {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 50%;
+}
+
+.remove-kid-location .kid-head {
+  display: none;
+}

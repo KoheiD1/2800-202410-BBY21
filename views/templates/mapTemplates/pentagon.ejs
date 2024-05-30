@@ -1,39 +1,87 @@
+<style>
+  .centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .responsive-svg {
+    width: 100%; 
+    max-width: 300px;
+    height: auto;
+  }
+
+  .svg-wrapper {
+    width: 100%; 
+    max-width: 300px;
+    height: auto;
+  }
+
+  @media (max-width: 600px) {
+    .svg-wrapper {
+      width: 125%; 
+    }
+  }
+
+  .kid-location {
+    position: relative;
+  }
+
+  .kid-location img.kid-head {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25%;
+    height: 25%;
+  }
+
+  .remove-kid-location .kid-head {
+    display: none;
+  }
+</style>
+
 <% switch(status) {
   case 'unvisited' : %>
-  <div>
+  <div class="<%= isKidLocation ? 'kid-location' : '' %>">
     <form action="/startencounter" method="POST" class="hoverglow">
       <input type="hidden" name="row" value="<%- row %>">
       <input type="hidden" name="difficulty" value="pentagon">
       <input type="hidden" name="index" value="<%- index %>">
       <input type="image" src="/pentagon_black.svg" class="w-full" alt="home">
     </form>
+    <% if (isKidLocation) { %>
+      <img src="/kid-head.png" class="kid-head" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'chosen' : %>
-  <div>
-    <!-- <form action="/encounter" method="POST">
-      <input type="hidden" name="difficulty" value="pentagon">
-      <input type="image" src="/pentagon_green.svg" class="w-full" alt="home">
-    </form> -->
-    <img src="/pentagon_green.svg" class="w-full" alt="home">
+  <div class="<%= isKidLocation ? 'kid-location' : '' %>">
+    <img src="/pentagon_red.svg" class="w-full" alt="home">
+    <% if (isKidLocation) { %>
+      <img src="/kid-head.png" class="kid-head" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'notChosen' : %>
-  <div>
-    <!-- <form action="/encounter" method="POST">
-      <input type="hidden" name="difficulty" value="pentagon">
-      <input type="image" src="/pentagon_red.svg" class="w-full" alt="home">
-    </form> -->
+  <div class="<%= isKidLocation ? 'kid-location' : '' %>">
     <img src="/pentagon_red.svg" class="w-full" alt="home">
+    <% if (isKidLocation) { %>
+      <img src="/kid-head.png" class="kid-head" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
   case 'inactive' : %>
-  <div>
-    <!-- <form action="/encounter" method="POST">
-      <input type="hidden" name="difficulty" value="pentagon">
-      <input type="image" src="/pentagon_black.svg" class="w-full" alt="home">
-    </form> -->
-    <img src="/pentagon_black.svg" class="responsive-svg" alt="home">
+  <div class="<%= isKidLocation ? 'kid-location' : '' %>">
+    <div class="centered-container">
+      <div class="svg-wrapper">
+        <img src="/pentagon_black.svg" class="responsive-svg" alt="home">
+      </div>
+    </div>
+    <% if (isKidLocation) { %>
+      <img src="/kid-head.png" class="kid-head" alt="Kid Head">
+    <% } %>
   </div>
   <% break;
 } %>

@@ -236,8 +236,9 @@ app.get('/startGame', async (req, res) => {
 		gameStarted: true,
 		mapID: null,
 		totalDamage: 0,
+		currentCell: { row: 0, index: 2 }
 	};
-
+	
 	try {
 		await new Promise((resolve, reject) => {
 			if (req.session.gameSession) {
@@ -256,6 +257,7 @@ app.get('/startGame', async (req, res) => {
 
 app.get('/map', async (req, res) => {
 	req.session.shop = null;
+	
 	if (!req.session.gameSession.mapSet) {
 		const result = await pathsCollection.find({ _id: currMap }).project({
 			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
@@ -271,7 +273,11 @@ app.get('/map', async (req, res) => {
 		req.session.gameSession.mapSet = true;
 	}
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
-	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID });
+
+	const currentCell = req.session.gameSession.currentCell;
+	console.log("map" + currentCell.row + " " + currentCell.index);
+
+	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID, currentCell: currentCell });
 });
 
 app.post('/startencounter', async (req, res) => {
@@ -411,6 +417,8 @@ app.post('/preshop', async (req, res) => {
 
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
+	
+	req.session.gameSession.currentCell = { row: row, index: index };
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
 	var arr = result[0].path['r' + row + 'connect'][index];
@@ -478,6 +486,8 @@ app.post('/preshop', async (req, res) => {
 app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
+	
+	req.session.gameSession.currentCell = { row: row, index: index };
 	const difficulty = req.session.battleSession.difficulty;
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
