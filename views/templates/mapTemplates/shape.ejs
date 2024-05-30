@@ -1,25 +1,65 @@
+
 <% switch(shape) {
   case 'empty' : %>
-  <div>
-  </div>
+    <div>
+    </div>
   <% break;
   case 'circle' : %>
-    <%- include("./circle", {status: status, index: index, row: row}) %>
+    <%- include("./circle", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'triangle' : %>
-    <%- include("./triangle", {status: status, index: index, row: row}) %>
+    <%- include("./triangle", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'square' : %>
-    <%- include("./square", {status: status, index: index, row: row}) %>
+    <%- include("./square", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'pentagon' : %>
-    <%- include("./pentagon", {status: status, index: index, row: row}) %>
+    <%- include("./pentagon", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'hexagon' : %>
-    <%- include("./hexagon", {status: status, index: index, row: row}) %>
+    <%- include("./hexagon", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
   <% break;
   case 'shop' : %>
-  <%- include("./shopshape", {status: status, index: index, row: row}) %>
-<% break;
+    <%- include("./shopshape", {status: status, index: index, row: row, isKidLocation: isKidLocation}) %>
+  <% break; 
+  case 'legend' : %>
+    <div id="legend" class="pt-1">
+      <img id ="legend-image" src="/legend.svg" alt="legend" class="responsive-svg" onclick="showLegendModal()" onmouseover="hoveredLegend()" onmouseout="revertLegend()">
+    </div>
+    <div id="legendModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+      <div class="bg-white rounded-lg p-3 text-center flex flex-col">
+        <h1 class="titleFont text-3xl mb-4">LEGEND</h1>
+        <h2 class="text-xl basicPixel mb-4 mr-auto"><img src ="shop.svg" style ="display: inline-block; width: 50px; height: 50px; margin-bottom: 3px;"> = Buy items </h2>
+        <h2 class="text-xl basicPixel mb-4 mr-auto"><img src ="triangle_black.svg" style ="display: inline-block; width: 50px; height: 50px; margin-bottom: 3px;"> = Easy level</h2>
+        <h2 class="text-xl basicPixel mb-4 mr-auto"><img src ="square_black.svg" style ="display: inline-block; width: 50px; height: 50px; margin-bottom: 3px;"> = Medium level</h2>
+        <h2 class="text-xl basicPixel mb-4 mr-auto"><img src ="pentagon_black.svg" style ="display: inline-block; width: 50px; height: 50px; margin-bottom: 3px;"> = Hard level</h2>
+        <h2 class="text-xl basicPixel mb-4 mr-auto"><img src ="hexagon_black.svg" style ="display: inline-block; width: 50px; height: 50px; margin-bottom: 3px;"> = Boss level</h2>
+        <div class="flex justify-center space-x-4">
+          <button onclick="hideLegendModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      function revertLegend() {
+          document.getElementById("legend-image").src = "/legend.svg";
+      }
+
+      function hoveredLegend() {
+          document.getElementById("legend-image").src = "/legend2.svg";
+      }
+
+      function showLegendModal() {
+          document.getElementById('legendModal').classList.remove('hidden');
+          document.getElementById("image").classList.add('hidden');
+      }
+
+      function hideLegendModal() {
+          document.getElementById('legendModal').classList.add('hidden');
+          revertLegend(); // Call the function to revert the legend image
+          click = false;
+          document.getElementById("image").classList.remove('hidden');
+      }
+    </script>
+  <% break;
   }
 %>

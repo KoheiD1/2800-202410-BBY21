@@ -43,6 +43,7 @@ const userRunsCollection = database.db(mongodb_database).collection('userRuns');
 const levelOneCollection = database.db(mongodb_database).collection('level-1-questions');
 const userTitlesCollection = database.db(mongodb_database).collection('UserTitles');
 const pfpCollection = database.db(mongodb_database).collection('profile-pics');
+const achievementsCollection = database.db(mongodb_database).collection('achievements');
 
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
@@ -90,7 +91,9 @@ app.use('/', shopRouter(itemCollection, userCollection));
 const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
-const { damageCalculator, coinDistribution, chooseEnemy, resetCoinsReceived, regenCalculator, enemeyScaling, additionalHealth, additionalDMG } = require('./game');
+//Passing in the functions from game.js which are used for the game logic
+const { damageCalculator, coinDistribution, chooseEnemy, regenCalculator, enemeyScaling,
+	additionalHealth, additionalDMG, coinsWon } = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
 // res.locals is an object that contains response local variables scoped to the request, and therefore available to the view templates
@@ -120,7 +123,7 @@ app.get('/createUser', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-	res.render("login");
+	res.render("login" , { success: true });
 });
 
 const emailRoute = require('./emailRoute');
@@ -138,52 +141,58 @@ app.get('/resetPassword', (req, res) => {
 });
 
 app.post('/submitUser', async (req, res) => {
-	var username = req.body.username;
-	var email = req.body.email;
-	var password = req.body.password;
+	
+	const {schema} = require('./joi-schema');
+    const { username, email, password } = req.body;
 
-	const schema = Joi.object(
-		{
-			username: Joi.string().alphanum().max(20).required(),
-			email: Joi.string().email().max(320).required(),
-			password: Joi.string().max(20).required()
-		});
+    const result = schema.validate(req.body, { abortEarly: false });
+    if (result.error) {
+        console.log("Error");
+        res.render("createUser", { errors: result.error.details });
+        return;
+    }
 
-	const validationResult = schema.validate({ username, email, password });
-	if (validationResult.error != null) {
-		res.redirect("/createUser");
-		return;
-	}
+    try {
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-	var hashedPassword = await bcrypt.hash(password, saltRounds);
+        await userCollection.insertOne({
+            username,
+            profile_pic: "profile-logo.png",
+            friendsList: [],
+            itemList: [],
+            email,
+            password: hashedPassword,
+            slotsCurrency: 0,
+            ownedProfilePics: ["pfp-1.png", "pfp-2.png", "pfp-3.png"],
+            titles: ["New around the block"],
+						bio: "Click Edit Profile to change your profile",
+						UserTitle : "New around the block",
+						achievements: [],
+						claimedAchievements: []
+        });
 
-	await userCollection.insertOne({ username: username, profile_pic: "profile-logo.png", friendsList: [], itemList: [], email: email, password: hashedPassword, slotsCurrency: 0, ownedProfilePics: [], titles: [] });
+        req.session.authenticated = true;
+        req.session.username = username;
+        req.session.email = email;
+        req.session.cookie.maxAge = expireTime;
 
-	req.session.authenticated = true;
-	req.session.username = username;
-	req.session.email = email;
-	req.session.cookie.maxAge = expireTime;
-
-	res.redirect('profile');
+        console.log("Success");
+        res.redirect(`/profile?username=${username}`);
+    } catch (error) {
+        console.error("Database insertion error:", error);
+        res.status(500).send("Internal server error");
+    }
 });
 
 app.post('/loggingin', async (req, res) => {
-	var email = req.body.email;
-	var password = req.body.password;
 
-	const schema = Joi.string().max(320).required();
-	const validationResult = schema.validate(email);
-	if (validationResult.error != null) {
-		res.redirect("/login");
-		return;
-	}
-
+	const { email, password } = req.body;
 	const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, _id: 1, profile_pic: 1 }).toArray();
-
 	if (result.length != 1) {
-		res.redirect("/login");
+		res.render("login", { success: false });
 		return;
 	}
+
 	if (await bcrypt.compare(password, result[0].password)) {
 		req.session.authenticated = true;
 		req.session.email = email;
@@ -195,7 +204,7 @@ app.post('/loggingin', async (req, res) => {
 		return;
 	}
 	else {
-		res.redirect("/login");
+		res.render("login", { success: false });
 		return;
 	}
 });
@@ -215,8 +224,8 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/startGame', async (req, res) => {
-	// When the player starts the game it creates a new game session
-	req.session.gameSession = await {
+
+	req.session.gameSession = {
 		mapSet: false,
 		playerHealth: 100,
 		maxPlayerHealth: 100,
@@ -227,37 +236,28 @@ app.get('/startGame', async (req, res) => {
 		gameStarted: true,
 		mapID: null,
 		totalDamage: 0,
-	}
-
+		currentCell: { row: 0, index: 2 }
+	};
+	
 	try {
 		await new Promise((resolve, reject) => {
-			if (!req.session.gameSession.mapSet) {
+			if (req.session.gameSession) {
 				resolve();
 			} else {
 				reject(new Error('Game session map is not set'));
 			}
 		});
 
-
-		// Check if the map is set
-		if (!req.session.gameSession.mapSet) {
-			// If not set, redirect to '/map'
-			setTimeout(() => {
-				res.redirect('/map');
-			}, 300);
-		} else {
-			// If set, redirect to '/'
-			res.redirect('/');
-		}
+		res.json({ success: true });
 	} catch (error) {
-		// Handle any errors
-		res.redirect('/');
+		console.log('Error starting game:', error);
+		res.redirect('/startGame')
 	}
 });
 
-
 app.get('/map', async (req, res) => {
 	req.session.shop = null;
+	
 	if (!req.session.gameSession.mapSet) {
 		const result = await pathsCollection.find({ _id: currMap }).project({
 			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
@@ -273,22 +273,36 @@ app.get('/map', async (req, res) => {
 		req.session.gameSession.mapSet = true;
 	}
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
-	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID });
+
+	const currentCell = req.session.gameSession.currentCell;
+	console.log("map" + currentCell.row + " " + currentCell.index);
+
+	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID, currentCell: currentCell });
 });
 
 app.post('/startencounter', async (req, res) => {
-	// When the player starts the game it creates a new game session
-	await levelOneCollection.deleteMany({});
-	const encounterQuestions = await questionCollection.aggregate([{ $sample: { size: 25 } }]).toArray();
-	await levelOneCollection.insertMany(encounterQuestions);
-	resetCoinsReceived()
+
+	const battleQuestions = await questionCollection.aggregate([{ $sample: { size: 25 } }]).toArray();
+
+	await userCollection.updateOne({ email: req.session.email }, { $set: { battleQuestions: battleQuestions } });
+
+	/*
+	Checks if the player has any additional health or damage from items in their inventory.
+	If they do, it adds the additional health and damage to the player's health and damage.
+	*/
 	additionalHealth(req);
 	additionalDMG(req);
+
 	let enemies = await enemiesCollection.find().toArray();
+
+	// Chooses an enemy based on the difficulty of the level
 	var enemy = chooseEnemy(req, req.body.difficulty, enemies);
+
 	res.locals.gameStarted = true;
 
+	// Regenerates the player's health based on the items in the player's inventory
 	req.session.gameSession.playerHealth = req.session.gameSession.playerHealth + regenCalculator(req);
+
 	if (req.session.gameSession.playerHealth > (req.session.gameSession.maxPlayerHealth)) {
 		req.session.gameSession.playerHealth = (req.session.gameSession.maxPlayerHealth);
 	}
@@ -303,7 +317,8 @@ app.post('/startencounter', async (req, res) => {
 		answerStreak: 0,
 		index: req.body.index,
 		row: req.body.row,
-		difficulty: req.body.difficulty
+		difficulty: req.body.difficulty,
+		coinsReceived: false
 	};
 	res.redirect('/question');
 });
@@ -322,11 +337,12 @@ app.get('/question', async (req, res) => {
 
 app.get('/getNewQuestion', async (req, res) => {
 
-	const question = await levelOneCollection.aggregate([{ $sample: { size: 1 } }]).next();
+	const user = await userCollection.findOne({ email: req.session.email });
 
-	await levelOneCollection.deleteOne({ _id: question._id });
+	const question = user.battleQuestions.pop();
 
-
+    await userCollection.updateOne({ email: req.session.email }, { $set: { battleQuestions: user.battleQuestions } });
+	
 	res.json({ question: question });
 
 });
@@ -334,20 +350,13 @@ app.get('/getNewQuestion', async (req, res) => {
 app.post('/updateTotalDamage', async (req, res) => {
 
 	const { playerDMG } = req.body;
-
-	console.log("Player Damage Server side: ", playerDMG)
-
 	if (!req.session.gameSession) {
 		req.session.gameSession = { totalDamage: 0 };
 	}
 	if (typeof req.session.gameSession.totalDamage !== 'number') {
 		req.session.gameSession.totalDamage = 0;
 	}
-
-
 	req.session.gameSession.totalDamage += playerDMG;
-	console.log("Total Damage Server side: ", req.session.gameSession.totalDamage);
-
 	res.json({ totalDamage: req.session.gameSession.totalDamage });
 
 });
@@ -382,6 +391,10 @@ app.post('/feedback', async (req, res) => {
 			req.session.battleSession.answerStreak = 0;
 		}
 
+		/*
+		 Calculate the damage dealt to the enemy or the player 
+		 based on the player's answer
+		*/
 		damageCalculator(result, req);
 
 		if (result) {
@@ -404,6 +417,8 @@ app.post('/preshop', async (req, res) => {
 
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
+	
+	req.session.gameSession.currentCell = { row: row, index: index };
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
 	var arr = result[0].path['r' + row + 'connect'][index];
@@ -448,8 +463,6 @@ app.post('/preshop', async (req, res) => {
 				if (prevConnections[i][n] == (parseInt(index) + 1)) {
 
 				} else {
-					console.log(prevConnections[i][n]);
-					console.log(parseInt(index) + 1);
 					prevConnections[i][n]--;
 				}
 			}
@@ -460,8 +473,6 @@ app.post('/preshop', async (req, res) => {
 			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
 
 			} else {
-				console.log(prevConnections[lastVisitedIndex][n]);
-				console.log(parseInt(index) + 1);
 				prevConnections[lastVisitedIndex][n]--;
 			}
 		}
@@ -475,6 +486,8 @@ app.post('/preshop', async (req, res) => {
 app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
+	
+	req.session.gameSession.currentCell = { row: row, index: index };
 	const difficulty = req.session.battleSession.difficulty;
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
@@ -483,8 +496,16 @@ app.get('/victory', async (req, res) => {
 		await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) }, { $push: { ['path.r' + (eval(row) + 1) + 'active']: element } });
 	});
 
-	//distribute coins depending on difficulty
-	req.session.gameSession.playerCoins += coinDistribution(difficulty);
+	//Update player coins based on difficulty of the current level.
+	if (req.session.battleSession.coinsReceived == false) {
+		req.session.gameSession.playerCoins += coinDistribution(difficulty, req);
+		req.session.battleSession.coinsReceived = true;
+	}
+
+	/*
+	Update the player coins in the response locals so 
+	the right amount is displayed on headers.
+	*/
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
@@ -523,10 +544,7 @@ app.get('/victory', async (req, res) => {
 		for (var i = 0; i < prevConnections.length; i++) {
 			for (var n = 0; n < prevConnections[i].length; n++) {
 				if (prevConnections[i][n] == (parseInt(index) + 1)) {
-
 				} else {
-					console.log(prevConnections[i][n]);
-					console.log(parseInt(index) + 1);
 					prevConnections[i][n]--;
 				}
 			}
@@ -537,8 +555,6 @@ app.get('/victory', async (req, res) => {
 			if (prevConnections[lastVisitedIndex][n] == (parseInt(index) + 1)) {
 
 			} else {
-				console.log(prevConnections[lastVisitedIndex][n]);
-				console.log(parseInt(index) + 1);
 				prevConnections[lastVisitedIndex][n]--;
 			}
 		}
@@ -546,36 +562,67 @@ app.get('/victory', async (req, res) => {
 
 	await userRunsCollection.updateOne({ _id: new ObjectId(req.session.gameSession.mapID) },
 		{ $set: { ['path.r' + (row - 1) + 'connect']: prevConnections } });
+	req.session.battleSession.coinsReceived = false;
+	await userCollection.updateOne(
+		{username: req.session.username}, 
+		{$inc: {goldCollected: coinDistribution(difficulty, req)}});
 
-	res.render("victory",{coinsWon:coinDistribution(difficulty), redirect: "/map", page: "map"});
+	//setting the coins received to false so the victory page can display the coins won
+	req.session.battleSession.coinsReceived = false;
+	var result = await userCollection.findOne({ email: req.session.email });
+
+	if(!result.achievements.includes("First Monster Defeated") && !result.claimedAchievements.includes("First Monster Defeated")){
+		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Monster Defeated" } });
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "Achievements", special: "firstBlood" });
+	} else {
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/map", page: "Map", special: "" });
+	}
 });
 
 app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
-	req.session.gameSession.playerLevel++;
+	req.session.battleSession.playerLevel++;
 
-	req.session.gameSession.playerCoins += coinDistribution(difficulty);
+	//if the player has not received coins yet, give them coins
+	if (req.session.battleSession.coinsReceived == false) {
+		req.session.gameSession.playerCoins += coinDistribution(difficulty, req);
+		userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
+		req.session.battleSession.coinsReceived = true;
+	}
+
+	/*
+	Update the player coins in the response locals so 
+	the right amount is displayed in headers.
+	*/
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-	userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
+	
 
 	req.session.gameSession.mapSet = false;
 
 	try {
 		const user = req.session.username;
 
-		const goldCollected = req.session.gameSession.playerCoins;
+		const goldWon = coinsWon(difficulty);
 
 		const totalDamage = req.session.gameSession.totalDamage;
 
 		await userCollection.updateOne(
 			{ username: user },
-			{ $inc: { runsCompleted: 1, goldCollected: goldCollected, totalDamageDealt: totalDamage } }
+			{ $inc: { runsCompleted: 1, goldCollected: goldWon, totalDamageDealt: totalDamage } }
 		);
 	} catch (error) {
 		console.error('Error updating user level:', error);
 	}
+	//setting the coins received to false so the victory page can display the coins won
+	req.session.battleSession.coinsReceived = false;
+	var result = await userCollection.findOne({ email: req.session.email });
 
-	res.render("victory", {coinsWon: coinDistribution(difficulty), redirect: "/", page: "menu"});
+	if(!result.achievements.includes("First Level Up") && !result.claimedAchievements.includes("First Level Up")){
+		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Stage Cleared" } });
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "Achievements", special: "firstLevelUp" });
+	} else {
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "Main Menu", special: "" });
+	}
 });
 
 app.get('/defeat', (req, res) => {
@@ -588,21 +635,6 @@ app.post('/mapreset', async (req, res) => {
 	res.locals.gameStarted = false;
 	req.session.gameSession.gameStarted = false;
 	res.redirect('/');
-});
-
-app.get('/shop', async (req, res) => {
-	let items = await itemCollection.find().toArray();
-	let itemsPicked = new Array(3);
-	for (let i = 0; i < 3 && i < items.length; i++) {
-		let rand;
-		do {
-			rand = parseInt(Math.random() * items.length);
-		} while (items[rand] == null);
-
-		itemsPicked[i] = items[rand];
-		items[rand] = null;
-	}
-	res.render('shop', { item1: itemsPicked[0], item2: itemsPicked[1], item3: itemsPicked[2] });
 });
 
 app.get('/gatchapage', async (req, res) => {
@@ -663,7 +695,6 @@ app.get('/capsuleopening', async (req, res) => {
 	} else {
 		playerReward = "No rewards available";
 	}
-	console.log("Player reward", playerReward);
 	res.render('capsuleopening', { playerReward, rewardType });
 });
 
@@ -680,7 +711,7 @@ app.get('/premiumShop', async (req, res) => {
 
 	var titlesArray = await userTitlesCollection.find({ rarity: { $ne: "triangle" } }).toArray();
 	var newTitles = [];
-	
+
 	for (let i = 0; i < titlesArray.length; i++) {
 		if (!user.titles.includes(titlesArray[i].title)) {
 			newTitles.push(titlesArray[i]);
@@ -689,42 +720,67 @@ app.get('/premiumShop', async (req, res) => {
 	res.render("premiumShop", { pfpList: newArray, titleList: newTitles });
 });
 
-app.post('/buyPFP', async (req, res) => {
-	const pfp = req.body.pfp;
-	const price = parseInt(req.body.price);
-	const userEmail = req.session.email;
-	const user = await userCollection.findOne({ email: userEmail });
+app.post('/buyItem', async (req, res) => {
+  const item = req.body.item;
+  const price = parseInt(req.body.price);
+  const userEmail = req.session.email;
+  const user = await userCollection.findOne({ email: userEmail });
 
-	if (user.slotsCurrency < price) {
-		res.status(400).json({ error: "Not enough currency" });
-		return;
-	} else {
-		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: pfp } });
-		res.redirect('/profile');
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  if (user.slotsCurrency < price) {
+    return res.status(400).json({ error: "Not enough currency" });
+  }
+
+  try {
+    if (item.type === 'pfp') {
+      await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: item.src } });
+    } else if (item.type === 'title') {
+      await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: item.title } });
+    }
+    res.redirect('/profile');
+  } catch (error) {
+    console.error("An error occurred:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get('/achievements', async (req, res) => {
+	const achievements = await achievementsCollection.find().toArray();
+	const user = await userCollection.findOne({ email: req.session.email });
+	const userAchievements = user ? user.achievements : [];
+	const userClaimedAchievements = user ? user.claimedAchievements : [];
+	var unclaimedAchievements = [];
+	var claimedAchievements = [];
+	for (let i = 0; i < achievements.length; i++) {
+		if (userAchievements.includes(achievements[i].name)) {
+			unclaimedAchievements.push(achievements[i]);
+		} else if (userClaimedAchievements.includes(achievements[i].name)) {
+			claimedAchievements.push(achievements[i]);
+		}
 	}
-}
-);
+	res.render('achievements', { unclaimedAchievements: unclaimedAchievements, claimedAchievements: claimedAchievements });
+});
 
-app.post('/buyTitle', async (req, res) => {
-	const title = req.body.title;
-	
-	const price = parseInt(req.body.price);
+app.post('/claimAchievement', async (req, res) => {
+	const achievementName = req.body.achievementName;
 	const userEmail = req.session.email;
-	const user = await userCollection.findOne({ email: userEmail });
-
-	if (user.slotsCurrency < price) {
-		res.status(400).json({ error: "Not enough currency" });
-		return;
+	if (!req.body.diamonds) {
+		const pfp = req.body.pfp;
+		await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName , ownedProfilePics: pfp }, $pull: { achievements: achievementName }});
+		res.redirect('/achievements');
 	} else {
-		await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: title} });
-		res.redirect('/profile');
+		const diamonds = req.body.diamonds;
+		await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName }, $inc: { slotsCurrency: diamonds }, $pull: { achievements: achievementName }});
+		res.redirect('/achievements');
 	}
-}
-);
+});
 
 app.get("*", (req, res) => {
 	res.status(404);
-	res.send("Page not found - 404");
+	res.render('404');
 });
 
 app.listen(port, () => {

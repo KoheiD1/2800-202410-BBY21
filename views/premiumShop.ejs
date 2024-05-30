@@ -1,108 +1,167 @@
 <%- include("templates/headerloggedinPREM", { overflowVariable: '' }) %>
-  <style>
-    body {
-      background-image: url('/indexBG.png');
-      background-size: cover;
-      background-position: top;
-      background-attachment: fixed;
-      min-height: 100vh;
-    }
+<style>
+body {
+  background-image: url('/indexBG.png');
+  background-size: cover;
+  background-position: top;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
 
-    @font-face {
-      font-family: 'startfont';
-      src: url('titlefont.ttf') format('truetype');
-    }
+@font-face {
+  font-family: 'startfont';
+  src: url('titlefont.ttf') format('truetype');
+}
 
-    .start-font {
-      font-family: 'startfont', sans-serif;
-    }
+.start-font {
+  font-family: 'startfont', sans-serif;
+  text-shadow: 2px 2px  white;
+}
 
-    .whiteshadow {
-      text-shadow: 3px 3px  white;
-    }
-  </style>
-  <h1 class="text-3xl px-4 font-bold mb-7 mx-auto text-center start-font whiteshadow">Premium Shop</h1>
-  <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font">Profile Pictures</h2>
-  <div class="grid p-2 max-w-md mx-auto">
-    <ul>
-      <% for (let i=0; i < pfpList.length; i++) { %>
-        <li
-          class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3 cursor-pointer"
-          onclick="buyPFP('<%= pfpList[i].src %>', <%= pfpList[i].price %>)"
-          style="background-image: url('/username-box.png');">
-          <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer"
-            src="/<%= pfpList[i].src %>" alt="profile picture">
-          <span class="text-gray-900 mx-auto text-3xl">
-            <%- pfpList[i].name %>
-          </span>
-          <div class="flex items-center">
-            <img src="diamond.png" class="w-6 h-6">
-            <span class="ml-1 text-gray-900 text-2xl">
-              <%= pfpList[i].price %>
-            </span>
-          </div>
-        </li>
-        <% } %>
-    </ul>
-    <h2 class="text-2xl px-4 font-semibold mt-4 mb-2 mx-auto text-center start-font">Profile Titles</h2>
-    <ul>
-      <% for (let i=0; i < titleList.length; i++) { %>
-        <li
-          class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-5 cursor-pointer"
-          onclick="buyTitle('<%- titleList[i].title %>', <%= titleList[i].price %>)"
-          style="background-image: url('/username-box.png');">
-          <span class="text-gray-900 mx-auto text-3xl">
-            <%- titleList[i].title %>
-          </span>
-          <div class="flex items-center">
-            <img src="diamond.png" class="w-6 h-6">
-            <span class="ml-1 text-gray-900 text-2xl">
-              <%= titleList[i].price %>
-            </span>
-          </div>
-        </li>
-        <% } %>
-    </ul>
+.whiteshadow {
+  text-shadow: 3px 3px  white;
+}
+</style>
+<h1 class="text-3xl px-4 font-bold mb-7 mx-auto text-center start-font whiteshadow">Premium Shop</h1>
+<h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font">Profile Pictures</h2>
+<div class="grid p-2 max-w-md mx-auto">
+<ul>
+  <% for (let i=0; i < pfpList.length; i++) { %>
+    <li
+      class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3 cursor-pointer"
+      onclick="showModal(this)"
+      style="background-image: url('/username-box.png');">
+      <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer"
+        src="/<%= pfpList[i].src %>" alt="profile picture">
+      <span class="text-gray-900 mx-auto text-2xl">
+        <%- pfpList[i].name %>
+      </span>
+      <div class="flex items-center">
+        <img src="diamond.png" class="w-6 h-6">
+        <span class="ml-1 text-gray-900 text-2xl">
+          <%= pfpList[i].price %>
+        </span>
+      </div>
+    </li>
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+      <div class="bg-white rounded-lg p-8 text-center">
+        <h2 class="text-xl basicPixel mb-4">Are you sure you want to buy <%- pfpList[i].name %>?</h2>
+        <div class="flex justify-center space-x-4">
+          <button onclick="hideModal(this)" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No</button>
+          <button onclick="buyItem({ type: 'pfp', src: '<%= pfpList[i].src %>' }, <%= pfpList[i].price %>, this)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</ul>
+<h2 class="text-2xl px-4 font-semibold mt-4 mb-2 mx-auto text-center start-font">Profile Titles</h2>
+<ul>
+  <% for (let i=0; i < titleList.length; i++) { %>
+    <li
+      class="pl-7 pr-6 flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-5 cursor-pointer"
+      onclick="showModal(this)"
+      style="background-image: url('/username-box.png');">
+      <span class="text-gray-900 mx-auto text-2xl">
+        <%- titleList[i].title %>
+      </span>
+      <div class="flex items-center">
+        <img src="diamond.png" class="w-6 h-6">
+        <span class="ml-1 text-gray-900 text-2xl">
+          <%= titleList[i].price %>
+        </span>
+      </div>
+    </li>
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+      <div class="bg-white rounded-lg p-8 text-center">
+        <h2 class="text-xl basicPixel mb-4">Are you sure you want to buy <%- titleList[i].title %>?</h2>
+        <div class="flex justify-center space-x-4">
+          <button onclick="hideModal(this)" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No</button>
+          <button onclick="buyItem({ type: 'title', title: '<%- titleList[i].title %>' }, <%= titleList[i].price %>, this)" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Yes</button>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</ul>
+</div>
+
+<!-- Reusable Tailwind Modal -->
+<div id="errorModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+  <div class="bg-white rounded-lg p-8 text-center">
+    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+      <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </div>
+    <h2 class="text-xl basicPixel mb-4">Error</h2>
+    <p id="errorMessage" class="text-sm text-gray-500 mb-4">You do not have enough currency to buy this item.</p>
+    <div class="flex justify-center space-x-4">
+      <button onclick="hideErrorModal()" class="basicPixel px-4 py-2 bg-red-600 text-white rounded-lg">Close</button>
+    </div>
   </div>
-  <%- include("templates/footer") %>
-    <script>
-      function buyPFP(item, price) {
-        fetch('/buyPFP', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            pfp: item,
-            price: price
-          })
-        }).then((response) => {
-          if (response.status === 200) {
-            window.location.href = '/profile?from=prem';
+</div>
+
+<%- include("templates/footer") %>
+
+<script>
+function showModal(obj) {
+  obj.nextElementSibling.classList.remove('hidden');
+}
+
+function hideModal(obj) {
+  const modal = obj.closest('.fixed');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+function buyItem(item, price, button) {
+  const slotsCurrency = parseInt('<%= slotsCurrency %>');
+
+  hideModal(button); // Hide the current modal before proceeding
+
+  if (slotsCurrency >= price) {
+    fetch('/buyItem', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        item: item,
+        price: price
+      })
+    }).then((response) => {
+      if (response.ok) {
+        window.location.href = '/profile?from=prem';
+      } else {
+        response.json().then(data => {
+          if (data.error === 'Not enough currency') {
+            showErrorModal("You do not have enough currency to buy this item.");
           } else {
-            alert('You do not have enough coins to buy this title!');
+            showErrorModal(data.error || 'An unexpected error occurred.');
           }
-        })
+        }).catch(() => {
+          showErrorModal('An unexpected error occurred.');
+        });
       }
+    }).catch(() => {
+      showErrorModal('An unexpected error occurred.');
+    });
+  } else {
+    showErrorModal("You do not have enough currency to buy this item.");
+  }
+}
 
-      function buyTitle(item, price) {
-        fetch('/buyTitle', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            title: item,
-            price: price
-          })
-        }).then((response) => {
-          if (response.status === 200) {
-            window.location.href = '/profile?from=prem';
-          } else {
-            alert('You do not have enough coins to buy this title!');
-          }
-        })
-      }
+function showErrorModal(message) {
+  const modalMessage = document.getElementById('errorMessage');
+  modalMessage.textContent = message;
+  const modal = document.getElementById('errorModal');
+  modal.classList.remove('hidden');
+}
 
+function hideErrorModal() {
+  console.log('Hiding error modal');
+  const modal = document.getElementById('errorModal');
+  modal.classList.add('hidden');
+}
 
-    </script>
+</script>

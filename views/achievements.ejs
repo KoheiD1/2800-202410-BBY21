@@ -1,0 +1,139 @@
+<%- include("templates/headerloggedinACHIE", { overflowVariable: '' }) %>
+<style>
+body {
+  background-image: url('/indexBG.png');
+  background-size: cover;
+  background-position: top;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+@font-face {
+  font-family: 'startfont';
+  src: url('titlefont.ttf') format('truetype');
+}
+
+.start-font {
+  font-family: 'startfont', sans-serif;
+}
+
+.whiteshadow {
+  text-shadow: 3px 3px  white;
+}
+</style>
+<h1 class="text-3xl px-4 font-bold mb-7 mx-auto text-center start-font whiteshadow">Achievements</h1>
+<% if (unclaimedAchievements.length == 0 && claimedAchievements.length == 0) { %>
+  <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font whiteshadow">No achievements found. </h2>
+  <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font whiteshadow">Start a game to discover and unlock new achievements</h2>
+<% } %>
+<% if (unclaimedAchievements.length > 0) { %>
+<h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font whiteshadow">Unclaimed Rewards</h2>
+<div class="grid p-2 max-w-md mx-auto">
+  <ul>
+    <% for (let i=0; i < unclaimedAchievements.length; i++) { %>
+      <li
+        class="px-5 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3 cursor-pointer"
+        onclick="reward(this)"
+        style="background-image: url('/username-box.png');">
+        <img class="w-10 h-10 cursor-pointer"
+          src="../trophy.png" alt="trophy">
+        <span class="text-gray-900 mx-auto text-xl name">
+          <%- unclaimedAchievements[i].name %>
+        </span>
+        <% if (unclaimedAchievements[i].reward > 0) { %>
+        <div class="flex items-center">
+          <img src="diamond.png" class="w-6 h-6">
+          <span class="ml-1 text-gray-900 text-xl diamonds">
+            <%= unclaimedAchievements[i].reward %>
+          </span>
+        </div>
+        <% } else { %>
+          <img class="w-10 h-10 rounded-full bg-white border-2 border-gray-500 cursor-pointer pfp"
+          src="../<%- unclaimedAchievements[i].pfp %>" alt="<%- unclaimedAchievements[i].pfp %>">
+        <% } %>
+      </li>
+    <% } %>
+  </ul>
+</div>
+<% } %>
+<% if (claimedAchievements.length > 0) { %>
+<h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font whiteshadow">Claimed Rewards</h2>
+<div class="grid p-2 max-w-md mx-auto">
+  <ul>
+    <% for (let i=0; i < claimedAchievements.length; i++) { %>
+      <li
+        class="px-5 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
+        style="background-image: url('/username-box.png');">
+        <img class="w-10 h-10"
+          src="../trophy.png" alt="trophy">
+        <span class="text-gray-900 mx-auto text-xl">
+          <%- claimedAchievements[i].name %>
+        </span>
+        <% if (claimedAchievements[i].reward > 0) { %>
+        <div class="flex items-center">
+          <img src="diamond.png" class="w-6 h-6">
+          <span class="ml-1 text-gray-900 text-xl">
+            <%= claimedAchievements[i].reward %>
+          </span>
+        </div>
+        <% } else { %>
+          <img class="w-10 h-10 rounded-full bg-white border-2 border-gray-500"
+          src="../<%- claimedAchievements[i].pfp %>" alt="rewardpfp">
+        <% } %>
+      </li>
+    <% } %>
+  </ul>
+</div>
+<% } %>
+<%- include("templates/footer") %>
+
+<script>
+
+async function reward(obj) {
+  await obj.setAttribute('onclick', '');
+  const name = obj.querySelector('.name').innerText;
+  if (obj.querySelector('.diamonds')) {
+    const diamonds = parseInt(obj.querySelector('.diamonds').innerText);
+    await fetch('/claimAchievement', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        achievementName: name,
+        diamonds: diamonds
+      })
+    }).then((response) => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        console.log('Failed to claim achievement');
+        response.json().then((data) => {
+          console.log(data);
+        });
+      }
+    });
+  } else {
+    const pfp = obj.querySelector('.pfp').alt;
+    await fetch('/claimAchievement', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        achievementName: name,
+        pfp: pfp
+      })
+    }).then((response) => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        console.log('Failed to claim achievement');
+        response.json().then((data) => {
+          console.log(data);
+        });
+      }
+    });
+  }
+}
+</script>

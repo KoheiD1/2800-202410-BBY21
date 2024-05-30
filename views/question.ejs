@@ -1,3 +1,15 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeCrypt</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" type="text/css" href="/healthbar.css">
+  <link rel="stylesheet" type="text/css" href="/pixelButton.css">
+  <link rel="stylesheet" href="/fonts.css">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" type="text/css" href="/header.css">
+  <link href="/tight.css" rel="stylesheet" type="text/css">
+</head>
 <style>
   .hidden {
     display: none;
@@ -13,6 +25,7 @@
   }
 
   @keyframes flash {
+
     0%,
     50%,
     100% {
@@ -25,9 +38,61 @@
     }
   }
 
+  @keyframes shake {
+    0% {
+      transform: translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+      transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+      transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+      transform: translate(3px, 2px) rotate(0deg);
+    }
+
+    40% {
+      transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+      transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+      transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+      transform: translate(3px, 1px) rotate(-1deg);
+    }
+
+    80% {
+      transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+      transform: translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+      transform: translate(1px, -2px) rotate(-1deg);
+    }
+  }
+
   .flash-animation {
     animation-name: flash;
     animation-duration: 1s;
+    animation-fill-mode: both;
+  }
+
+  .shake-animation {
+    animation-name: shake;
+    animation-duration: 0.5s;
     animation-fill-mode: both;
   }
 
@@ -36,9 +101,7 @@
     margin: 10px;
   }
 
-  #opt-btn {
-    
-  }
+  #opt-btn {}
 
   #mainContainer {
     display: grid;
@@ -66,6 +129,7 @@
     background-repeat: no-repeat;
     width: 100%;
   }
+
   #feedbackContainer p {
     color: white;
   }
@@ -85,6 +149,7 @@
     height: 57vh;
     width: 100%;
   }
+
   #questionContainer {
     grid-row: 2;
     height: 100%;
@@ -95,7 +160,7 @@
     grid-row: 2;
     overflow: auto;
   }
-  
+
   .header {
     grid-column: 1 / span 3;
     display: flex;
@@ -104,8 +169,10 @@
     top: 0;
     z-index: 1000;
     width: 100%;
-    background: linear-gradient(to bottom, rgba(116, 166, 214, 0.4), rgba(116, 166, 214, 0.3), rgba(116, 166, 214, 0.2), rgba(116, 166, 214, 0)); /* White background with gradient fade out */
-    backdrop-filter: blur(5px); /* Optional: Adds a blur effect to the background */
+    background: linear-gradient(to bottom, rgba(116, 166, 214, 0.4), rgba(116, 166, 214, 0.3), rgba(116, 166, 214, 0.2), rgba(116, 166, 214, 0));
+    /* White background with gradient fade out */
+    backdrop-filter: blur(5px);
+    /* Optional: Adds a blur effect to the background */
   }
 
   .healthbar-wrapper-left {
@@ -118,12 +185,13 @@
   .healthbar-wrapper-right {
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* Aligns the contents to the right */
-    
+    align-items: flex-end;
+    /* Aligns the contents to the right */
+
     justify-content: center;
     width: 100%;
   }
-  
+
   #healthbar-left {
     grid-row: 7;
     grid-column: 1;
@@ -134,24 +202,27 @@
   .healthContainer {
     display: flex;
   }
+
   #healthbar-right {
     grid-row: 2;
     grid-column: 3;
     right: 0;
     align-items: right;
   }
-  
-  #hero-container, #enemy-container {
+
+  #hero-container,
+  #enemy-container {
     display: flex;
     align-items: center;
   }
-  .heroSVG{
+
+  .heroSVG {
     display: flex;
     align-items: flex-start;
     height: 100%;
   }
 
-  .enemySVG{
+  .enemySVG {
     display: flex;
     align-items: flex-start;
     height: 100%;
@@ -165,23 +236,31 @@
 
   #enemy-container {
     display: flex;
-    grid-row: 3 / 6; /* Span rows 3 to 6 inclusive */
-    grid-column: 2 / 4; /* Span columns 2 and 3 */
+    grid-row: 3 / 6;
+    /* Span rows 3 to 6 inclusive */
+    grid-column: 2 / 4;
+    /* Span columns 2 and 3 */
     justify-content: right;
   }
-  
+
   svg {
     width: 100%;
     height: 100%;
   }
-  #heroInfo, #enemyInfo {
-    white-space: nowrap; /* Prevent text wrapping */
+
+  #heroInfo,
+  #enemyInfo {
+    white-space: nowrap;
+    /* Prevent text wrapping */
   }
 
   body {
-    background-image: url('/dirt.svg'); /* Ensure the path is correct */
-    background-size: cover; /* Ensure the image covers the entire div */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-image: url('/dirt.svg');
+    /* Ensure the path is correct */
+    background-size: cover;
+    /* Ensure the image covers the entire div */
+    background-repeat: no-repeat;
+    /* Prevent the image from repeating */
     background-color: #5d375a;
   }
 
@@ -191,15 +270,15 @@
 
   .sshadow {
     color: white;
-    text-shadow: 2px 2px  black;
+    text-shadow: 2px 2px black;
   }
 </style>
-  
+
 <body class="flex flex-col justify-center items-center mx-auto">
   <div id="mainContainer">
     <div id="battleContainer">
       <div class="header">
-        <%- include("templates/headerloggedin", { overflowVariable: 'overflow-x-hidden' }) %>
+        <%- include("templates/headerloggedinQUEST", { overflowVariable: 'overflow-x-hidden' }) %>
       </div>
 
       <div id="healthbar-left" class="health-bar-left">
@@ -210,7 +289,7 @@
           <%- include('healthbar.html') %>
         </div>
       </div>
-    
+
       <div id="hero-container">
         <div class="heroSVG">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -236,67 +315,80 @@
       </div>
     </div>
 
-      <div id="questionContainer">
-      </div>
+    <div id="questionContainer">
+    </div>
 
-      <div id="feedbackContainer" class="hidden mx-auto p-8 rounded">
-        <p id="modalFeedback" class="mt-4"></p>
-        <div class="flex justify-center" id="modalButtons">
-          <button id="learn-more" class="pixel-button-long text-black font-bold px-2 z-10" onclick="openModal()">
-            Learn More
-          </button>
-          <button id="closeFeedback" class="pixel-button-long text-black font-bold px-2 z-10"
-            onclick="closeFeedbackFunction()">Next Question</button>
-        </div>
-      </div>
-
-      <div id="learnMoreModal"
-        class="fixed inset-0 z-50 overflow-auto bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg p-8 w-96">
-          <div class="flex justify-end">
-            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <h2 class="text-2xl font-bold mb-4">Learn More</h2>
-          <p id="feedbackParagraph"></p>
-        </div>
+    <div id="feedbackContainer" class="hidden mx-auto p-8 rounded">
+      <p id="modalFeedback" class="mt-4"></p>
+      <div class="flex justify-center" id="modalButtons">
+        <button id="learn-more" class="pixel-button-long text-black font-bold px-2 z-10" onclick="openModal()">
+          Learn More
+        </button>
+        <button id="closeFeedback" class="pixel-button-long text-black font-bold px-2 z-10"
+          onclick="closeFeedbackFunction()">Next Question</button>
       </div>
     </div>
 
-    <script>
-      var enemyHealth = '<%= enemyHealth %>';
-      var playerHealth = '<%= playerHealth %>';
-      var maxEnemyHealth = '<%= maxEnemyHealth %>';
-      var difficulty = "<%= difficulty %>";
-      var maxPlayerHealth = '<%= maxPlayerHealth %>';
+    <div id="learnMoreModal"
+      class="fixed inset-0 z-50 overflow-auto bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
+      <div class="bg-white rounded-lg p-8 w-96">
+        <div class="flex justify-end">
+          <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <h2 class="text-2xl font-bold mb-4">Learn More</h2>
+        <p id="feedbackParagraph"></p>
+      </div>
+    </div>
+  </div>
 
-      renderHealth();
+  <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+    <div class="bg-white rounded-lg p-8 text-center">
+      <h2 class="text-xl basicPixel mb-4">Welcome to the battle! This is where your knowledge will get put to the test
+      </h2>
+      <div class="flex justify-center space-x-4">
+        <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var enemyHealth = '<%= enemyHealth %>';
+    var playerHealth = '<%= playerHealth %>';
+    var maxEnemyHealth = '<%= maxEnemyHealth %>';
+    var difficulty = "<%= difficulty %>";
+    var maxPlayerHealth = '<%= maxPlayerHealth %>';
+
+    renderHealth();
 
 
-      document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "             " + enemyHealth + "/" + maxEnemyHealth;
-      document.getElementById('heroInfo').textContent = "<%=userName%> " + "             " + playerHealth + "/" + maxPlayerHealth;
+    document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "             " + enemyHealth + "/" + maxEnemyHealth;
+    document.getElementById('heroInfo').textContent = "<%=userName%> " + "             " + playerHealth + "/" + maxPlayerHealth;
 
-      async function populateQuestionContainer() {
-        try {
-          const response = await fetch('/getNewQuestion', {
-            method: 'GET'
-          });
-          const question = await response.json();
-          const questionTextFormatted = question.question.questionText.replace(/\n/g, '<br>');
-      
+    async function populateQuestionContainer() {
+      try {
+        const response = await fetch('/getNewQuestion', {
+          method: 'GET'
+        });
+        const question = await response.json();
+        const questionTextFormatted = question.question.questionText.replace(/\n/g, '<br>');
 
-          var questionContainer = document.getElementById('questionContainer');
-          const feedbackContainer = document.getElementById('feedbackContainer');
-          questionContainer.classList.remove("hidden");
-          feedbackContainer.classList.add("hidden");
-          document.getElementById('enemy-image').classList.remove('flash-animation');
-          document.getElementById('hero-image').classList.remove('flash-animation');
 
-          questionContainer = document.getElementById('questionContainer');
-          questionContainer.innerHTML = `
+        var questionContainer = document.getElementById('questionContainer');
+        const feedbackContainer = document.getElementById('feedbackContainer');
+        questionContainer.classList.remove("hidden");
+        feedbackContainer.classList.add("hidden");
+        document.getElementById('enemy-image').classList.remove('flash-animation');
+        document.getElementById('enemy-image').classList.remove('shake-animation');
+
+        document.getElementById('hero-image').classList.remove('flash-animation');
+        document.getElementById('hero-image').classList.remove('shake-animation');
+
+        questionContainer = document.getElementById('questionContainer');
+        questionContainer.innerHTML = `
             <div class="max-w-lg mx-auto px-3 rounded  ">
               <h1 class="text-md mb-4 text-white basicPixel qShadow">${questionTextFormatted}</h1>
               <ul>
@@ -312,201 +404,218 @@
               </ul>
             </div>
           `;
-    
-          attachFeedbackListeners(question.question);
-        } catch (error) {
-          console.error('Error:', error);
-        }
+
+        attachFeedbackListeners(question.question);
+      } catch (error) {
+        console.error('Error:', error);
       }
+    }
 
-      function displayFeedback(correct, feedbackText) {
-        const questionContainer = document.getElementById('questionContainer');
-        const feedbackContainer = document.getElementById('feedbackContainer');
+    function displayFeedback(correct, feedbackText) {
+      const questionContainer = document.getElementById('questionContainer');
+      const feedbackContainer = document.getElementById('feedbackContainer');
 
-        // Hide the question container and show the feedback container
-        questionContainer.classList.add("hidden");
-        feedbackContainer.classList.remove("hidden");
+      // Hide the question container and show the feedback container
+      questionContainer.classList.add("hidden");
+      feedbackContainer.classList.remove("hidden");
 
-        const modalFeedback = document.getElementById("modalFeedback");
-        modalFeedback.innerHTML = '';
+      const modalFeedback = document.getElementById("modalFeedback");
+      modalFeedback.innerHTML = '';
 
-        const h2Element = document.createElement('h2');
-        h2Element.textContent = correct ? "Correct" : "Wrong";
-        h2Element.style.fontSize = "2rem";
-        h2Element.style.textAlign = "center";
-        h2Element.style.marginTop = "1rem";
-        h2Element.style.color = "white";
-        h2Element.style.fontFamily = "basicPixel";
+      const h2Element = document.createElement('h2');
+      h2Element.textContent = correct ? "Correct" : "Wrong";
+      h2Element.style.fontSize = "2rem";
+      h2Element.style.textAlign = "center";
+      h2Element.style.marginTop = "1rem";
+      h2Element.style.color = "white";
+      h2Element.style.fontFamily = "basicPixel";
 
-        modalFeedback.appendChild(h2Element);
+      modalFeedback.appendChild(h2Element);
 
-        const feedbackParagraph = document.createElement('p');
-        feedbackParagraph.textContent = feedbackText;
+      const feedbackParagraph = document.createElement('p');
+      feedbackParagraph.textContent = feedbackText;
 
-        if (correct) {
+      if (correct) {
 
-          console.log("Correct");
-          updateTotalDamage();
+        console.log("Correct");
+        updateTotalDamage();
 
-          if (enemyHealth < 0) {
-            enemyHealth = 0;
-          }
-          document.getElementById('enemy-image').classList.add('flash-animation');
-          document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "      " + enemyHealth + "/" + maxEnemyHealth;
-        } else {
-
-          console.log("Wrong");
-
-          if (playerHealth < 0) {
-            playerHealth = 0;
-          }
-          document.getElementById('hero-image').classList.add('flash-animation');
-          document.getElementById('heroInfo').textContent = "<%=userName%> " + "      " + playerHealth + "/" + maxPlayerHealth;
+        if (enemyHealth < 0) {
+          enemyHealth = 0;
         }
+        document.getElementById('enemy-image').classList.add('flash-animation');
+        document.getElementById('enemy-image').classList.add('shake-animation');
+        document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "      " + enemyHealth + "/" + maxEnemyHealth;
+      } else {
+
+        console.log("Wrong");
+
+        if (playerHealth < 0) {
+          playerHealth = 0;
+        }
+        document.getElementById('hero-image').classList.add('flash-animation');
+        document.getElementById('hero-image').classList.add('shake-animation');
+        document.getElementById('heroInfo').textContent = "<%=userName%> " + "      " + playerHealth + "/" + maxPlayerHealth;
       }
+    }
 
-      function closeFeedbackFunction() {
+    function closeFeedbackFunction() {
 
-        if (enemyHealth <= 0 && difficulty != "hexagon") {
-          window.location.href = '/victory';
-        } else if (playerHealth <= 0) {
-          window.location.href = '/defeat';
-        } else if (enemyHealth <= 0 && difficulty == "hexagon") {
-          window.location.href = '/levelup';
-        }
-        else {
-          populateQuestionContainer(); 
-        }
+      if (enemyHealth <= 0 && difficulty != "hexagon") {
+        window.location.href = '/victory';
+      } else if (playerHealth <= 0) {
+        window.location.href = '/defeat';
+      } else if (enemyHealth <= 0 && difficulty == "hexagon") {
+        window.location.href = '/levelup';
       }
-
-      function attachFeedbackListeners(question) {
-        document.querySelectorAll('.feedback-form button').forEach(button => {
-          button.addEventListener('click', function (event) {
-            // Prevent default button behavior (form submission)
-            event.preventDefault();
-
-            const optionIndex = button.parentElement.querySelector('input[name="option"]').value;
-            const questionID = question._id;
-
-            fetch('/feedback', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ optionIndex: optionIndex, questionID: questionID })
-            })
-              .then(response => response.json())
-              .then(data => {
-                console.log('Feedback:', data.feedback);
-                enemyHealth = data.enemyHealth;
-                playerHealth = data.playerHealth;
-                maxEnemyHealth = data.maxEnemyHealth;
-                difficulty = data.difficulty;
-                maxPlayerHealth = data.maxPlayerHealth;
-
-                displayFeedback(data.result, data.feedback);
-
-                feedback = data.feedback;
-
-                renderHealth();
-              })
-              .catch(error => {
-                console.error('Error:', error);
-              });
-          });
-        });
+      else {
+        populateQuestionContainer();
       }
+    }
 
-      populateQuestionContainer();
+    function attachFeedbackListeners(question) {
+      document.querySelectorAll('.feedback-form button').forEach(button => {
+        button.addEventListener('click', function (event) {
+          // Prevent default button behavior (form submission)
+          event.preventDefault();
 
-      function renderHealth() {
-        var healthbarLeft = document.getElementById("healthbar-left");
-        var healthbarRight = document.getElementById("healthbar-right");
-        var fillsLeft = healthbarLeft.querySelectorAll(".healthbar_fill");
-        var fillsRight = healthbarRight.querySelectorAll(".healthbar_fill");
-        console.log(playerHealth, enemyHealth);
-        var healthLeft = playerHealth;
-        var healthRight = enemyHealth;
-        var enemyMaxHP = maxEnemyHealth;
+          const optionIndex = button.parentElement.querySelector('input[name="option"]').value;
+          const questionID = question._id;
 
-        var maxHp = maxPlayerHealth;
-        console.log("Max HP: ", maxHp);
-
-        var percentLeft = healthLeft / maxHp * 100;
-        var percentRight = healthRight / enemyMaxHP * 100;
-        var leftFill = healthbarLeft.querySelector(".healthbar_fill");
-        var rightFill = healthbarRight.querySelector(".healthbar_fill");
-        leftFill.style.width = percentLeft + "%";
-        rightFill.style.width = percentRight + "%";
-
-        // Update color
-        document.documentElement.style.setProperty('--bar-fill', '#57e705');
-        document.documentElement.style.setProperty('--bar-top', '#6aff03');
-
-        // Update color for left health bar
-        if (percentLeft <= 50) { // Yellows
-          document.documentElement.style.setProperty('--bar-fill-left', '#d6ed20');
-          document.documentElement.style.setProperty('--bar-top-left', '#d8ff48');
-        }
-        if (percentLeft <= 25) { // Reds
-          document.documentElement.style.setProperty('--bar-fill-left', '#ec290a');
-          document.documentElement.style.setProperty('--bar-top-left', '#ff3818');
-        }
-
-        // Update color for right health bar
-        if (percentRight <= 50) { // Yellows
-          document.documentElement.style.setProperty('--bar-fill-right', '#d6ed20');
-          document.documentElement.style.setProperty('--bar-top-right', '#d8ff48');
-        }
-        if (percentRight <= 25) { // Reds
-          document.documentElement.style.setProperty('--bar-fill-right', '#ec290a');
-          document.documentElement.style.setProperty('--bar-top-right', '#ff3818');
-        }
-
-        fillsLeft.forEach(fill => {
-          fill.style.width = percentLeft + "%";
-        });
-
-        fillsRight.forEach(fill => {
-          fill.style.width = percentRight + "%";
-        });
-        console.log("Player: " + percentLeft + ", Enemy: " + percentRight);
-      }
-
-      function updateTotalDamage() {
-        var playerDMG = <%= playerDMG %>;
-        console.log("Player Damagegg: ", playerDMG);
-
-        fetch('/updateTotalDamage', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ playerDMG: playerDMG })
-        })
-          .then(response => response.json())
-          .then(data => {
-            console.log("Total Damage: ", data.totalDamage);
+          fetch('/feedback', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ optionIndex: optionIndex, questionID: questionID })
           })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+            .then(response => response.json())
+            .then(data => {
+              console.log('Feedback:', data.feedback);
+              enemyHealth = data.enemyHealth;
+              playerHealth = data.playerHealth;
+              maxEnemyHealth = data.maxEnemyHealth;
+              difficulty = data.difficulty;
+              maxPlayerHealth = data.maxPlayerHealth;
+
+              displayFeedback(data.result, data.feedback);
+
+              feedback = data.feedback;
+
+              renderHealth();
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        });
+      });
+    }
+
+    populateQuestionContainer();
+
+    function renderHealth() {
+      var healthbarLeft = document.getElementById("healthbar-left");
+      var healthbarRight = document.getElementById("healthbar-right");
+      var fillsLeft = healthbarLeft.querySelectorAll(".healthbar_fill");
+      var fillsRight = healthbarRight.querySelectorAll(".healthbar_fill");
+      console.log(playerHealth, enemyHealth);
+      var healthLeft = playerHealth;
+      var healthRight = enemyHealth;
+      var enemyMaxHP = maxEnemyHealth;
+
+      var maxHp = maxPlayerHealth;
+      console.log("Max HP: ", maxHp);
+
+      var percentLeft = healthLeft / maxHp * 100;
+      var percentRight = healthRight / enemyMaxHP * 100;
+      var leftFill = healthbarLeft.querySelector(".healthbar_fill");
+      var rightFill = healthbarRight.querySelector(".healthbar_fill");
+      leftFill.style.width = percentLeft + "%";
+      rightFill.style.width = percentRight + "%";
+
+      // Update color
+      document.documentElement.style.setProperty('--bar-fill', '#57e705');
+      document.documentElement.style.setProperty('--bar-top', '#6aff03');
+
+      // Update color for left health bar
+      if (percentLeft <= 50) { // Yellows
+        document.documentElement.style.setProperty('--bar-fill-left', '#d6ed20');
+        document.documentElement.style.setProperty('--bar-top-left', '#d8ff48');
+      }
+      if (percentLeft <= 25) { // Reds
+        document.documentElement.style.setProperty('--bar-fill-left', '#ec290a');
+        document.documentElement.style.setProperty('--bar-top-left', '#ff3818');
       }
 
-      // Open the modal
-      function openModal() {
-        var modal = document.getElementById("learnMoreModal");
-        var feedbackParagraph = modal.querySelector("#feedbackParagraph");
-        feedbackParagraph.textContent = feedback; // Update the feedback content
-        modal.classList.remove("hidden");
+      // Update color for right health bar
+      if (percentRight <= 50) { // Yellows
+        document.documentElement.style.setProperty('--bar-fill-right', '#d6ed20');
+        document.documentElement.style.setProperty('--bar-top-right', '#d8ff48');
+      }
+      if (percentRight <= 25) { // Reds
+        document.documentElement.style.setProperty('--bar-fill-right', '#ec290a');
+        document.documentElement.style.setProperty('--bar-top-right', '#ff3818');
       }
 
-      // Close the modal
-      function closeModal() {
-        var modal = document.getElementById("learnMoreModal");
-        modal.classList.add("hidden");
-      }
+      fillsLeft.forEach(fill => {
+        fill.style.width = percentLeft + "%";
+      });
 
-    </script>
-  </body>
-  <%- include("templates/footer") %>
+      fillsRight.forEach(fill => {
+        fill.style.width = percentRight + "%";
+      });
+      console.log("Player: " + percentLeft + ", Enemy: " + percentRight);
+    }
+
+    function updateTotalDamage() {
+      var playerDMG = <%= playerDMG %>;
+      console.log("Player Damagegg: ", playerDMG);
+
+      fetch('/updateTotalDamage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ playerDMG: playerDMG })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Total Damage: ", data.totalDamage);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+    // Open the modal
+    function openModal() {
+      var modal = document.getElementById("learnMoreModal");
+      var feedbackParagraph = modal.querySelector("#feedbackParagraph");
+      feedbackParagraph.textContent = feedback; // Update the feedback content
+      modal.classList.remove("hidden");
+    }
+
+    // Close the modal
+    function closeModal() {
+      var modal = document.getElementById("learnMoreModal");
+      modal.classList.add("hidden");
+    }
+
+    /*
+    * The code below is the code for the information icon modal
+    */
+    function showModal() {
+      document.getElementById('warningModal').classList.remove('hidden');
+    }
+
+    function hideModal() {
+      document.getElementById('warningModal').classList.add('hidden');
+
+      //Code below is used in tandem with the code from informationIcon.ejs
+      document.getElementById("image").src = "i_orange.svg";
+      clicked = false;
+    }
+
+  </script>
+</body>
+<%- include("templates/footer") %>

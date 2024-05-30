@@ -1,22 +1,52 @@
 <%- include("templates/headerloggedin", { overflowVariable: '' }) %>
 <link href="/defaultBG.css" rel="stylesheet" type="text/css">
-  <div class="grid auto-rows-auto gap-y-3 mx-2">
-    <div><img src="/victory.png" class="w-full" alt="home"></div>
-    <div class="text-4xl text-center mx-2 title-font">You have defeated the enemy!</div>
-    <div class="pt-10 text-2xl text-center mx-2 title-font">
-      Heres what they dropped: <br> <img src="/coin.png" class="w-5 inline" alt="coin"> <%= coinsWon %> 
-    </div>
-    <div class="flex justify-center items-center pt-10">
-      <a href="<%= redirect %>"
-        class="px-6 py-3 pixel-button">Back
-        to <%= page %></a>
+<div class="grid auto-rows-auto gap-y-3 mx-2">
+  <div><img src="/victory.png" class="w-full max-w-md mx-auto" alt="home"></div>
+  <div class="text-4xl text-center mx-2 title-font">You have defeated the enemy!</div>
+  <div class="pt-10 text-2xl text-center mx-2 title-font">
+    Heres what they dropped: <br> <img src="/coin.png" class="w-5 inline" alt="coin"> <%= coinsWon %> 
+    <% if(page == "Main Menu") { %>
+      <img src="/diamond.png" class="w-5 inline" alt="diamond"> 1
+    <% } %>
+  </div>
+  <div class="flex justify-center items-center pt-10">
+    <a href="<%= redirect %>"
+      
+      class="px-6 py-3 pixel-button">Go to <%= page %></a>
+  </div>
+</div>
+<% if (special != "") { %>
+<div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  <div class="bg-white rounded-lg p-8 text-center">
+    <h2 class="text-xl basicPixel mb-4">Congratulations you have earned the achievement</h2>
+    <% if (special === "firstLevelUp") { %>
+      <h2 class="text-2xl font-extrabold basicPixel mb-4">My First Level Up</h2>
+    <% } %>
+    <% if (special === "firstBlood") { %>
+      <h2 class="text-2xl font-extrabold basicPixel mb-4">My First Monster Defeated</h2>
+    <% } %>
+    <h2 class="text-xl basicPixel mb-4">Go to Achievements on the Main Menu to collect your rewards!</h2>
+    <div class="flex justify-center space-x-4">
+      <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Okay</button>
     </div>
   </div>
+</div>
+<% } %>
+<script>
+  function hideModal() {
+    document.getElementById('warningModal').classList.add('hidden');
+  }
+</script>
+  
   <%- include("templates/footer") %>
   <style>
+    .help-button {
+      display: none;
+    }
+
     @font-face {
     font-family: 'titlefont';
-    src: url('./ttf/victory.ttf') format('truetype');
+    src: url('./ttf/victory.TTF') format('truetype');
     }
   
     .title-font {

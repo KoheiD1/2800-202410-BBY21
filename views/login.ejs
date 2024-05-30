@@ -1,4 +1,4 @@
-<%- include("templates/header", {overflowVariable: 'overflow-hidden' }) %>
+<%- include("templates/header", {overflowVariable: '' }) %>
 <link href="/defaultBG.css" rel="stylesheet" type="text/css">
 <link href="/tight.css" rel="stylesheet" type="text/css">
 
@@ -11,21 +11,18 @@
       </div>
       <h2 class="basicPixel mt-6 pb-10 text-center text-2xl text-gray-900">Lets level up together!</h2>
 
-      <form class="pixel-border p-8" action="/loggingin" method="POST">
+      <form class="pixel-border p-8" action="/loggingin" method="POST" unvalidate>
         <input type="hidden" name="remember" value="true">
         <h1 class="basicPixel text-black text-2xl mb-4">Login</h1>
         <div class="rounded-md shadow-sm">
           <div>
             <label for="email-address" class="sr-only">Email address</label>
-            <input id="email-address" name="email" type="email" autocomplete="email" required
-              class="text-sm basicPixel appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Email address">
+            <input type="text" class="form-control basicPixel" id="email" name="email" placeholder="email" required>
           </div>
           <div>
             <label for="password" class="sr-only">Password</label>
-            <input id="password" name="password" type="password" autocomplete="current-password" required
-              class="text-sm basicPixel appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Password">
+            <input type="password" class="form-control basicPixel" id="password" name="password" placeholder="password" required>
+              <p id="loginError" class="hidden text-red-500 text-xs italic">Invalid Email or Password</p>
           </div>
         </div>
 
@@ -45,7 +42,22 @@
     </div>
   </div>
 </body>
-<%- include("templates/footer") %>
+
+<script>
+  var validUser = "<%= success %>";
+
+  console.log(validUser);
+  checkValidUser();
+
+  function checkValidUser() {
+    const loginError = document.getElementById('loginError');
+    if (validUser === 'false') {
+      loginError.classList.remove('hidden');
+    }
+  }
+
+</script>
+
 <style>
   @font-face {
   font-family: 'titlefont';
@@ -56,3 +68,5 @@
   font-family: 'titlefont', sans-serif;
   }
 </style>
+
+<%- include("templates/footer") %>

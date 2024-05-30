@@ -7,6 +7,10 @@ module.exports = function(userCollection) {
     let currentPage = 0;
 
     router.get('/inventory', async (req, res) => {
+        if(req.session.gameSession == null) {
+            res.redirect('/');
+            return;
+        }
         res.locals.gameStarted = req.session.gameSession ? true : false;
         res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
         res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
