@@ -8,15 +8,15 @@
 }
 
 .gatchaBall {
-  width: 90%;
-  height: 90%;
-  z-index: 1;
+  width: 100%;
+  height: 60%;
+  z-index: 10;
   grid-column: 7 / span 1;
   grid-row: 9 / span 3;
   visibility: hidden;
   animation: rotateAndAppear 1.5s ease-out forwards, glow 1.5s linear infinite alternate;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 0%;
   box-shadow:
     inset 0px -2px 0px 30px rgb(255, 255, 255, 0.55),
     /* inner white */
