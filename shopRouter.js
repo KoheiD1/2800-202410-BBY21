@@ -24,6 +24,10 @@ module.exports = function (itemCollection, userCollection) {
     
     router.get('/shop', async (req, res) => {
         if (req.session.authenticated) {
+            if(req.session.gameSession == null) {
+                res.redirect('/');
+                return;
+            }
             var email = req.session.email;
             var username = req.session.username;
             // resetCoinsReceived();
