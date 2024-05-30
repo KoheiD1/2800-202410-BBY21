@@ -140,7 +140,6 @@
     }
 
     function editProfile(currentBio, userTitle, ownedUserTitles) {
-      console.log("Current bio parsed", currentBio.replace(/\n/g, ''));
       document.querySelectorAll('.edit').forEach(button => {
         var obj = button.getAttribute("onclick");
         button.onclick = () => openModalEdit(obj);
