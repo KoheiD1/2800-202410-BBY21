@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'basicPixel';
+    src: url('Apple_.ttf') format('truetype');
+}
+
+.pixelFont {
+    font-family: 'basicPixel', sans-serif;
+}
+
+@font-face {
+    font-family: 'titlefont';
+    src: url('startgame.ttf') format('truetype');
+}
+
+.title-font {
+    font-family: 'titlefont', sans-serif;
+}
