@@ -1,292 +1,288 @@
-<%- include("templates/header", {overflowVariable: 'overflow-x-hidden' }) %>
+<%- include("templates/header", {overflowVariable: 'overflow-x-hidden', stylesheet: 'profile.css' }) %>
 <link href="/defaultBG.css" rel="stylesheet" type="text/css">
-
-<style>
-  #player-stats, h2 {
-    font-family: 'basicPixel';
-  }
-
-  #user-info{
-    padding: 5px;
-  }
-</style>
 <body class="bg-gray-10s0">
   <div class="grid">
     <div class="flex justify-between p-2">
       <button id="editButton" type="submit" class="pixel-button py-2 px-4 rounded"
-        onclick="editProfile('<%= userBio %> ', '<%= userTitle %>', <%= JSON.stringify(ownedUserTitles) %>, this)">
+        onclick="editProfile('<%= userBio %> ', '<%= userTitle %>', '<%= JSON.stringify(ownedUserTitles) %>', this)">
         Edit Profile
       </button>
 
-      <form action="/logout" method="get">
-        <button type="submit" class="pixel-button-red text-white font-bold py-2 px-4 rounded">
-          Logout
-        </button>
-      </form>
-    </div>
+        <form action="/logout" method="get">
+          <button type="submit" class="pixel-button-red text-white font-bold py-2 px-4 rounded">
+            Logout
+          </button>
+        </form>
+      </div>
 
-    <div class="max-w-md mx-auto rounded-lg overflow-hidden">
-      <div class="px-4 py-8">
-        <div class="text-center">
-          <!-- Add outline to the profile picture -->
-          <img id="profileImg" class="h-28 w-28 rounded-full bg-white mx-auto border-2 border-gray-500 cursor-pointer"
-            src="<%= userProfilePic %>" alt="Profile Picture" onclick="openModal()">
+      <div class="max-w-md mx-auto rounded-lg overflow-hidden">
+        <div class="px-4 py-8">
+          <div class="text-center">
+            <!-- Add outline to the profile picture -->
+            <img id="profileImg" class="h-28 w-28 rounded-full bg-white mx-auto border-2 border-gray-500 cursor-pointer"
+              src="<%= userProfilePic %>" alt="Profile Picture" onclick="openModal()">
 
-          <h1 class=" basicPixel text-2xl font-bold mt-4">
-            <%= userName %>
-          </h1>
-          <div id="user-info" class="justify-center text-center">
-            <p id="userTitle" class="text-sm text-black mt-2">
-              <%= userTitle %>
-            </p>
+            <h1 class=" basicPixel text-2xl font-bold mt-4">
+              <%= userName %>
+            </h1>
+            <div id="user-info" class="justify-center text-center">
+              <p id="userTitle" class="text-sm text-black mt-2">
+                <%= userTitle %>
+              </p>
 
-            <p id="userBio" class="text-sm text-black mt-2 max-w-40 mx-auto whitespace-normal"></p>
+              <p id="userBio" class="text-sm text-black mt-2 max-w-40 mx-auto whitespace-normal"></p>
 
 
-            <p id="userEmail" class="basicPixel text-sm text-black mt-2">
-              Email: <%= userEmail %>
-            </p>
+              <p id="userEmail" class="basicPixel text-sm text-black mt-2">
+                Email: <%= userEmail %>
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="grid grid-flow-col auto-cols-auto mt-4 mx-5">
-      <div class="flex justify-center items-center"> <!-- Added 'items-center' -->
+      <div class="grid grid-flow-col auto-cols-auto mt-4 mx-5">
+        <div class="flex justify-center items-center"> <!-- Added 'items-center' -->
+        </div>
       </div>
-    </div>
-    <div id="player-stats">
-      <div class="p-4 text-center m-auto relative z-10 pixel-border m-4 max-w-80">
-        <h2 class="font-bold"><u>Stats</u></h2>
-        <p id="gold" class="text-sm text-black mt-2">Gold Collected: <%= goldCollected %>
-        </p>
-        <p id="runs" class="text-sm text-black mt-2">Runs Completed: <%= runsCompleted %>
-        </p>
-        <p id="damage" class="text-sm text-black mt-2">Damage Dealt: <%= damageDealt %>
-        </p>
+      <div id="player-stats">
+        <div class="p-4 text-center m-auto relative z-10 pixel-border m-4 max-w-80">
+          <h2 class="font-bold"><u>Stats</u></h2>
+          <p id="gold" class="text-sm text-black mt-2">Gold Collected: <%= goldCollected %>
+          </p>
+          <p id="runs" class="text-sm text-black mt-2">Runs Completed: <%= runsCompleted %>
+          </p>
+          <p id="damage" class="text-sm text-black mt-2">Damage Dealt: <%= damageDealt %>
+          </p>
+        </div>
       </div>
-    </div>
 
-    <div id="myModal" class="modal fixed inset-0 flex items-center justify-center z-10">
+    <div id="myModal" class="hidden fixed inset-0 flex items-center justify-center z-10">
       <div class="overlay fixed inset-0"></div>
         <div class="modal-content bg-white p-4 rounded-lg shadow-lg relative max-w-80 flex items-center">
           <h3 class="text-2xl font-bold mb-4">Choose Profile Picture</h3>
-            <div class="grid grid-cols-3 gap-4 justify-center">
-              <% ownedProfilePics.forEach(profilePicture=> { %>
-                <img class="h-16 w-16 rounded-full cursor-pointer" src="/<%= profilePicture %>"
-                  alt="<%= profilePicture %>" onclick="selectProfilePicture('<%= profilePicture %>')">
-                <% }) %>
-            </div>
-            <span class="close-modal absolute top-0 right-0 m-2 text-gray-600 cursor-pointer"
-              onclick="closeModal()">&times;</span>
-      </div>
-    </div>
-
-    <div id="myModalEdit" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
-      <div class="bg-white rounded-lg p-8 text-center">
-        <h2 class="text-xl basicPixel mb-4">Would you like to save your profile before leaving this page?</h2>
-        <div class="flex justify-center space-x-4">
-          <button id="yes" onclick="" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Yes</button>
-          <button id="no" onclick="" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No</button>
+          <div class="grid grid-cols-3 gap-4 justify-center">
+            <% ownedProfilePics.forEach(profilePicture=> { %>
+              <img class="h-16 w-16 rounded-full cursor-pointer" src="/<%= profilePicture %>"
+                alt="<%= profilePicture %>" onclick="selectProfilePicture('<%= profilePicture %>')">
+              <% }) %>
+          </div>
+          <span class="close-modal absolute top-0 right-0 m-2 text-gray-600 cursor-pointer"
+            onclick="closeModal()">&times;</span>
         </div>
       </div>
-    </div>
 
-    <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
-      <div class="mx-auto py-2 flex items-center">
-        <button type="submit" class="pixel-button py-2 px-4 rounded mr-2 edit friends" onclick="window.location.href = '/friends'">
-          Friends List
-        </button>
-        <button type="submit" class="pixel-button py-2 px-4 rounded edit findFriends" onclick="window.location.href = '/findFriends'">
-          Add Friends
-        </button>
+      <div id="myModalEdit" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+        <div class="bg-white rounded-lg p-8 text-center">
+          <h2 class="text-xl basicPixel mb-4">Would you like to save your profile before leaving this page?</h2>
+          <div class="flex justify-center space-x-4">
+            <button id="yes" onclick="" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Yes</button>
+            <button id="no" onclick="" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">No</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-center mx-auto rounded-lg overflow-hidden mt-8">
+        <div class="mx-auto py-2 flex items-center">
+          <button type="submit" class="pixel-button py-2 px-4 rounded mr-2 edit friends"
+            onclick="window.location.href = '/friends'">
+            Friends List
+          </button>
+          <button type="submit" class="pixel-button py-2 px-4 rounded edit findFriends"
+            onclick="window.location.href = '/findFriends'">
+            Add Friends
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-20 place-self-center">
+        <% if (from=='map' ) { %>
+          <button type="submit" class="pixel-button py-2 px-4 rounded edit map" onclick="window.location.href = '/map'">
+            Back to Map
+          </button>
+          <% } else if (from=='prem' ) { %>
+            <button type="submit" class="pixel-button py-2 px-4 rounded edit premiumShop"
+              onclick="window.location.href = '/premiumShop'">
+              Back to Premium Shop
+            </button>
+            <% } else if (from=='achievements' ) { %>
+              <button type="submit" class="pixel-button py-2 px-4 rounded edit premiumShop"
+                onclick="window.location.href = '/achievements'">
+                Back to Achievements
+              </button>
+              <% } else if (from=='question' ) { %>
+                <button type="submit" class="pixel-button py-2 px-4 rounded edit premiumShop"
+                  onclick="window.location.href = '/question'">
+                  Back to Battle
+                </button>
+                <% } else { %>
+                  <button type="submit" class="pixel-button-long py-2 px-4 rounded edit mainMenu"
+                    onclick="window.location.href = '/'">
+                    Back to Main Menu
+                  </button>
+                  <% } %>
       </div>
     </div>
-
-    <div class="mt-20 place-self-center">
-      <% if (from=='map' ) { %>
-        <button type="submit" class="pixel-button py-2 px-4 rounded edit map" onclick="window.location.href = '/map'">
-          Back to Map
-        </button>
-      <% } else if (from=='prem' ) { %>
-        <button type="submit" class="pixel-button py-2 px-4 rounded edit premiumShop" onclick="window.location.href = '/premiumShop'">
-          Back to Premium Shop
-        </button>
-      <% } else if (from=='achievements' ) { %>
-        <button type="submit" class="pixel-button py-2 px-4 rounded edit premiumShop" onclick="window.location.href = '/achievements'">
-          Back to Achievements
-        </button>
-      <% } else if (from=='question' ) { %>
-        <button type="submit" class="pixel-button py-2 px-4 rounded edit premiumShop" onclick="window.location.href = '/question'">
-          Back to Battle
-        </button>
-      <% } else { %>
-        <button type="submit" class="pixel-button-long py-2 px-4 rounded edit mainMenu" onclick="window.location.href = '/'">
-          Back to Main Menu
-        </button>
+    <% if (special==="chick" ) { %>
+      <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-white rounded-lg p-8 text-center">
+          <h2 class="text-xl basicPixel mb-4">Congratulations you have earned the achievement</h2>
+          <h2 class="text-2xl font-extrabold basicPixel mb-4">Chick This Out!</h2>
+          <h2 class="text-xl basicPixel mb-4">Go to Achievements on the Main Menu to collect your rewards!</h2>
+          <div class="flex justify-center space-x-4">
+            <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Okay</button>
+          </div>
+        </div>
+      </div>
       <% } %>
-    </div>
-  </div>
-<% if (special === "chick") { %>
-  <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div class="bg-white rounded-lg p-8 text-center">
-      <h2 class="text-xl basicPixel mb-4">Congratulations you have earned the achievement</h2>
-        <h2 class="text-2xl font-extrabold basicPixel mb-4">Chick This Out!</h2>
-      <h2 class="text-xl basicPixel mb-4">Go to Achievements on the Main Menu to collect your rewards!</h2>
-      <div class="flex justify-center space-x-4">
-        <button onclick="hideModal()" class="basicPixel px-4 py-2 bg-gray-300 rounded-lg">Okay</button>
-      </div>
-    </div>
-  </div>
-<% } %>
-  <script>
-    function hideModal() {
-    document.getElementById('warningModal').classList.add('hidden');
-  }
-    const userId = '<%= userId %>';
-    const ownedUserTitles = '<%= ownedUserTitles %>';
-    const userBio = '<%= userBio %>';
+        <script>
 
-    const userBioField = document.getElementById('userBio');
-    userBioField.innerHTML = userBio.replace(/\n/g, '');
+          function hideModal() {
+            document.getElementById('warningModal').classList.add('hidden');
+          }
 
-    function openModal() {
-      document.getElementById('myModal').style.display = "flex";
-    }
+          const userId = '<%= userId %>';
+          const ownedUserTitles = '<%= ownedUserTitles %>';
+          const userBio = '<%= userBio %>';
 
-    function closeModal() {
-      document.getElementById('myModal').style.display = "none";
-    }
+          const userBioField = document.getElementById('userBio');
+          userBioField.innerHTML = userBio.replace(/\n/g, '');
 
-    function editProfile(currentBio, userTitle, ownedUserTitles) {
-      document.querySelectorAll('.edit').forEach(button => {
-        var obj = button.getAttribute("onclick");
-        button.onclick = () => openModalEdit(obj);
-      });
-      document.getElementById('userTitle').innerHTML = `
-      <select id="titleDropdown" class="border border-gray-300 rounded p-2">
-      ${ownedUserTitles.map(title => `
-        <option value="${title}" ${title === userTitle ? 'selected' : ''}>${title}</option>
-      `).join('')}
-      </select>
-      `;
+          function openModal() {
+            document.getElementById('myModal').style.display = "flex";
+          }
 
-      document.getElementById('userBio').innerHTML = `
-      <textarea id="bioInput" class="border border-gray-300 rounded p-2" maxlength="50" placeholder="Enter your bio">${currentBio.replace(/\n/g, '')}</textarea>
-      `;
+          function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+          }
 
-      document.getElementById('bioInput').value = "<%= userBio %>";
+          function editProfile(currentBio, userTitle, ownedUserTitles) {
+            document.querySelectorAll('.edit').forEach(button => {
+              var obj = button.getAttribute("onclick");
+              button.onclick = () => openModalEdit(obj);
+            });
+            document.getElementById('userTitle').innerHTML = `
+              <select id="titleDropdown" class="border border-gray-300 rounded p-2">
+              ${ownedUserTitles.map(title => `
+              <option value="${title}" ${title === userTitle ? 'selected' : ''}>${title}</option>
+              `).join('')}
+               </select>
+            `;
 
-      document.getElementById('editButton').innerHTML = `
-      <button onclick="saveProfile()" >Save</button>
-      `;
+            document.getElementById('userBio').innerHTML = `
+            <textarea id="bioInput" class="border border-gray-300 rounded p-2" maxlength="50" placeholder="Enter your bio">${currentBio.replace(/\n/g, '')}</textarea>
+            `;
 
-    }
+            document.getElementById('bioInput').value = "<%= userBio %>";
 
-    function openModalEdit(obj) {
-      document.getElementById('myModalEdit').style.display = "flex";
-      document.getElementById('yes').setAttribute("onclick", `closeModalEdit(${obj}, true)`);
-      document.getElementById('no').setAttribute("onclick", `closeModalEdit(${obj}, false)`);
-    }
+            document.getElementById('editButton').innerHTML = `
+            <button onclick="saveProfile()" >Save</button>
+            `;
+          }
 
-    function closeModalEdit(obj, save) {
-      if (save) {
-        saveProfileNoReload(save);
+          function openModalEdit(obj) {
+            document.getElementById('myModalEdit').style.display = "flex";
+            document.getElementById('yes').setAttribute("onclick", `closeModalEdit(${obj}, true)`);
+            document.getElementById('no').setAttribute("onclick", `closeModalEdit(${obj}, false)`);
+          }
+
+          function closeModalEdit(obj, save) {
+            if (save) {
+              saveProfileNoReload(save);
+            }
+            document.getElementById('myModalEdit').style.display = "none";
+            obj;
+          }
+
+          function saveProfileNoReload() {
+            const title = document.getElementById('titleDropdown').value;
+            const bio = document.getElementById('bioInput').value;
+
+            fetch('/updateProfile', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                title: title, bio: bio
+              })
+            })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Failed to update title');
+                }
+
+                document.getElementById('userTitle').innerHTML = title;
+                document.getElementById('userBio').innerHTML = bio;
+                document.getElementById('editButton').innerHTML = `
+                <button id="editButton" type="submit" onclick="editProfile('${bio}, ${title}')">
+                  Edit Profile
+                </button>
+                `;
+              })
+              .catch(error => {
+                console.error('Error updating title:', error);
+              });
+          }
+
+          function saveProfile() {
+            const title = document.getElementById('titleDropdown').value;
+            const bio = document.getElementById('bioInput').value;
+
+            fetch('/updateProfile', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                title: title, bio: bio
+              })
+            })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Failed to update title');
+                }
+
+                document.getElementById('userTitle').innerHTML = title;
+                document.getElementById('userBio').innerHTML = bio;
+                document.getElementById('editButton').innerHTML = `
+                <button id="editButton" type="submit" onclick="editProfile('${bio}, ${title}')">
+                  Edit Profile
+                </button>
+                `;
+                location.reload();
+              })
+              .catch(error => {
+                console.error('Error updating title:', error);
+              });
+          }
+
+          function selectProfilePicture(pictureSrc) {
+            document.getElementById('profileImg').src = pictureSrc;
+            closeModal();
+            fetch('/updateProfilePicture', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                profilePictureUrl: pictureSrc
+              })
+            })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Failed to update profile picture');
+                }
+              })
+              .catch(error => {
+                console.error('Error updating profile picture:', error);
+              });
+          }
+
+        </script>
+  </body>
+  <%- include("templates/footer") %>
+    <style>
+      .modal {
+        display: none;
       }
-      document.getElementById('myModalEdit').style.display = "none";
-      obj;
-    }
-
-    function saveProfileNoReload() {
-      const title = document.getElementById('titleDropdown').value;
-      const bio = document.getElementById('bioInput').value;
-
-      fetch('/updateProfile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: title, bio: bio
-        })
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to update title');
-          }
-
-          document.getElementById('userTitle').innerHTML = title;
-          document.getElementById('userBio').innerHTML = bio;
-          document.getElementById('editButton').innerHTML = `
-            <button id="editButton" type="submit" onclick="editProfile('${bio}, ${title}')">
-              Edit Profile
-            </button>
-            `;
-        })
-        .catch(error => {
-          console.error('Error updating title:', error);
-        });
-    }
-
-    function saveProfile() {
-      const title = document.getElementById('titleDropdown').value;
-      const bio = document.getElementById('bioInput').value;
-
-      fetch('/updateProfile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: title, bio: bio
-        })
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to update title');
-          }
-
-          document.getElementById('userTitle').innerHTML = title;
-          document.getElementById('userBio').innerHTML = bio;
-          document.getElementById('editButton').innerHTML = `
-            <button id="editButton" type="submit" onclick="editProfile('${bio}, ${title}')">
-              Edit Profile
-            </button>
-            `;
-          location.reload();
-
-        })
-        .catch(error => {
-          console.error('Error updating title:', error);
-        });
-    }
-
-    function selectProfilePicture(pictureSrc) {
-      document.getElementById('profileImg').src = pictureSrc;
-      closeModal();
-      fetch('/updateProfilePicture', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          profilePictureUrl: pictureSrc
-        })
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to update profile picture');
-          }
-          // Optionally, handle success response
-        })
-        .catch(error => {
-          console.error('Error updating profile picture:', error);
-        });
-    }
-  </script>
-</body>
-<%- include("templates/footer") %>
-  <style>
-    .modal {
-      display: none;
-    }
-  </style>
+    </style>

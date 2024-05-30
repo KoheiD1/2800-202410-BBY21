@@ -1,11 +1,11 @@
-<%- include("templates/header", {overflowVariable: '' }) %>
+<%- include("templates/header", {overflowVariable: '' , stylesheet: 'fonts.css'}) %>
 <link href="/defaultBG.css" rel="stylesheet" type="text/css">
 <link href="/tight.css" rel="stylesheet" type="text/css">
 
 <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-md w-full space-y-8">
     <div class="flex items-center justify-center">
-      <h1 class="text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl text-black title-font mt-16">CODECRYPT</h1>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl text-black titleFont mt-16">CODECRYPT</h1>
     </div>
     <h2 class="basicPixel mt-6 pb-10 text-center text-2xl text-gray-900">Lets level up together!</h2>
 
@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <div class="pt-3 flex items-center justify-between">
+      <div class="pt-3 flex items-center justify-between pb-3">
         <div class="text-sm">
           <a href="/forgotPassword" class="tight-sm basicPixel font-light text-xs text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
         </div>
@@ -53,16 +53,4 @@
   }
 
 </script>
-
-<style>
-  @font-face {
-  font-family: 'titlefont';
-  src: url('startgame.ttf') format('truetype');
-  }
-
-  .title-font {
-  font-family: 'titlefont', sans-serif;
-  }
-</style>
-
 <%- include("templates/footer") %>

@@ -364,7 +364,6 @@
 
     renderHealth();
 
-
     document.getElementById('enemyInfo').textContent = "<%=enemyName%> " + "             " + enemyHealth + "/" + maxEnemyHealth;
     document.getElementById('heroInfo').textContent = "<%=userName%> " + "             " + playerHealth + "/" + maxPlayerHealth;
 
@@ -375,7 +374,6 @@
         });
         const question = await response.json();
         const questionTextFormatted = question.question.questionText.replace(/\n/g, '<br>');
-
 
         var questionContainer = document.getElementById('questionContainer');
         const feedbackContainer = document.getElementById('feedbackContainer');
@@ -568,7 +566,7 @@
     }
 
     function updateTotalDamage() {
-      var playerDMG = <%= playerDMG %>;
+      var playerDMG = '<%= playerDMG %>';
       console.log("Player Damagegg: ", playerDMG);
 
       fetch('/updateTotalDamage', {
@@ -599,21 +597,6 @@
     function closeModal() {
       var modal = document.getElementById("learnMoreModal");
       modal.classList.add("hidden");
-    }
-
-    /*
-    * The code below is the code for the information icon modal
-    */
-    function showModal() {
-      document.getElementById('warningModal').classList.remove('hidden');
-    }
-
-    function hideModal() {
-      document.getElementById('warningModal').classList.add('hidden');
-
-      //Code below is used in tandem with the code from informationIcon.ejs
-      document.getElementById("image").src = "i_orange.svg";
-      clicked = false;
     }
 
   </script>

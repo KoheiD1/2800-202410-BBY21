@@ -401,7 +401,6 @@ app.post('/feedback', async (req, res) => {
 			req.session.battleSession.answerStreak++;
 		}
 
-
 		res.json({ feedback: feedback, result: result, enemyHealth: req.session.battleSession.enemyHealth, playerHealth: req.session.gameSession.playerHealth, maxEnemyHealth: req.session.battleSession.maxEnemyHealth, difficulty: req.session.battleSession.difficulty, maxPlayerHealth: req.session.gameSession.maxPlayerHealth });
 
 	} catch (error) {
@@ -619,7 +618,7 @@ app.get('/levelup', async (req, res) => {
 	req.session.battleSession.coinsReceived = false;
 	var result = await userCollection.findOne({ email: req.session.email });
 
-	if(!result.achievements.includes("First Level Up") && !result.claimedAchievements.includes("First Level Up")){
+	if(!result.achievements.includes("First Stage Cleared") && !result.claimedAchievements.includes("First Stage Cleared")){
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Stage Cleared" } });
 		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "Achievements", special: "firstLevelUp" });
 	} else {

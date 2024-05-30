@@ -1,8 +1,8 @@
-<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<%- include("templates/headerloggedin", { overflowVariable: '', stylesheet: 'victory.css' }) %>
 <link href="/defaultBG.css" rel="stylesheet" type="text/css">
   <div class="grid auto-rows-auto gap-y-3 mx-2">
     <div><img src="/defeat.png" class="w-full max-w-md mx-auto" alt="home"></div>
-    <div class="text-2xl text-center mx-2">You have been defeated.</div>
+    <div class="text-4xl text-center mx-2 title-font">You have been defeated.</div>
     <div>
       
     </div>
@@ -12,9 +12,4 @@
         to main menu</a>
     </div>
   </div>
-<style>
-  .help-button {
-    display: none;
-  }
-</style>
 <%- include("templates/footer") %>

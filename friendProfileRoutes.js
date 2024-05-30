@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-module.exports = function(userCollection) {
+module.exports = function (userCollection) {
     router.get('/friendProfile', async (req, res) => {
         try {
             const currentUser = req.session.username;
@@ -24,9 +24,9 @@ module.exports = function(userCollection) {
             const friendDamage = friend ? friend.totalDamageDealt : 0;
 
             if (req.session.authenticated) {
-                res.render("friendProfile", { 
-                    friendName: friendName, 
-                    userProfilePic: friendProfilePic, 
+                res.render("friendProfile", {
+                    friendName: friendName,
+                    userProfilePic: friendProfilePic,
                     currentUser: currentUser,
                     isFriend: isFriend,
                     source: source,
@@ -35,7 +35,6 @@ module.exports = function(userCollection) {
                     friendGold: friendGold,
                     friendRuns: friendRuns,
                     friendDamage: friendDamage
-
                 });
             } else {
                 res.redirect('/login');
@@ -46,32 +45,31 @@ module.exports = function(userCollection) {
         }
     });
 
-router.post('/toggleFriend', async (req, res) => {
-    try {
-        const currentUser = req.session.username;
-        const { username } = req.body;
+    router.post('/toggleFriend', async (req, res) => {
+        try {
+            const currentUser = req.session.username;
+            const { username } = req.body;
 
-        // Retrieve current user's document
-        const currentUserDoc = await userCollection.findOne({ username: currentUser });
-        if (!currentUserDoc) {
-            return res.status(404).send('User not found');
+            // Retrieve current user's document
+            const currentUserDoc = await userCollection.findOne({ username: currentUser });
+            if (!currentUserDoc) {
+                return res.status(404).send('User not found');
+            }
+
+            const isFriend = currentUserDoc.friendsList.includes(username);
+
+            if (isFriend) {
+                await userCollection.updateOne({ username: currentUser }, { $pull: { friendsList: username } });
+                res.status(200).send({ removed: true });
+            } else {
+                await userCollection.updateOne({ username: currentUser }, { $addToSet: { friendsList: username } });
+                res.status(200).send({ removed: false });
+            }
+        } catch (error) {
+            console.error('Error toggling friend status:', error);
+            res.status(500).send('Internal Server Error');
         }
-
-        const isFriend = currentUserDoc.friendsList.includes(username);
-
-        if (isFriend) {
-            await userCollection.updateOne({ username: currentUser }, { $pull: { friendsList: username } });
-            res.status(200).send({ removed: true }); 
-        } else {
-            await userCollection.updateOne({ username: currentUser }, { $addToSet: { friendsList: username } });
-            res.status(200).send({ removed: false }); 
-        }
-    } catch (error) {
-        console.error('Error toggling friend status:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
+    });
 
     router.post('/addFriend', async (req, res) => {
         try {
@@ -119,7 +117,7 @@ router.post('/toggleFriend', async (req, res) => {
             res.status(500).send('Internal Server Error');
         }
     });
-    
+
     return router;
 };
 

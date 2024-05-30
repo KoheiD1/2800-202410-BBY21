@@ -1,4 +1,4 @@
-<%- include("templates/header", {overflowVariable: '' }) %>
+<%- include("templates/header", {overflowVariable: '' , stylesheet: 'fonts.css'}) %>
   <link href="/defaultBG.css" rel="stylesheet" type="text/css">
 
   <body>
@@ -38,13 +38,3 @@
     <script defer src="/joi-client.js"></script>
   </body>
   <%- include("templates/footer") %>
-    <style>
-      @font-face {
-        font-family: 'titlefont';
-        src: url('startgame.ttf') format('truetype');
-      }
-
-      .title-font {
-        font-family: 'titlefont', sans-serif;
-      }
-    </style>

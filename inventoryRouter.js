@@ -15,7 +15,6 @@ module.exports = function(userCollection) {
         res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
         res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
         let result = req.session.gameSession.playerInventory;
-        // await userCollection.find({username: req.session.username}).toArray();
         let items = [];
         for(let i = currentPage * 32; i < result.length; i++) {
             items.push(result[i]);

@@ -1,4 +1,4 @@
-<%- include("templates/headerloggedin", { overflowVariable: '' }) %>
+<%- include("templates/headerloggedin", { overflowVariable: '' , stylesheet: 'victory.css'}) %>
 <link href="/defaultBG.css" rel="stylesheet" type="text/css">
 <div class="grid auto-rows-auto gap-y-3 mx-2">
   <div><img src="/victory.png" class="w-full max-w-md mx-auto" alt="home"></div>
@@ -33,23 +33,10 @@
 </div>
 <% } %>
 <script>
+
   function hideModal() {
     document.getElementById('warningModal').classList.add('hidden');
   }
+  
 </script>
-  
-  <%- include("templates/footer") %>
-  <style>
-    .help-button {
-      display: none;
-    }
-
-    @font-face {
-    font-family: 'titlefont';
-    src: url('./ttf/victory.TTF') format('truetype');
-    }
-  
-    .title-font {
-    font-family: 'titlefont', sans-serif;
-    }
-  </style>
+<%- include("templates/footer") %>
