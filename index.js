@@ -111,7 +111,6 @@ app.use(async (req, res, next) => {
 	next();
 });
 
-
 app.get('/', (req, res) => {
 	res.render("index");
 });
@@ -119,11 +118,13 @@ app.get('/', (req, res) => {
 app.use('/profile', profileRoutes);
 
 app.get('/createUser', (req, res) => {
-	res.render("createUser");
+	var duplicateError = "";
+	var userExists = false;
+	res.render("createUser" , { duplicateError: duplicateError, userExists: userExists });
 });
 
 app.get('/login', (req, res) => {
-	res.render("login" , { success: true });
+	res.render("login", { success: true });
 });
 
 const emailRoute = require('./emailRoute');
@@ -141,47 +142,66 @@ app.get('/resetPassword', (req, res) => {
 });
 
 app.post('/submitUser', async (req, res) => {
-	
-	const {schema} = require('./joi-schema');
-    const { username, email, password } = req.body;
 
-    const result = schema.validate(req.body, { abortEarly: false });
-    if (result.error) {
-        console.log("Error");
-        res.render("createUser", { errors: result.error.details });
-        return;
-    }
+	const { schema } = require('./joi-schema');
+	const { username, email, password } = req.body;
 
-    try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+	const result = schema.validate(req.body, { abortEarly: false });
 
-        await userCollection.insertOne({
-            username,
-            profile_pic: "profile-logo.png",
-            friendsList: [],
-            itemList: [],
-            email,
-            password: hashedPassword,
-            slotsCurrency: 0,
-            ownedProfilePics: ["pfp-1.png", "pfp-2.png", "pfp-3.png"],
-            titles: ["New around the block"],
-						bio: "Click Edit Profile to change your profile",
-						UserTitle : "New around the block",
-						achievements: [],
-						claimedAchievements: []
-        });
+	var userNameExsits = await userCollection.findOne({ username: username });
+	var emailExists = await userCollection.findOne({ email: email });
 
-        req.session.authenticated = true;
-        req.session.username = username;
-        req.session.email = email;
-        req.session.cookie.maxAge = expireTime;
+	if (userNameExsits || emailExists) {
+		if (userNameExsits) {
+			console.log("Username exists");
+			var duplicateError = "Username already exists";
+		} else if (emailExists) {
+			console.log("Email exists");
+			var duplicateError = "Email already exists";
+		}
+		var userExists = true;
+		res.render("createUser", { duplicateError: duplicateError, userExists: userExists });
+	} else {
 
-        console.log("Success");
-        res.redirect(`/profile?username=${username}`);
-    } catch (error) {
-        console.error("Database insertion error:", error);
-        res.status(500).send("Internal server error");
-    }
+		userExists = false;
+
+		if (result.error) {
+			console.log("Error");
+			res.render("createUser", { errors: result.error.details, duplicateError: "", userExists: userExists});
+			return;
+		}
+
+		try {
+			const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+			await userCollection.insertOne({
+				username,
+				profile_pic: "profile-logo.png",
+				friendsList: [],
+				itemList: [],
+				email,
+				password: hashedPassword,
+				slotsCurrency: 0,
+				ownedProfilePics: ["pfp-1.png", "pfp-2.png", "pfp-3.png"],
+				titles: ["New around the block"],
+				bio: "Click Edit Profile to change your profile",
+				UserTitle: "New around the block",
+				achievements: [],
+				claimedAchievements: []
+			});
+
+			req.session.authenticated = true;
+			req.session.username = username;
+			req.session.email = email;
+			req.session.cookie.maxAge = expireTime;
+
+			console.log("Success");
+			res.redirect(`/profile?username=${username}`);
+		} catch (error) {
+			console.error("Database insertion error:", error);
+			res.status(500).send("Internal server error");
+		}
+	}
 });
 
 app.post('/loggingin', async (req, res) => {
@@ -238,7 +258,7 @@ app.get('/startGame', async (req, res) => {
 		totalDamage: 0,
 		currentCell: { row: 0, index: 2 }
 	};
-	
+
 	try {
 		await new Promise((resolve, reject) => {
 			if (req.session.gameSession) {
@@ -257,7 +277,7 @@ app.get('/startGame', async (req, res) => {
 
 app.get('/map', async (req, res) => {
 	req.session.shop = null;
-	
+
 	if (!req.session.gameSession.mapSet) {
 		const result = await pathsCollection.find({ _id: currMap }).project({
 			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
@@ -341,8 +361,8 @@ app.get('/getNewQuestion', async (req, res) => {
 
 	const question = user.battleQuestions.pop();
 
-    await userCollection.updateOne({ email: req.session.email }, { $set: { battleQuestions: user.battleQuestions } });
-	
+	await userCollection.updateOne({ email: req.session.email }, { $set: { battleQuestions: user.battleQuestions } });
+
 	res.json({ question: question });
 
 });
@@ -416,7 +436,7 @@ app.post('/preshop', async (req, res) => {
 
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
-	
+
 	req.session.gameSession.currentCell = { row: row, index: index };
 
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
@@ -485,7 +505,7 @@ app.post('/preshop', async (req, res) => {
 app.get('/victory', async (req, res) => {
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
-	
+
 	req.session.gameSession.currentCell = { row: row, index: index };
 	const difficulty = req.session.battleSession.difficulty;
 
@@ -568,7 +588,7 @@ app.get('/victory', async (req, res) => {
 	//setting the coins received to false so the victory page can display the coins won
 	var result = await userCollection.findOne({ email: req.session.email });
 
-	if(!result.achievements.includes("First Monster Defeated") && !result.claimedAchievements.includes("First Monster Defeated")){
+	if (!result.achievements.includes("First Monster Defeated") && !result.claimedAchievements.includes("First Monster Defeated")) {
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Monster Defeated" } });
 		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "Achievements", special: "firstBlood" });
 	} else {
@@ -579,7 +599,7 @@ app.get('/victory', async (req, res) => {
 app.get('/levelup', async (req, res) => {
 	const difficulty = req.session.battleSession.difficulty;
 	req.session.battleSession.playerLevel++;
-	
+
 	req.session.gameSession.currentCell = { row: 0, index: 2 };
 
 	//if the player has not received coins yet, give them coins
@@ -594,7 +614,7 @@ app.get('/levelup', async (req, res) => {
 	the right amount is displayed in headers.
 	*/
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-	
+
 
 	req.session.gameSession.mapSet = false;
 
@@ -616,7 +636,7 @@ app.get('/levelup', async (req, res) => {
 	req.session.battleSession.coinsReceived = false;
 	var result = await userCollection.findOne({ email: req.session.email });
 
-	if(!result.achievements.includes("First Stage Cleared") && !result.claimedAchievements.includes("First Stage Cleared")){
+	if (!result.achievements.includes("First Stage Cleared") && !result.claimedAchievements.includes("First Stage Cleared")) {
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Stage Cleared" } });
 		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "Achievements", special: "firstLevelUp" });
 	} else {
@@ -720,30 +740,30 @@ app.get('/premiumShop', async (req, res) => {
 });
 
 app.post('/buyItem', async (req, res) => {
-  const item = req.body.item;
-  const price = parseInt(req.body.price);
-  const userEmail = req.session.email;
-  const user = await userCollection.findOne({ email: userEmail });
+	const item = req.body.item;
+	const price = parseInt(req.body.price);
+	const userEmail = req.session.email;
+	const user = await userCollection.findOne({ email: userEmail });
 
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
-  }
+	if (!user) {
+		return res.status(404).json({ error: "User not found" });
+	}
 
-  if (user.slotsCurrency < price) {
-    return res.status(400).json({ error: "Not enough currency" });
-  }
+	if (user.slotsCurrency < price) {
+		return res.status(400).json({ error: "Not enough currency" });
+	}
 
-  try {
-    if (item.type === 'pfp') {
-      await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: item.src } });
-    } else if (item.type === 'title') {
-      await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: item.title } });
-    }
-    res.redirect('/profile');
-  } catch (error) {
-    console.error("An error occurred:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+	try {
+		if (item.type === 'pfp') {
+			await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { ownedProfilePics: item.src } });
+		} else if (item.type === 'title') {
+			await userCollection.updateOne({ email: userEmail }, { $inc: { slotsCurrency: -price }, $push: { titles: item.title } });
+		}
+		res.redirect('/profile');
+	} catch (error) {
+		console.error("An error occurred:", error);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
 });
 
 app.get('/achievements', async (req, res) => {
@@ -768,11 +788,11 @@ app.post('/claimAchievement', async (req, res) => {
 	const userEmail = req.session.email;
 	if (!req.body.diamonds) {
 		const pfp = req.body.pfp;
-		await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName , ownedProfilePics: pfp }, $pull: { achievements: achievementName }});
+		await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName, ownedProfilePics: pfp }, $pull: { achievements: achievementName } });
 		res.redirect('/achievements');
 	} else {
 		const diamonds = req.body.diamonds;
-		await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName }, $inc: { slotsCurrency: diamonds }, $pull: { achievements: achievementName }});
+		await userCollection.updateOne({ email: userEmail }, { $push: { claimedAchievements: achievementName }, $inc: { slotsCurrency: diamonds }, $pull: { achievements: achievementName } });
 		res.redirect('/achievements');
 	}
 });
