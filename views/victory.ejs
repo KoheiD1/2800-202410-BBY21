@@ -5,16 +5,17 @@
   <div class="text-4xl text-center mx-2 title-font">You have defeated the enemy!</div>
   <div class="pt-10 text-2xl text-center mx-2 title-font">
     Heres what they dropped: <br> <img src="/coin.png" class="w-5 inline" alt="coin"> <%= coinsWon %> 
-    <% if(redirect == "/") { %>
+    <% if(page == "Main Menu") { %>
       <img src="/diamond.png" class="w-5 inline" alt="diamond"> 1
     <% } %>
   </div>
   <div class="flex justify-center items-center pt-10">
     <a href="<%= redirect %>"
       
-      class="px-6 py-3 pixel-button"><%= page %></a>
+      class="px-6 py-3 pixel-button">Go to <%= page %></a>
   </div>
 </div>
+<% if (special != "") { %>
 <div id="warningModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
   <div class="bg-white rounded-lg p-8 text-center">
     <h2 class="text-xl basicPixel mb-4">Congratulations you have earned the achievement</h2>
@@ -30,6 +31,7 @@
     </div>
   </div>
 </div>
+<% } %>
 <script>
   function hideModal() {
     document.getElementById('warningModal').classList.add('hidden');

@@ -575,7 +575,7 @@ app.get('/victory', async (req, res) => {
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Monster Defeated" } });
 		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "Achievements", special: "firstBlood" });
 	} else {
-		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "Main Menu", special: "" });
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/map", page: "Map", special: "" });
 	}
 });
 
@@ -619,9 +619,9 @@ app.get('/levelup', async (req, res) => {
 
 	if(!result.achievements.includes("First Level Up") && !result.claimedAchievements.includes("First Level Up")){
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Stage Cleared" } });
-		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "menu", special: "firstLevelUp" });
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "Achievements", special: "firstLevelUp" });
 	} else {
-		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu", special: "" });
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "Main Menu", special: "" });
 	}
 });
 
