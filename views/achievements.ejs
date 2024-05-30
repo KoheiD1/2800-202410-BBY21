@@ -1,4 +1,4 @@
-<%- include("templates/headerloggedinPREM", { overflowVariable: '' }) %>
+<%- include("templates/headerloggedinACHIE", { overflowVariable: '' }) %>
 <style>
 body {
   background-image: url('/indexBG.png');
@@ -32,20 +32,25 @@ body {
   <ul>
     <% for (let i=0; i < unclaimedAchievements.length; i++) { %>
       <li
-        class="px-4 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3 cursor-pointer"
+        class="px-5 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3 cursor-pointer"
         onclick="reward(this)"
         style="background-image: url('/username-box.png');">
-        <img class="w-10 h-10 rounded-full bg-white border-4 border-gray-500 cursor-pointer"
+        <img class="w-10 h-10 cursor-pointer"
           src="../trophy.png" alt="trophy">
         <span class="text-gray-900 mx-auto text-xl name">
           <%- unclaimedAchievements[i].name %>
         </span>
+        <% if (unclaimedAchievements[i].reward > 0) { %>
         <div class="flex items-center">
           <img src="diamond.png" class="w-6 h-6">
           <span class="ml-1 text-gray-900 text-xl diamonds">
             <%= unclaimedAchievements[i].reward %>
           </span>
         </div>
+        <% } else { %>
+          <img class="w-10 h-10 rounded-full bg-white border-2 border-gray-500 cursor-pointer pfp"
+          src="../<%- unclaimedAchievements[i].pfp %>" alt="<%- unclaimedAchievements[i].pfp %>">
+        <% } %>
       </li>
     <% } %>
   </ul>
@@ -57,19 +62,24 @@ body {
   <ul>
     <% for (let i=0; i < claimedAchievements.length; i++) { %>
       <li
-        class="px-4 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
+        class="px-5 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
         style="background-image: url('/username-box.png');">
-        <img class="w-10 h-10 rounded-full bg-white border-4 border-gray-500"
+        <img class="w-10 h-10"
           src="../trophy.png" alt="trophy">
         <span class="text-gray-900 mx-auto text-xl">
           <%- claimedAchievements[i].name %>
         </span>
+        <% if (claimedAchievements[i].reward > 0) { %>
         <div class="flex items-center">
           <img src="diamond.png" class="w-6 h-6">
           <span class="ml-1 text-gray-900 text-xl">
             <%= claimedAchievements[i].reward %>
           </span>
         </div>
+        <% } else { %>
+          <img class="w-10 h-10 rounded-full bg-white border-2 border-gray-500"
+          src="../<%- claimedAchievements[i].pfp %>" alt="rewardpfp">
+        <% } %>
       </li>
     <% } %>
   </ul>
@@ -82,8 +92,8 @@ body {
 async function reward(obj) {
   await obj.setAttribute('onclick', '');
   const name = obj.querySelector('.name').innerText;
-  const diamonds = parseInt(obj.querySelector('.diamonds').innerText);
-
+  if (obj.querySelector('.diamonds')) {
+    const diamonds = parseInt(obj.querySelector('.diamonds').innerText);
     await fetch('/claimAchievement', {
       method: 'POST',
       headers: {
@@ -103,5 +113,27 @@ async function reward(obj) {
         });
       }
     });
+  } else {
+    const pfp = obj.querySelector('.pfp').alt;
+    await fetch('/claimAchievement', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        achievementName: name,
+        pfp: pfp
+      })
+    }).then((response) => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        console.log('Failed to claim achievement');
+        response.json().then((data) => {
+          console.log(data);
+        });
+      }
+    });
+  }
 }
 </script>
