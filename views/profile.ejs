@@ -116,7 +116,7 @@
           Back to Battle
         </button>
       <% } else { %>
-        <button type="submit" class="pixel-button-long py-2 px-4 rounded mainMenu" onclick="window.location.href = '/'">
+        <button type="submit" class="pixel-button-long py-2 px-4 rounded edit mainMenu" onclick="window.location.href = '/'">
           Back to Main Menu
         </button>
       <% } %>
@@ -127,8 +127,6 @@
     const userId = '<%= userId %>';
     const ownedUserTitles = '<%= ownedUserTitles %>';
     const userBio = '<%= userBio %>';
-
-    console.log(userBio);
 
     const userBioField = document.getElementById('userBio');
     userBioField.innerHTML = userBio.replace(/\n/g, '');
