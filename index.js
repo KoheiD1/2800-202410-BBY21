@@ -559,7 +559,14 @@ app.get('/victory', async (req, res) => {
 
 	//setting the coins received to false so the victory page can display the coins won
 	req.session.battleSession.coinsReceived = false;
-	res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/map", page: "map", special: ""});
+	var result = await userCollection.findOne({ email: req.session.email });
+
+	if(result.achievements.includes("First Monster Defeated") == false){
+		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Monster Defeated" } });
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu", special: "firstBlood" });
+	} else {
+		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "menu", special: "" });
+	}
 });
 
 app.get('/levelup', async (req, res) => {

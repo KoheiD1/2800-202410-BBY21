@@ -32,17 +32,17 @@ body {
   <ul>
     <% for (let i=0; i < unclaimedAchievements.length; i++) { %>
       <li
-        class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3 cursor-pointer"
+        class="px-4 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3 cursor-pointer"
         onclick="reward(this)"
         style="background-image: url('/username-box.png');">
-        <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500 cursor-pointer"
+        <img class="w-10 h-10 rounded-full bg-white border-4 border-gray-500 cursor-pointer"
           src="../trophy.png" alt="trophy">
-        <span class="text-gray-900 mx-auto text-2xl name">
+        <span class="text-gray-900 mx-auto text-xl name">
           <%- unclaimedAchievements[i].name %>
         </span>
         <div class="flex items-center">
           <img src="diamond.png" class="w-6 h-6">
-          <span class="ml-1 text-gray-900 text-2xl diamonds">
+          <span class="ml-1 text-gray-900 text-xl diamonds">
             <%= unclaimedAchievements[i].reward %>
           </span>
         </div>
@@ -57,16 +57,16 @@ body {
   <ul>
     <% for (let i=0; i < claimedAchievements.length; i++) { %>
       <li
-        class="pl-7 pr-6 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
+        class="px-4 text-md flex items-center justify-between max-w-md mx-auto bg-cover bg-center py-3"
         style="background-image: url('/username-box.png');">
-        <img class="w-12 h-12 rounded-full bg-white border-4 border-gray-500"
+        <img class="w-10 h-10 rounded-full bg-white border-4 border-gray-500"
           src="../trophy.png" alt="trophy">
-        <span class="text-gray-900 mx-auto text-2xl">
+        <span class="text-gray-900 mx-auto text-xl">
           <%- claimedAchievements[i].name %>
         </span>
         <div class="flex items-center">
           <img src="diamond.png" class="w-6 h-6">
-          <span class="ml-1 text-gray-900 text-2xl">
+          <span class="ml-1 text-gray-900 text-xl">
             <%= claimedAchievements[i].reward %>
           </span>
         </div>
