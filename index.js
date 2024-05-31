@@ -103,7 +103,7 @@ app.use(async (req, res, next) => {
 	res.locals.userProfilePic = req.session.profile_pic || 'profile-logo.png';
 	res.locals.authenticated = req.session.authenticated || false;
 	res.locals.playerCoins = req.session.gameSession ? req.session.gameSession.playerCoins : 0;
-	res.locals.gameStarted = req.session.gameSession ? req.session.gameSggession.gameStarted : false;
+	res.locals.gameStarted = req.session.gameSession ? req.session.gameSession.gameStarted : false;
 	const result = await userCollection.find({ email: email, username: username }).project({ slotsCurrency: 1 }).toArray();
 	if (result.length > 0) {
 		res.locals.slotsCurrency = result[0].slotsCurrency;
