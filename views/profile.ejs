@@ -4,7 +4,7 @@
   <div class="grid">
     <div class="flex justify-between p-2">
       <button id="editButton" type="submit" class="pixel-button py-2 px-4 rounded"
-        onclick="editProfile('<%= userBio %> ', '<%= userTitle %>', '<%= JSON.stringify(ownedUserTitles) %>', this)">
+        onclick="editProfile('<%= userBio %> ', '<%= userTitle %>', <%= JSON.stringify(ownedUserTitles) %>, this)">
         Edit Profile
       </button>
 
