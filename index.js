@@ -56,7 +56,7 @@ app.use(express.static(__dirname + "/public/mapAssets"));
 app.use(express.static(__dirname + "/public/ttf"));
 app.use(express.static(__dirname + "/public"));
 
-const currMap = new ObjectId("66467f92599dd72ac79fcec9");
+var currMap = null;
 
 var mongoStore = MongoStore.create({
 	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -279,6 +279,9 @@ app.get('/map', async (req, res) => {
 	req.session.shop = null;
 
 	if (!req.session.gameSession.mapSet) {
+		pathsCollection.aggregate([{ $sample: { size: 1 } }]).project({ _id: 1 }).toArray().then(result => {
+			currMap = result[0]._id;
+		});
 		const result = await pathsCollection.find({ _id: currMap }).project({
 			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
 			r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
@@ -295,7 +298,6 @@ app.get('/map', async (req, res) => {
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
 
 	const currentCell = req.session.gameSession.currentCell;
-	console.log("map" + currentCell.row + " " + currentCell.index);
 
 	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID, currentCell: currentCell });
 });

@@ -1,0 +1,93 @@
+@keyframes flashShake {
+  0%, 50%, 100% {
+    opacity: 1;
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  25%, 75% {
+    opacity: 0;
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
+
+.shake-animation {
+  animation-name: flashShake;
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+
+@keyframes pixelFadeOut {
+  0% {
+    opacity: 1;
+    filter: none;
+  }
+  50% {
+    opacity: 0.5;
+    filter: pixelate(5);
+  }
+  100% {
+    opacity: 0;
+    filter: pixelate(10);
+  }
+}
+
+.pixel-fade-out {
+  animation: pixelFadeOut 2s forwards; /* Adjust the duration as needed */
+}
+
+/* Optional: Add the pixelate filter */
+@keyframes pixelate {
+  0% {
+    filter: none;
+  }
+  50% {
+    filter: url(#pixelate); /* Use SVG filter or equivalent */
+  }
+  100% {
+    filter: url(#pixelate); /* Use SVG filter or equivalent */
+  }
+}
+
+/* Example of using SVG filter for pixelate effect */
+.pixel-fade-out {
+  animation: pixelFadeOut 2s forwards;
+}
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs>
+    <filter id="pixelate" x="0" y="0">
+      <feFlood x="4" y="4" height="4" width="4" />
+      <feComposite width="4" height="4" />
+      <feTile />
+    </filter>
+  </defs>
+</svg>
