@@ -16,15 +16,6 @@
     display: none;
   }
 
-  @font-face {
-    font-family: 'basicPixel';
-    src: url('Apple_.ttf') format('truetype');
-  }
-
-  .pixelFont {
-    font-family: 'basicPixel', sans-serif;
-  }
-
   #learn-more,
   #closeFeedback {
     margin: 10px;
@@ -212,7 +203,7 @@
 
       <div id="healthbar-left" class="health-bar-left">
         <div class="healthbar-wrapper">
-          <p id="heroInfo" class="pixelFont text-sm pl-3 sshadow">
+          <p id="heroInfo" class="basicPixel text-sm pl-3 sshadow">
             <%=userName%>
           </p>
           <%- include('healthbar.html') %>
@@ -229,7 +220,7 @@
 
       <div id="healthbar-right" class="health-bar-right flex flex-col">
         <div class="healthbar-wrapper-right">
-          <p id="enemyInfo" class="pixelFont text-sm text-right pr-1 sshadow">
+          <p id="enemyInfo" class="basicPixel text-sm text-right pr-1 sshadow">
           </p>
           <%- include('healthbar.html') %>
         </div>
