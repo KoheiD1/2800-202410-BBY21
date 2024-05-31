@@ -49,7 +49,7 @@ router.post('/forgotPassword', async (req, res) => {
                     <div class="text-center">
                         <div class="bg-green-100 text-green-700 p-5 rounded-lg shadow-lg">
                             <p>Password reset link sent to your email</p>
-                            <a href="https://mail.${email.split('@')[1]}" class="mt-3 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out">
+                            <a href="https://${email.split('@')[1]}" class="mt-3 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out">
                                 Go to ${email.split('@')[1]}
                             </a>
                         </div>
