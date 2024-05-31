@@ -3,10 +3,12 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const OAuth2 = google.auth.OAuth2;
+const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
 
 const OAuth2_Client = new OAuth2(
   process.env.OAUTH_CLIENT_ID, 
-  process.env.OAUTH_CLIENT_SECRET);
+  process.env.OAUTH_CLIENT_SECRET,
+  REDIRECT_URI);
 
 OAuth2_Client.setCredentials({ refresh_token: process.env.OAUTH_REFRESH_TOKEN });
 

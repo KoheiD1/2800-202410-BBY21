@@ -25,7 +25,6 @@ router.post('/forgotPassword', async (req, res) => {
 
         if (user) {
             const resetToken = generateResetToken();
-            console.log('token in forgotPassword:' + resetToken);
             const resetLink = `http://codecrypt.onrender.com/resetPassword?token=${resetToken}`;
 
             // Save the reset token and expiry in the user document in the database
@@ -120,11 +119,9 @@ router.post('/forgotPassword', async (req, res) => {
 // Route to handle password reset
 router.post('/resetPassword', async (req, res) => {
     const { token, newPassword } = req.body;
-    console.log('token in resetPassword:' + token);
     try {
         // Find the user by reset token and ensure the token is not expired
         const user = await userCollection.findOne({ resetToken: token, resetTokenExpiry: { $gt: new Date() } });
-        console.log(user);
 
         if (user) {
             // Hash the new password and update the user document in the database
