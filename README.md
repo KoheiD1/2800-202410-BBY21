@@ -23,6 +23,17 @@ Install Git first then clone the project. Install NodeJS and run "npm init" and 
 How to use:
 Sign up and start a game. You will see a page with a map showing the main character at the bottom of the path. You can select any connected path to choose locations that are explained in the legend button on the top right of the map. Work your way towards the final boss on the top of the map by taking down monsters and buying items in the shop to increase your stats. Each battle consists of tackling a series of questions related to coding that will deal damage to the enemy when you get the answer correct or take damage when you get it incorrect. 
 
+Credits:
+Thanks to Safia Dorae for the art assets.
+
+Use of AI:
+Github Co-Pilot autocomplete was used occasionally while coding to fill in generic code and repeated.
+Chat-GPT was used to generate data for the Java-Related coding questions, which are currently hard-coded.
+The application itself does not use AI.
+Limitations of AI were that it was useful for simple syntax explanations and boilerplate code that we could easily customize, but generating customized code for features was not reliable or worthwhile. It is important to understand the code fully in order to communicate why specific portions of our code was written to team members during integration. Relying on our own knowledge to code and supplementing it with AI was the best choice during this project.
+
+Contact: rjiang18@my.bcit.ca
+
 List of Files:
 /:.
 |   .env
