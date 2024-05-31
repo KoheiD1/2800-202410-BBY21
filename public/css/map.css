@@ -1,0 +1,49 @@
+body {
+    background-image: url('/indexBG.png');
+    background-size: cover;
+    background-position: top;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+.outer-grid {
+    background-image: url('/parchment.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-top: 15px;
+}
+
+.middle-grid {
+    padding-left: 60px;
+    padding-bottom: 50px;
+}
+
+.redShadow {
+    text-shadow: -2px 0px #000000, 0px -2px #000000;
+}
+
+.centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.responsive-svg {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+}
+
+.svg-wrapper {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+}
+
+@media (max-width: 600px) {
+    .svg-wrapper {
+        width: 125%;
+    }
+}

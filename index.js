@@ -277,7 +277,7 @@ app.get('/startGame', async (req, res) => {
 
 app.get('/map', async (req, res) => {
 	req.session.shop = null;
-
+	console.log(req.session.gameSession.playerLevel);
 	if (!req.session.gameSession.mapSet) {
 		pathsCollection.aggregate([{ $sample: { size: 1 } }]).project({ _id: 1 }).toArray().then(result => {
 			currMap = result[0]._id;
