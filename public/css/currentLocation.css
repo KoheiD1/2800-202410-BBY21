@@ -7,8 +7,10 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 50%;
-  height: 50%;
+  width: 100%;
+  height: auto; /* Preserve aspect ratio by setting height to auto */
+  max-height: 50%; /* Ensure the image does not exceed 40% height of its container */
+  object-fit: contain; /* Ensure the image scales to fit within its container */
 }
 
 .remove-kid-location .kid-head {
