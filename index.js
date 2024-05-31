@@ -56,8 +56,6 @@ app.use(express.static(__dirname + "/public/mapAssets"));
 app.use(express.static(__dirname + "/public/ttf"));
 app.use(express.static(__dirname + "/public"));
 
-var currMap = null;
-
 var mongoStore = MongoStore.create({
 	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
 	crypto: {
@@ -277,29 +275,26 @@ app.get('/startGame', async (req, res) => {
 
 app.get('/map', async (req, res) => {
 	req.session.shop = null;
-	console.log(req.session.gameSession.playerLevel);
-	if (!req.session.gameSession.mapSet) {
-		pathsCollection.aggregate([{ $sample: { size: 1 } }]).project({ _id: 1 }).toArray().then(result => {
-			currMap = result[0]._id;
-		});
-		const result = await pathsCollection.find({ _id: currMap }).project({
-			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
-			r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
-			r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
-		}).toArray();
+	if (req.session.gameSession.mapSet == false) {
+		const randomPath = await pathsCollection.aggregate([{ $sample: { size: 1 } }]).toArray();
 
-		await userRunsCollection.insertOne({ path: result[0] }).then(result => {
-			req.session.gameSession.mapID = result.insertedId;
-		});
+		const result = await userRunsCollection.find({ email: req.session.email }).toArray();
+		if (result.length > 0) {
+			await userRunsCollection.deleteOne({ email: req.session.email });
+		}
+		const insertResult = await userRunsCollection.insertOne({ path: randomPath[0] });
+    req.session.gameSession.mapID = insertResult.insertedId;
+
 		await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID }, { $set: { email: req.session.email } });
 
 		req.session.gameSession.mapSet = true;
 	}
-	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
+
+	var userRun = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
 
 	const currentCell = req.session.gameSession.currentCell;
 
-	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID, currentCell: currentCell });
+	res.render("map", { path: userRun[0].path, id: req.session.gameSession.mapID, currentCell: currentCell });
 });
 
 app.post('/startencounter', async (req, res) => {
@@ -722,7 +717,7 @@ app.get('/capsuleopening', async (req, res) => {
 });
 
 app.get('/premiumShop', async (req, res) => {
-	var pfpArray = await pfpCollection.find({ rarity: { $ne: "triangle" } }).toArray();
+	var pfpArray = await pfpCollection.find({ rarity: { $nin: ["triangle", "circle"] } }).toArray();
 	var user = await userCollection.findOne({ email: req.session.email });
 	var newArray = [];
 
@@ -732,7 +727,7 @@ app.get('/premiumShop', async (req, res) => {
 		}
 	}
 
-	var titlesArray = await userTitlesCollection.find({ rarity: { $ne: "triangle" } }).toArray();
+	var titlesArray = await userTitlesCollection.find({ rarity: {  $nin: ["triangle", "circle"] } }).toArray();
 	var newTitles = [];
 
 	for (let i = 0; i < titlesArray.length; i++) {

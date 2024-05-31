@@ -1,0 +1,33 @@
+body {
+  background-image: url('/indexBG.png');
+  background-size: cover;
+  background-position: top;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+@font-face {
+  font-family: 'startfont';
+  src: url('titlefont.ttf') format('truetype');
+}
+
+.start-font {
+  font-family: 'startfont', sans-serif;
+}
+
+.whiteshadow {
+  text-shadow: 3px 3px  white;
+}
+
+.modal-overlay {
+  z-index: 50;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent black background */
+  display: none;
+  /* Initially hidden */
+}
