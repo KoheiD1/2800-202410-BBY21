@@ -724,7 +724,7 @@ app.get('/capsuleopening', async (req, res) => {
 });
 
 app.get('/premiumShop', async (req, res) => {
-	var pfpArray = await pfpCollection.find({ rarity: { $ne: "triangle" } }).toArray();
+	var pfpArray = await pfpCollection.find({ rarity: { $nin: ["triangle", "circle"] } }).toArray();
 	var user = await userCollection.findOne({ email: req.session.email });
 	var newArray = [];
 
@@ -734,7 +734,7 @@ app.get('/premiumShop', async (req, res) => {
 		}
 	}
 
-	var titlesArray = await userTitlesCollection.find({ rarity: { $ne: "triangle" } }).toArray();
+	var titlesArray = await userTitlesCollection.find({ rarity: {  $nin: ["triangle", "circle"] } }).toArray();
 	var newTitles = [];
 
 	for (let i = 0; i < titlesArray.length; i++) {
