@@ -282,17 +282,18 @@ app.get('/map', async (req, res) => {
 		pathsCollection.aggregate([{ $sample: { size: 1 } }]).project({ _id: 1 }).toArray().then(result => {
 			currMap = result[0]._id;
 		});
-		const result = await pathsCollection.find({ _id: currMap }).project({
-			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
-			r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
-			r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
-		}).toArray();
+		const result = await pathsCollection.find({ _id: currMap }).toArray();
 
-		await userRunsCollection.insertOne({ path: result[0] }).then(result => {
-			req.session.gameSession.mapID = result.insertedId;
-		});
+		if (userRunsCollection.find({ email: req.session.email }).count() == 0) {
+			await userRunsCollection.insertOne({ path: result[0] }).then(result => {
+				req.session.gameSession.mapID = result.insertedId;
+			});
+		} else {
+			await userRunsCollection.updateOne({ email: req.session.email }, { $set: { path: result[0] } });
+			const map = userRunsCollection.find({ email: req.session.email }).toArray();
+			req.session.gameSession.mapID = map[0]._id;
+		}
 		await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID }, { $set: { email: req.session.email } });
-
 		req.session.gameSession.mapSet = true;
 	}
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
