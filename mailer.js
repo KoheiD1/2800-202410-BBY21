@@ -29,7 +29,7 @@ async function sendMail(to, subject, text, html) {
       });
 
       const mailOptions = {
-          from: process.env.OAUTH_EMAIL,
+          from: `"CodeCrypt" <${process.env.OAUTH_EMAIL}>`,
           to: to,
           subject: subject,
           text: text,
