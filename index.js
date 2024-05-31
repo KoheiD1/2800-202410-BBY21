@@ -92,7 +92,7 @@ const inventoryRouter = require('./inventoryRouter');
 app.use('/', inventoryRouter(userCollection));
 
 //Passing in the functions from game.js which are used for the game logic
-const { damageCalculator, coinDistribution, chooseEnemy, regenCalculator, enemeyScaling,
+const { damageCalculator, chooseEnemy, regenCalculator, enemeyScaling,
 	additionalHealth, additionalDMG, coinsWon } = require('./game');
 
 // Middleware to set the user profile picture and authentication status in the response locals
@@ -503,12 +503,15 @@ app.post('/preshop', async (req, res) => {
 });
 
 app.get('/victory', async (req, res) => {
+	
+
 	const index = req.session.battleSession.index;
 	const row = req.session.battleSession.row;
 
 	req.session.gameSession.currentCell = { row: row, index: index };
 	const difficulty = req.session.battleSession.difficulty;
 
+	if(req.session.battleSession.coinsReceived == false) {
 	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
 	var arr = result[0].path['r' + row + 'connect'][index];
 	arr.forEach(async (element) => {
@@ -517,7 +520,7 @@ app.get('/victory', async (req, res) => {
 
 	//Update player coins based on difficulty of the current level.
 	if (req.session.battleSession.coinsReceived == false) {
-		req.session.gameSession.playerCoins += coinDistribution(difficulty, req);
+		req.session.gameSession.playerCoins += coinsWon(difficulty);
 		req.session.battleSession.coinsReceived = true;
 	}
 
@@ -584,15 +587,15 @@ app.get('/victory', async (req, res) => {
 	await userCollection.updateOne(
 		{username: req.session.username}, 
 		{$inc: {goldCollected: coinsWon(difficulty)}});
-
-	//setting the coins received to false so the victory page can display the coins won
+	}
 	var result = await userCollection.findOne({ email: req.session.email });
+	
 
 	if (!result.achievements.includes("First Monster Defeated") && !result.claimedAchievements.includes("First Monster Defeated")) {
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Monster Defeated" } });
-		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "Achievements", special: "firstBlood" });
+		res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/achievements", page: "Achievements", special: "firstBlood" });
 	} else {
-		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/map", page: "Map", special: "" });
+		res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/map", page: "Map", special: "" });
 	}
 });
 
@@ -604,7 +607,7 @@ app.get('/levelup', async (req, res) => {
 
 	//if the player has not received coins yet, give them coins
 	if (req.session.battleSession.coinsReceived == false) {
-		req.session.gameSession.playerCoins += coinDistribution(difficulty, req);
+		req.session.gameSession.playerCoins += coinsWon(difficulty);
 		userCollection.updateOne({ email: req.session.email }, { $inc: { slotsCurrency: 1 } });
 		req.session.battleSession.coinsReceived = true;
 	}
@@ -632,15 +635,14 @@ app.get('/levelup', async (req, res) => {
 	} catch (error) {
 		console.error('Error updating user level:', error);
 	}
-	//setting the coins received to false so the victory page can display the coins won
-	req.session.battleSession.coinsReceived = false;
+
 	var result = await userCollection.findOne({ email: req.session.email });
 
 	if (!result.achievements.includes("First Stage Cleared") && !result.claimedAchievements.includes("First Stage Cleared")) {
 		await userCollection.updateOne({ email: req.session.email }, { $push: { achievements: "First Stage Cleared" } });
-		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/achievements", page: "Achievements", special: "firstLevelUp" });
+		res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/achievements", page: "Achievements", special: "firstLevelUp" });
 	} else {
-		res.render("victory", { coinsWon: coinDistribution(difficulty, req), redirect: "/", page: "Main Menu", special: "" });
+		res.render("victory", { coinsWon: coinsWon(difficulty), redirect: "/", page: "Main Menu", special: "" });
 	}
 });
 
