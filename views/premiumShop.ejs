@@ -1,27 +1,4 @@
-<%- include("templates/headerloggedinPREM", { overflowVariable: '' }) %>
-<style>
-body {
-  background-image: url('/indexBG.png');
-  background-size: cover;
-  background-position: top;
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
-@font-face {
-  font-family: 'startfont';
-  src: url('titlefont.ttf') format('truetype');
-}
-
-.start-font {
-  font-family: 'startfont', sans-serif;
-  text-shadow: 2px 2px  white;
-}
-
-.whiteshadow {
-  text-shadow: 3px 3px  white;
-}
-</style>
+<%- include("templates/headerloggedinPREM", { overflowVariable: '', stylesheet : 'premium.css' }) %>
 <h1 class="text-3xl px-4 font-bold mb-7 mx-auto text-center start-font whiteshadow">Premium Shop</h1>
 <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font">Profile Pictures</h2>
 <div class="grid p-2 max-w-md mx-auto">
