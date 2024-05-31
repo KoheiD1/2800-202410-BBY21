@@ -134,36 +134,6 @@ function regenCalculator(req) {
 
 
 /*
-Description: This function distributes coins to the player based
-on the difficulty of the enemy.
-
-returns: the amount of coins the player will receive
-*/
-function coinDistribution(difficulty, req) {
-    coinsReceived = req.session.battleSession.coinsReceived;
-
-    if (!coinsReceived) {
-        switch (difficulty) {
-            case "triangle":
-                return 5;
-            case "square":
-                return 10;
-            case "pentagon":
-                return 25;
-            case "hexagon":
-                return 50;
-        }
-         /*
-        Set coinsReceived to true so that the player does
-        not receive coins multiple times
-        */
-        req.session.battleSession.coinsReceived = true;
-    }
-   
-
-   
-}
-/*
 Description: This function calculates the amount of coins won 
 from the diffculty level of the enemy.
 
@@ -309,7 +279,6 @@ function additionalDMG(req) {
 // Export the functions so that they can be used in other files.
 module.exports = {
     damageCalculator,
-    coinDistribution,
     purchaseItem,
     chooseEnemy,
     regenCalculator,
