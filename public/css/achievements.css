@@ -1,0 +1,20 @@
+body {
+  background-image: url('/indexBG.png');
+  background-size: cover;
+  background-position: top;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+@font-face {
+  font-family: 'startfont';
+  src: url('titlefont.ttf') format('truetype');
+}
+
+.start-font {
+  font-family: 'startfont', sans-serif;
+}
+
+.whiteshadow {
+  text-shadow: 3px 3px  white;
+}

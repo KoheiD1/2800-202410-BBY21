@@ -1,26 +1,4 @@
-<%- include("templates/headerloggedinACHIE", { overflowVariable: '' }) %>
-<style>
-body {
-  background-image: url('/indexBG.png');
-  background-size: cover;
-  background-position: top;
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
-@font-face {
-  font-family: 'startfont';
-  src: url('titlefont.ttf') format('truetype');
-}
-
-.start-font {
-  font-family: 'startfont', sans-serif;
-}
-
-.whiteshadow {
-  text-shadow: 3px 3px  white;
-}
-</style>
+<%- include("templates/headerloggedinACHIE", { overflowVariable: '' , stylesheet : 'achievements.css'}) %>
 <h1 class="text-3xl px-4 font-bold mb-7 mx-auto text-center start-font whiteshadow">Achievements</h1>
 <h2 class="text-2xl px-4 font-semibold mb-2 mx-auto text-center start-font whiteshadow">Unclaimed Rewards</h2>
 <% if (unclaimedAchievements.length == 0) { %>
