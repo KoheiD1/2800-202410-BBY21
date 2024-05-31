@@ -25,7 +25,6 @@ router.post('/forgotPassword', async (req, res) => {
 
         if (user) {
             const resetToken = generateResetToken();
-            console.log('token in forgotPassword:' + resetToken);
             const resetLink = `http://codecrypt.onrender.com/resetPassword?token=${resetToken}`;
 
             // Save the reset token and expiry in the user document in the database
@@ -47,10 +46,10 @@ router.post('/forgotPassword', async (req, res) => {
                     </style>
                 </head>
                 <body class="bg-gray-100 flex items-center justify-center h-screen">
-                    <div class="text-center">
-                        <div class="bg-green-100 text-green-700 p-5 rounded-lg shadow-lg">
+                    <div class="text-center p-6">
+                        <div class="bg-green-100 text-green-700 p-8 rounded-lg shadow-lg max-w-md mx-auto text-xl sm:text-xl lg:text-2xl">
                             <p>Password reset link sent to your email</p>
-                            <a href="https://mail.${email.split('@')[1]}" class="mt-3 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out">
+                            <a href="https://${email.split('@')[1]}" class="mt-5 inline-block bg-blue-500 text-white py-3 px-6 rounded hover:bg-blue-700 transition duration-300 ease-in-out text-xl sm:text-xl">
                                 Go to ${email.split('@')[1]}
                             </a>
                         </div>
@@ -72,14 +71,14 @@ router.post('/forgotPassword', async (req, res) => {
                     </style>
                 </head>
                 <body class="bg-gray-100 flex items-center justify-center h-screen">
-                    <div class="text-center">
-                        <div class="bg-red-100 text-red-700 p-5 rounded-lg shadow-lg">
+                    <div class="text-center p-6">
+                        <div class="bg-red-100 text-red-700 p-8 rounded-lg shadow-lg max-w-md mx-auto text-xl sm:text-xl lg:text-2xl">
                             <p>User not found</p>
-                            <div class="mt-3">
-                                <a href="/forgotPassword" class="inline-block bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-700 transition duration-300 ease-in-out">
+                            <div class="mt-5 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                                <a href="/forgotPassword" class="bg-yellow-500 text-white py-3 px-6 rounded hover:bg-yellow-700 transition duration-300 ease-in-out text-xl sm:text-xl">
                                     Try Again
                                 </a>
-                                <a href="/login" class="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out ml-2">
+                                <a href="/login" class="bg-blue-500 text-white py-3 px-6 rounded hover:bg-blue-700 transition duration-300 ease-in-out text-xl sm:text-xl">
                                     Back to Login
                                 </a>
                             </div>
@@ -103,11 +102,11 @@ router.post('/forgotPassword', async (req, res) => {
                 </style>
             </head>
             <body class="bg-gray-100 flex items-center justify-center h-screen">
-                <div class="text-center">
-                    <div class="bg-red-100 text-red-700 p-5 rounded-lg shadow-lg">
+                <div class="text-center p-6">
+                    <div class="bg-red-100 text-red-700 p-8 rounded-lg shadow-lg max-w-md mx-auto text-xl sm:text-xl lg:text-2xl">
                         Server error
-                        <div class="mt-4">
-                            <a href="/" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Back to Main Menu</a>
+                        <div class="mt-5">
+                            <a href="/" class="bg-blue-500 text-white py-3 px-6 rounded hover:bg-blue-600 text-xl sm:text-xl">Back to Main Menu</a>
                         </div>
                     </div>
                 </div>
@@ -120,11 +119,9 @@ router.post('/forgotPassword', async (req, res) => {
 // Route to handle password reset
 router.post('/resetPassword', async (req, res) => {
     const { token, newPassword } = req.body;
-    console.log('token in resetPassword:' + token);
     try {
         // Find the user by reset token and ensure the token is not expired
         const user = await userCollection.findOne({ resetToken: token, resetTokenExpiry: { $gt: new Date() } });
-        console.log(user);
 
         if (user) {
             // Hash the new password and update the user document in the database
@@ -157,11 +154,11 @@ router.post('/resetPassword', async (req, res) => {
                     </script>
                 </head>
                 <body class="bg-gray-100 flex items-center justify-center h-screen">
-                    <div class="text-center">
-                        <div class="bg-green-100 text-green-700 p-5 rounded-lg shadow-lg">
+                    <div class="text-center p-6">
+                        <div class="bg-green-100 text-green-700 p-8 rounded-lg shadow-lg max-w-md mx-auto text-xl sm:text-2xl lg:text-2xl">
                             <p>Password reset successful</p>
                             <p>Redirecting to login in <span id="countdown">5</span> seconds...</p>
-                            <a href="/login" class="mt-3 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out">
+                            <a href="/login" class="mt-5 inline-block bg-blue-500 text-white py-3 px-6 rounded hover:bg-blue-700 transition duration-300 ease-in-out text-xl sm:text-xl">
                                 Login
                             </a>
                         </div>
@@ -182,11 +179,11 @@ router.post('/resetPassword', async (req, res) => {
                     </style>
                 </head>
                 <body class="bg-gray-100 flex items-center justify-center h-screen">
-                    <div class="text-center">
-                        <div class="bg-red-100 text-red-700 p-5 rounded-lg shadow-lg">
+                    <div class="text-center p-6">
+                        <div class="bg-red-100 text-red-700 p-8 rounded-lg shadow-lg max-w-md mx-auto text-xl sm:text-xl lg:text-2xl">
                             Invalid or expired reset token
-                            <div class="mt-4">
-                                <a href="/login" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Back to Login</a>
+                            <div class="mt-5">
+                                <a href="/login" class="bg-blue-500 text-white py-3 px-6 rounded hover:bg-blue-600 text-xl sm:text-2xl">Back to Login</a>
                             </div>
                         </div>
                     </div>
@@ -208,11 +205,11 @@ router.post('/resetPassword', async (req, res) => {
                 </style>
             </head>
             <body class="bg-gray-100 flex items-center justify-center h-screen">
-                <div class="text-center">
-                    <div class="bg-red-100 text-red-700 p-5 rounded-lg shadow-lg">
+                <div class="text-center p-6">
+                    <div class="bg-red-100 text-red-700 p-8 rounded-lg shadow-lg max-w-md mx-auto text-xl sm:text-xl lg:text-2xl">
                         Server error
-                        <div class="mt-4">
-                            <a href="/" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Back to Main Menu</a>
+                        <div class="mt-5">
+                            <a href="/" class="bg-blue-500 text-white py-3 px-6 rounded hover:bg-blue-600 text-xl sm:text-xl">Back to Main Menu</a>
                         </div>
                     </div>
                 </div>
