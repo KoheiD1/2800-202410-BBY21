@@ -259,6 +259,8 @@ app.get('/startGame', async (req, res) => {
 		currentCell: { row: 0, index: 2 }
 	};
 
+	console.log(req.session.gameSession.gameStarted);
+
 	try {
 		await new Promise((resolve, reject) => {
 			if (req.session.gameSession) {
@@ -277,29 +279,29 @@ app.get('/startGame', async (req, res) => {
 
 app.get('/map', async (req, res) => {
 	req.session.shop = null;
-	console.log(req.session.gameSession.playerLevel);
-	if (!req.session.gameSession.mapSet) {
-		pathsCollection.aggregate([{ $sample: { size: 1 } }]).project({ _id: 1 }).toArray().then(result => {
-			currMap = result[0]._id;
-		});
+	if (req.session.gameSession.mapSet == false) {
+		const randomPath = await pathsCollection.aggregate([{ $sample: { size: 1 } }]).project({ _id: 1 }).toArray();
+		const currMap = randomPath[0]._id;
+
 		const result = await pathsCollection.find({ _id: currMap }).project({
 			row0: 1, row1: 1, row2: 1, row3: 1, row4: 1,
 			r0active: 1, r1active: 1, r2active: 1, r3active: 1, r4active: 1,
 			r0connect: 1, r1connect: 1, r2connect: 1, r3connect: 1,
 		}).toArray();
 
-		await userRunsCollection.insertOne({ path: result[0] }).then(result => {
-			req.session.gameSession.mapID = result.insertedId;
-		});
+		const insertResult = await userRunsCollection.insertOne({ path: result[0] });
+        req.session.gameSession.mapID = insertResult.insertedId;
+
 		await userRunsCollection.updateOne({ _id: req.session.gameSession.mapID }, { $set: { email: req.session.email } });
 
 		req.session.gameSession.mapSet = true;
 	}
-	var result = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
+
+	var userRun = await userRunsCollection.find({ _id: new ObjectId(req.session.gameSession.mapID) }).project({ path: 1 }).toArray();
 
 	const currentCell = req.session.gameSession.currentCell;
 
-	res.render("map", { path: result[0].path, id: req.session.gameSession.mapID, currentCell: currentCell });
+	res.render("map", { path: userRun[0].path, id: req.session.gameSession.mapID, currentCell: currentCell });
 });
 
 app.post('/startencounter', async (req, res) => {
