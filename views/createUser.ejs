@@ -1,40 +1,59 @@
-<%- include("templates/header", {overflowVariable: '' , stylesheet: 'fonts.css'}) %>
+<%- include("templates/header", {overflowVariable: '' , stylesheet: 'fonts.css' }) %>
+
+  <style>
+    .required {
+    color: red;
+  }
+  </style>
+
   <link href="/defaultBG.css" rel="stylesheet" type="text/css">
 
   <body>
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-center py-12 px-4">
       <div class="max-w-md w-full space-y-8">
         <div class="flex items-center justify-center">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl text-black title-font mt-16">CODECRYPT
+          <h1 class="text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl text-black titleFont mt-16">CODECRYPT
           </h1>
         </div>
-        <h2 class="mt-6 text-center text-1xl font-extrabold text-gray-900 title-font">Create a new account</h2>
+        <h2 class="mt-6 text-center text-1xl font-extrabold text-gray-900 titleFont">Create a new account</h2>
 
-        <form id="form_user" class="pixel-border p-8" action="/submitUser" method="POST" novalidate>
-          <div class="col-md-4">
-            <label for="username" class="form-label basicPixel">*Username</label>
-            <input type="text" class="form-control basicPixel" id="username" name="username" placeholder="username" required>
+        <form id="form_user" class="pixel-border max-w-md p-8" action="/submitUser" method="POST" novalidate>
+        
+            <label for="username" class="form-label basicPixel">Username<span class="required">*</span></label>
+            <input type="text" class="form-control basicPixel" id="username" name="username" placeholder="username"
+              required="required">
             <div class="username-msg invalid-feedback">
             </div>
-          </div>
-          <div class="col-md-4">
-            <label for="email" class="form-label basicPixel">*Email</label>
-            <input type="text" class="form-control basicPixel" id="email" name="email" placeholder="email" required>
+            <label for="email" class="form-label basicPixel">Email<span class="required">*</span></label>
+            <input type="text" class="form-control basicPixel w-full" id="email" name="email" placeholder="email"
+              required="required">
             <div class="email-msg invalid-feedback">
             </div>
-          </div>
-          <div class="col-md-4">
-            <label for="password" class="form-label basicPixel">*Password</label>
-            <input type="password" class="form-control basicPixel" id="password" name="password" placeholder="password" required>
+            <label for="password" class="form-label basicPixel">Password<span class="required">*</span></label>
+            <input type="password" class="form-control basicPixel" id="password" name="password" placeholder="password"
+              required>
             <div class="password-msg invalid-feedback">
             </div>
+          <div>
+            <p id="duplicateErrorMessage" class="text-red-500 text-xs mt-2 hidden basicPixel"></p>
+            <p class="text-xs mt-2 basicPixel">Required Fields:<span class="required">*</span></p>
           </div>
           <div class="col-12">
-            <button class="btn pixel-button mt-2" type="submit">Submit form</button>
+            <button class="btn pixel-button m-3" type="submit">Submit form</button>
           </div>
         </form>
       </div>
     </div>
     <script defer src="/joi-client.js"></script>
+    <script>
+
+      var userExists = '<%= userExists %>';
+
+      if (userExists === 'true') {
+        document.getElementById('duplicateErrorMessage').classList.remove('hidden');
+        document.getElementById('duplicateErrorMessage').innerText = '<%= duplicateError %>';
+      }
+
+    </script>
   </body>
   <%- include("templates/footer") %>
